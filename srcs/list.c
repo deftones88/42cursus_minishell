@@ -15,17 +15,13 @@ t_list	*ft_lstnew(char *cmd)
 void	ft_lstadd_front(t_list **lst, t_list *new)
 {
 	if (!*lst)
-	{
 		*lst = new;
-		new->next = new;
-		new->bef = new;
-	}
 	else
 	{
 		new->bef = 0;
 		new->next = *lst;
 		(*lst)->bef = new;
-		(*lst) = new;
+		*lst = new;
 	}
 }
 

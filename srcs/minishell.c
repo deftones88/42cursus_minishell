@@ -39,5 +39,5 @@ int		main(int argc, char **argv, char **envp)
 		wait(&status);
 		free(line);
 	}
-	//ft_lstclear(&history);
+	ft_lstclear(&history);
 }
