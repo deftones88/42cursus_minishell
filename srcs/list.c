@@ -6,7 +6,7 @@ t_list	*ft_lstnew(char *cmd)
 
 	if (!(newlst = (t_list*)malloc(sizeof(t_list))))
 		err_msg("malloc error\n");
-	newlst->cmd = strdup(cmd);
+	newlst->cmd = ft_strdup(cmd);
 	newlst->next = 0;
 	newlst->bef = 0;
 	return (newlst);
@@ -92,17 +92,10 @@ t_list	*ft_lstdel_front(t_list **lst)
 
 void	ft_lstclear(t_list **lst)
 {
-	t_list	*tmp;
-	int		i;
-
-	i = ft_lstsize(*lst);
-	while (i > 0)
-	{
-		tmp = *lst;
-		free(tmp->cmd);
-		*lst = (*lst)->next;
-		free(tmp);
-		i--;
-	}
-	*lst = 0;
+	if (!lst || !*lst)
+		return ;
+	if ((*lst)->next)
+		ft_lstclear(&((*lst)->next));
+	free((*lst)->cmd);
+	free(*lst);
 }
