@@ -32,33 +32,6 @@ int		ft_isspdigit(char *str)
 	return (1);
 }
 
-int		ft_atoi(char *str, int *i)
-{
-	long long int	ret;
-	long long int	sign;
-
-	sign = 1;
-	ret = 0;
-	if (str[*i] == '-' || str[*i] == '+')
-	{
-		if (str[*i] == '-')
-			sign = -1;
-		++*i;
-	}
-	while (str[*i])
-	{
-		if (str[*i] < '0' || str[*i] > '9')
-			break ;
-		ret = ret * 10 + str[*i] - '0';
-		++*i;
-	}
-	while (str[*i] && (str[*i] == ' ' || str[*i] == '\t'))
-		++*i;
-	if (ret * sign < -2147483648LL || ret * sign > 2147483647)
-		err_msg("Error\n");
-	return (ret * sign);
-}
-
 void	err_msg(char *str)
 {
 	int				i;

@@ -6,9 +6,14 @@
 # endif
 
 # include "get_next_line.h"
+# include "libft.h"
 
 # include <stdio.h>
 # include <list.h>
+# include <sys/types.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
+# include <unistd.h>
 
 typedef struct	s_cmd
 {
