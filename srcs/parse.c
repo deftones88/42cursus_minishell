@@ -14,9 +14,6 @@ void cmd_print(t_cmd *cmd)
 void parse_tmp(char *line, t_cmd *cmd)
 {
   char  **str_split;
-  char  **tmp_dir;
-  char  *tmp_join;
-  int   fd;
   int   i;
   int   idx;
   int   j;
@@ -28,8 +25,12 @@ void parse_tmp(char *line, t_cmd *cmd)
     if (str_split[i][0] == '<' || str_split[i][0] == '>')
       idx = i;
   cmd = ft_calloc(sizeof(t_cmd), 1);
+  if (!cmd)
+    return ;
   // set cmd->arg
   cmd->arg = ft_calloc(sizeof(char *), i - 1);
+  if (!cmd->arg)
+    return ;
   i = -1;
   j = -1;
   while (str_split[++i])
@@ -39,16 +40,22 @@ void parse_tmp(char *line, t_cmd *cmd)
     cmd->arg[++j] = ft_strdup(str_split[i]);
   }
   // set cmd->cmd
+  char  **tmp_dir;
   tmp_dir = ft_split("/bin/,/usr/local/bin/,/usr/bin/,/usr/sbin/,/sbin/", ',');
+  char  *tmp_join;
+  int   fd;
   i = -1;
   while (++i < 5)
   {
     tmp_join = ft_strjoin(tmp_dir[i], cmd->arg[0]);
     if ((fd = open(tmp_join, O_RDONLY, 0644)) > -1)
+    {
       cmd->cmd = tmp_join;
+      close(fd);
+      break ;
+    }
     else
       free(tmp_join);
-    close(fd);
   }
   // set redirection
   if (idx > -1)
@@ -63,8 +70,8 @@ void parse_tmp(char *line, t_cmd *cmd)
         cmd->redout = ft_strdup(str_split[idx + 1]);
     }
   }
-  freeall(0, tmp_dir);
   freeall(0, str_split);
+  freeall(0, tmp_dir);
 
   printf("\n--\t<<PARSE>>\n");
   cmd_print(cmd);
