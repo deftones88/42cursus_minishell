@@ -8,13 +8,7 @@ LIBFT 		= libft.a
 INCLUDE 	= includes/
 SRCS_DIR 	= ./srcs/
 
-SRCS 			= $(addprefix $(SRCS_DIR),\
-						get_next_line.c\
-						get_next_line_utils.c\
-						list.c\
-						minishell.c\
-						utils.c\
-						)
+SRCS 			= $(wildcard ./srcs/*.c)
 OBJS 			= $(SRCS:.c=.o)
 DEPS 			= $(SRCS:.c=.d)
 
@@ -23,9 +17,9 @@ $(NAME) : $(OBJS) $(LIBFT)
 	$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft
 
 $(LIBFT) :
-	make all -C ./libft
-	cp ./libft/libft.h $(INCLUDE)
-	cp ./libft/libft.a ./
+	@make all -C ./libft
+	@cp ./libft/libft.h $(INCLUDE)
+	@cp ./libft/libft.a ./
 
 san : $(OBJS) $(LIBFT)
 	@$(CC) $(CFLAGS) $(SFLAGS) $(OBJS) -o $@ -L. -lft

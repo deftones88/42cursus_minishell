@@ -10,7 +10,7 @@ OBJS_B = $(SRCS_B:.c=.o)
 all : $(NAME)
 
 $(NAME) : $(OBJS)
-	ar -cr $@ $(OBJS)
+	@ar -cr $@ $(OBJS)
 
 bonus : $(NAME) $(OBJS_B)
 	ar -cr $(NAME) $(OBJS_B)

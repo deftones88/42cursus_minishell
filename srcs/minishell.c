@@ -12,7 +12,7 @@ int		main(int argc, char **argv, char **envp)
 	setbuf(stdout, NULL);
 
 	//for debug
-	char **tmp;
+	// char **tmp;
 
 	while(1)
 	{
@@ -24,22 +24,15 @@ int		main(int argc, char **argv, char **envp)
 				free(line);
 			break ;
 		}
-//		parse_tmp(line, &cmd);
-
-		tmp = ft_split(line, ' ');
-		cmd.cmd = tmp[0];
+		parse_tmp(line, &cmd);
 
 		ft_lstadd_front(&history, ft_lstnew(line));
 		pid_t pid = fork();
 		if (pid == 0)
 		{
-
-			/* only execve allowed */
-			execvp(cmd.cmd, tmp); //have to implement
-			//execve(cmd.cmd, cmd.arg, cmd.env);
-			// cmd.cmd = "wc"   			(char *)
-			// cmd.arg = "wc", "-l" 	(char **)
-			// cmd.env = envp?
+			// execvp(cmd.cmd, tmp); //have to implement
+			if (execve(cmd.cmd, cmd.arg, envp) == -1)
+				perror(cmd.cmd);
 			exit(0);
 		}
 		wait(&status);
