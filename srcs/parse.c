@@ -64,6 +64,6 @@ void parse_tmp(char *line, t_cmd *cmd)
   }
   freeall(0, tmp_dir);
 
-  
+
   cmd_print(cmd);
 }

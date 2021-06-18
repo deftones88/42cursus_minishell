@@ -16,12 +16,12 @@ bonus : $(NAME) $(OBJS_B)
 	ar -cr $(NAME) $(OBJS_B)
 
 clean :
-	rm -f $(OBJS) $(OBJS_B)
+	@rm -f $(OBJS) $(OBJS_B)
 
 fclean : clean
-	rm -f $(NAME)
+	@rm -f $(NAME)
 
 re : fclean all
 
 .c.o :
-	$(CC) $(CFLAGS) -c -o $@ $<
+	@$(CC) $(CFLAGS) -c -o $@ $<

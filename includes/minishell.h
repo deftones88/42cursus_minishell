@@ -1,10 +1,6 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-# ifndef STDIN
-#  define STDIN 1
-# endif
-
 # include "get_next_line.h"
 # include "libft.h"
 

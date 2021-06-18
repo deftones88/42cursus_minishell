@@ -18,7 +18,7 @@ int		main(int argc, char **argv, char **envp)
 	{
 		dir = "current dir";
 		printf("%s$ ", dir);
-		if (get_next_line(STDIN, &line) != 1 || !line)
+		if (get_next_line(STDOUT_FILENO, &line) != 1 || !line)
 		{
 			if (line)
 				free(line);
