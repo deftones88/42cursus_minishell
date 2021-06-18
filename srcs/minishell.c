@@ -1,5 +1,13 @@
 #include "minishell.h"
 
+/*
+**	<< BUILTIN COMMANDS THAT ARE EXECUTABLE WITH execve() >>
+**
+**  - pwd
+** 	- echo '-n'
+**	- env
+*/
+
 int		main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -24,10 +32,8 @@ int		main(int argc, char **argv, char **envp)
 				free(line);
 			break ;
 		}
+		init_cmd(&cmd);
 		parse_tmp(line, &cmd);
-
-		printf("\n--\t<<MAIN>>\n");
-		cmd_print(&cmd);
 
 		ft_lstadd_front(&history, ft_lstnew(line));
 		pid_t pid = fork();

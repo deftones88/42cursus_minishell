@@ -1,5 +1,6 @@
 #include "minishell.h"
 
+//
 void cmd_print(t_cmd *cmd)
 {
   printf("cmd:\t%s\n", cmd->cmd);
@@ -9,6 +10,18 @@ void cmd_print(t_cmd *cmd)
   printf("redin:\t%s\n", cmd->redin);
   printf("redout:\t%s\n", cmd->redout);
   printf("append:\t%s\n", cmd->append);
+  printf("--\n");
+}
+//
+
+void init_cmd(t_cmd *cmd)
+{
+  cmd->cmd = 0;
+  cmd->arg = 0;
+  cmd->flag = 0;
+  cmd->redin = 0;
+  cmd->redout = 0;
+  cmd->append = 0;
 }
 
 void parse_tmp(char *line, t_cmd *cmd)
@@ -24,11 +37,11 @@ void parse_tmp(char *line, t_cmd *cmd)
   while (str_split[++i])
     if (str_split[i][0] == '<' || str_split[i][0] == '>')
       idx = i;
-  cmd = ft_calloc(sizeof(t_cmd), 1);
-  if (!cmd)
-    return ;
-  // set cmd->arg
-  cmd->arg = ft_calloc(sizeof(char *), i - 1);
+  if (idx > -1)
+    i -= 1;
+  else
+    i++;
+  cmd->arg = ft_calloc(sizeof(char *), i);
   if (!cmd->arg)
     return ;
   i = -1;

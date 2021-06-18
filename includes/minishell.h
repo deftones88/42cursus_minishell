@@ -29,7 +29,7 @@ typedef struct	s_cmd
 //
 void cmd_print(t_cmd *cmd);
 //
-int  check_arg(char	c);
+void init_cmd(t_cmd *cmd);
 void parse_tmp(char *line, t_cmd *cmd);
 
 #endif
