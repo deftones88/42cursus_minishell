@@ -17,10 +17,11 @@
 
 typedef struct	s_cmd
 {
-	char	*cmd;
-	int		flag;
-	char	*redin;
-	char	*redout;
+	char	*cmd;					// command
+	char	**arg;				// command + options
+	int		flag;					//
+	char	*redin;				// >  ??
+	char	*redout;			// <  ??
 
 }				t_cmd;
 

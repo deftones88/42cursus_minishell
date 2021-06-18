@@ -25,7 +25,7 @@ int		main(int argc, char **argv, char **envp)
 			break ;
 		}
 //		parse_tmp(line, &cmd);
-		
+
 		tmp = ft_split(line, ' ');
 		cmd.cmd = tmp[0];
 
@@ -33,7 +33,13 @@ int		main(int argc, char **argv, char **envp)
 		pid_t pid = fork();
 		if (pid == 0)
 		{
+
+			/* only execve allowed */
 			execvp(cmd.cmd, tmp); //have to implement
+			//execve(cmd.cmd, cmd.arg, cmd.env);
+			// cmd.cmd = "wc"   			(char *)
+			// cmd.arg = "wc", "-l" 	(char **)
+			// cmd.env = envp?
 			exit(0);
 		}
 		wait(&status);
