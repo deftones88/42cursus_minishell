@@ -23,7 +23,12 @@ typedef struct	s_cmd
 	char	*append;			// >>
 }				t_cmd;
 
-
+/*
+** parse.c
+*/
+//
+void cmd_print(t_cmd *cmd);
+//
 int  check_arg(char	c);
 void parse_tmp(char *line, t_cmd *cmd);
 

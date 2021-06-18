@@ -26,6 +26,7 @@ int		main(int argc, char **argv, char **envp)
 		}
 		parse_tmp(line, &cmd);
 
+		cmd_print(&cmd);
 		ft_lstadd_front(&history, ft_lstnew(line));
 		pid_t pid = fork();
 		if (pid == 0)
