@@ -26,12 +26,13 @@ int		main(int argc, char **argv, char **envp)
 		}
 		parse_tmp(line, &cmd);
 
+		printf("\n--\t<<MAIN>>\n");
 		cmd_print(&cmd);
+
 		ft_lstadd_front(&history, ft_lstnew(line));
 		pid_t pid = fork();
 		if (pid == 0)
 		{
-			// execvp(cmd.cmd, tmp); //have to implement
 			if (execve(cmd.cmd, cmd.arg, envp) == -1)
 				perror(cmd.cmd);
 			exit(0);
