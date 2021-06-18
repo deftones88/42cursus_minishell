@@ -4,13 +4,7 @@ CFLAGS = -Wall -Wextra #-Werror
 NAME = minishell
 LIBFT = libft.a
 INCLUDE = includes/
-SRCS = $(addprefix $(SRCS_DIR),\
-				get_next_line.c\
-				get_next_line_utils.c\
-				list.c\
-				minishell.c\
-				utils.c\
-				)
+SRCS = $(wildcard ./srcs/*.c)
 OBJS = $(SRCS:.c=.o)
 DEPS = $(SRCS:.c=.d)
 
