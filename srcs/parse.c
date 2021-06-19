@@ -22,6 +22,7 @@ void init_cmd(t_cmd *cmd)
   cmd->redin = 0;
   cmd->redout = 0;
   cmd->append = 0;
+  cmd->delimit = 0;
 }
 
 int  closing_quotation_check(char *line, char c, int *a)
@@ -196,7 +197,12 @@ void parse_tmp(char *line, t_cmd *cmd)
   if (idx > -1)
   {
     if (str_split[idx][0] == '<')
-      cmd->redin = ft_strdup(str_split[idx + 1]);
+    {
+      if (str_split[idx][1] == '<')
+        cmd->delimit = ft_strdup(str_split[idx + 1]);
+      else
+        cmd->redin = ft_strdup(str_split[idx + 1]);
+    }
     else if (str_split[idx][0] == '>')
     {
       if (str_split[idx][1] == '>')

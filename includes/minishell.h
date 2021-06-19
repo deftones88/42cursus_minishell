@@ -5,6 +5,8 @@
 # include "libft.h"
 
 # include <stdio.h>
+# include <stdlib.h>
+# include <string.h>
 # include <list.h>
 # include <sys/types.h>
 # include <sys/stat.h>
@@ -21,6 +23,7 @@ typedef struct	s_cmd
 	char	*redin;				// <
 	char	*redout;			// >
 	char	*append;			// >>
+	char	*delimit;			// <<
 }				t_cmd;
 
 /*
