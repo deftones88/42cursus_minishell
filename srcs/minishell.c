@@ -24,8 +24,8 @@ int		main(int argc, char **argv, char **envp)
 
 	while(1)
 	{
-		dir = ft_strrchr(getcwd(NULL, 0), '/');
-		printf("%s$ ", dir);
+		dir = ft_strrchr(getcwd(NULL, 0), '/') + 1;
+		printf("%s $ ", dir);
 		if (get_next_line(STDOUT_FILENO, &line) != 1 || !line)
 		{
 			if (line)
