@@ -10,6 +10,7 @@ void cmd_print(t_cmd *cmd)
   printf("redin:\t|%s|\n", cmd->redin);
   printf("redout:\t|%s|\n", cmd->redout);
   printf("append:\t|%s|\n", cmd->append);
+  printf("delimit:\t|%s|\n", cmd->delimit);
   printf("--\n");
 }
 //
@@ -34,7 +35,7 @@ int  closing_quotation_check(char *line, char c, int *a)
     if (line[i] == c)
       break ;
   if (line[i])
-    a++;
+    ++a;
   if (line[i] && i > 1)
     return (i);
   return (0);
@@ -44,28 +45,28 @@ char **split_line(char *line)
 {
   char **tmp;
   int  i;
-  int  dbl[2];
-  int  sgl[2];
+  int  dbl;
+  int  sgl;
   int  count;
   int  flag;
 
   i = -1;
-  dbl[0] = 0;
-  sgl[0] = 0;
+  dbl = 0;
+  sgl = 0;
   count = 0;
   flag = 0;
   while (line[++i])
   {
     if (line[i] == '\"')
     {
-      dbl[0]++;
-      i += closing_quotation_check(line + i + 1, '\"', &dbl[0]);
+      dbl++;
+      i += closing_quotation_check(line + i + 1, '\"', &dbl);
       count++;
     }
     else if (line[i] == '\'')
     {
-      sgl[0]++;
-      i += closing_quotation_check(line + i + 1, '\'', &sgl[0]);
+      sgl++;
+      i += closing_quotation_check(line + i + 1, '\'', &sgl);
       count++;
     }
     else if (line[i] == ' ')
@@ -81,7 +82,7 @@ char **split_line(char *line)
   }
   if (flag)
     count++;
-  if (dbl[0] < 2 && sgl[0] < 2)
+  if (dbl < 2 && sgl < 2)
     return (ft_split(line, ' '));
 
   // printf("count:  %d\n", count);
@@ -100,20 +101,18 @@ char **split_line(char *line)
     // printf("after) line[%d]: %c\n\n", i, line[i]);
     while (line[i] != ' ' && line[i])
     {
-      // printf("sgl: %d, dbl: %d\n", sgl[0], dbl[0]);
-      if ((line[i] == '\'' && sgl[0] > 1) || (line[i] == '\"' && dbl[0] > 1))
+      // printf("sgl: %d, dbl: %d\n", sgl, dbl);
+      if ((line[i] == '\'' && sgl > 1) || (line[i] == '\"' && dbl > 1))
       {
         if (line[i] == '\'')
         {
-          sgl[1] = closing_quotation_check(line + i + 1, '\'', 0);
-          wlen = sgl[1];
-          sgl[0] -= 2;
+          wlen = closing_quotation_check(line + i + 1, '\'', 0);
+          sgl -= 2;
         }
         else
         {
-          dbl[1] = closing_quotation_check(line + i + 1, '\"', 0);
-          wlen = dbl[1];
-          dbl[0] -= 2;
+          wlen = closing_quotation_check(line + i + 1, '\"', 0);
+          dbl -= 2;
         }
         if (wlen)
         {

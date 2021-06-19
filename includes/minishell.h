@@ -35,6 +35,8 @@ typedef struct	s_cmd
 void cmd_print(t_cmd *cmd);
 //
 void init_cmd(t_cmd *cmd);
+char **split_line(char *line);
+int  closing_quotation_check(char *line, char c, int *a);
 void parse_tmp(char *line, t_cmd *cmd);
 
 #endif
