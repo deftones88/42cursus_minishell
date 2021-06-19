@@ -25,13 +25,17 @@ int		main(int argc, char **argv, char **envp)
 	while(1)
 	{
 		dir = ft_strrchr(getcwd(NULL, 0), '/') + 1;
-		printf("%s $ ", dir);
-		if (get_next_line(STDOUT_FILENO, &line) != 1 || !line)
-		{
-			if (line)
-				free(line);
-			break ;
-		}
+		dir = ft_strjoin(dir, "$ ");
+		// printf("%s $ ", dir);
+		line = readline(dir);
+		if (ft_strlen(line) > 0)
+			add_history(line);
+		// if (get_next_line(STDOUT_FILENO, &line) != 1 || !line)
+		// {
+		// 	if (line)
+		// 		free(line);
+		// 	break ;
+		// }
 		init_cmd(&cmd);
 		parse_tmp(line, &cmd);
 

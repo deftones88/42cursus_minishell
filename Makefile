@@ -13,7 +13,7 @@ DEPS 			= $(SRCS:.c=.d)
 
 all : $(NAME)
 $(NAME) : $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft
+	@$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft -lreadline
 
 $(LIBFT) :
 	@make all -C ./libft
