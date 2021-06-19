@@ -7,7 +7,7 @@
 ** 	- echo '-n'
 **	- env
 **
-**  - 'cd' exists, but doesn't do anything
+**  - 'cd' exists, but only checks if the directory exists
 */
 
 int		main(int argc, char **argv, char **envp)
@@ -42,14 +42,20 @@ int		main(int argc, char **argv, char **envp)
 				parse_tmp(line, &cmd);
 
 				// ft_lstadd_front(&history, ft_lstnew(line));
-				pid_t pid = fork();
-				if (pid == 0)
+				if (cmd.cmd)
 				{
-					if (execve(cmd.cmd, cmd.arg, envp) == -1)
-					printf("Error executing : %s\n", strerror(errno));
-					exit(0);
+					pid_t pid = fork();
+					if (pid == 0)
+					{
+						if (execve(cmd.cmd, cmd.arg, envp) == -1)
+							printf("Error executing : %s\n", strerror(errno));
+						exit(0);
+					}
+					wait(&status);
 				}
-				wait(&status);
+				else
+					printf(">> %s\n", cmd.arg[0]);
+				free_cmd(&cmd);
 		}
 		free(line);
 		free(dir);

@@ -3,13 +3,13 @@
 //
 void cmd_print(t_cmd *cmd)
 {
-  printf("cmd:\t|%s|\n", cmd->cmd);
+  printf("cmd:\t\t|%s|\n", cmd->cmd);
   printf("arg:");
   for(int i = 0; cmd->arg[i]; i++)
-    printf("\t- |%s|\n", cmd->arg[i]);
-  printf("redin:\t|%s|\n", cmd->redin);
-  printf("redout:\t|%s|\n", cmd->redout);
-  printf("append:\t|%s|\n", cmd->append);
+    printf("\t\t- |%s|\n", cmd->arg[i]);
+  printf("redin:\t\t|%s|\n", cmd->redin);
+  printf("redout:\t\t|%s|\n", cmd->redout);
+  printf("append:\t\t|%s|\n", cmd->append);
   printf("delimit:\t|%s|\n", cmd->delimit);
   printf("--\n");
 }
@@ -24,6 +24,19 @@ void init_cmd(t_cmd *cmd)
   cmd->redout = 0;
   cmd->append = 0;
   cmd->delimit = 0;
+}
+
+void free_cmd(t_cmd *cmd)
+{
+  freeall(cmd->cmd, cmd->arg);
+  if (cmd->redin)
+    free(cmd->redin);
+  if (cmd->redout)
+    free(cmd->redout);
+  if (cmd->append)
+    free(cmd->append);
+  if (cmd->delimit)
+    free(cmd->delimit);
 }
 
 int  closing_quotation_check(char *line, char c, int *a)
