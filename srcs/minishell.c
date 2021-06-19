@@ -40,7 +40,7 @@ int		main(int argc, char **argv, char **envp)
 		if (pid == 0)
 		{
 			if (execve(cmd.cmd, cmd.arg, envp) == -1)
-				perror(cmd.cmd);
+				printf("Error executing : %s\n", strerror(errno));
 			exit(0);
 		}
 		wait(&status);
