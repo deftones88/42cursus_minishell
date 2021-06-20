@@ -15,19 +15,6 @@ void cmd_print(t_cmd *cmd)
 }
 //
 
-void init_cmd(t_cmd *cmd)
-{
-  cmd->cmd = 0;
-  cmd->arg = 0;
-  cmd->flag = 0;
-  cmd->redin = 0;
-  cmd->redout = 0;
-  cmd->append = 0;
-  cmd->delimit = 0;
-  // cmd->env.len = 0;
-  // cmd->env.env_str = 0;
-}
-
 void free_cmd(t_cmd *cmd)
 {
   freeall(cmd->cmd, cmd->arg);
@@ -39,71 +26,6 @@ void free_cmd(t_cmd *cmd)
     free(cmd->append);
   if (cmd->delimit)
     free(cmd->delimit);
-}
-
-int  check_closing_quotation(char *line, char c, int *a)
-{
-  int   i;
-
-  i = -1;
-  while (line[++i])
-    if (line[i] == c)
-      break ;
-  if (line[i])
-    ++a;
-  if (line[i] && i > 1)
-    return (i);
-  return (0);
-}
-
-int  check_env(char *line, t_cmd *cmd, int flag)
-{
-  int   i;
-  int   j;
-  int   close_flag;
-  char  buf[ARG_MAX];
-
-  cmd->env.len = 0;
-  i = -1;
-  while (line[++i])
-  {
-    // printf("1: %d\n", i);
-    close_flag = 0;
-    j = 0;
-    if (line[i] == ' ' && !flag)
-      return (0);
-    // printf("2\n");
-    if (line[i] == '$')
-    {
-      // printf("2 - 1\n");
-      i++;
-      if (line[i] == '{' && ft_strchr(line + i + 1, '}'))
-      {
-        // printf("2 - 2\n");
-        close_flag = 2;
-        i++;
-      }
-      while (((!close_flag && (line[i + j] != ' ' && line[i + j] != '$' && line[i + j] != '\"' && line[i + j] != '\'')) || (close_flag && line[i + j] != '}')) && line[i + j])
-      {
-        // printf("2 - 3: %c\n", line[i + j]);
-        buf[j] = line[i + j];
-        j++;
-      }
-      buf[j] = 0;
-      // printf("2 - 4: %s(%lu)\n", buf, strlen(buf));
-      cmd->env.env_str = getenv(buf);
-      // printf("2 - 5: %s\n", cmd->env.env_str);
-      if (cmd->env.env_str)
-        cmd->env.len += (int)ft_strlen(cmd->env.env_str);
-      // printf("2 - 6: %d\n", cmd->env.len);
-      cmd->env.len -= 1 + close_flag + (int)ft_strlen(buf);
-      // printf("2 - 7: %d\n", cmd->env.len);
-      return ((int)ft_strlen(buf) + close_flag + 1);
-    }
-    // printf("3\n");
-    i += j;
-  }
-  return (0);
 }
 
 char **split_line(char *line, t_cmd *cmd)
@@ -269,22 +191,26 @@ void parse_tmp(char *line, t_cmd *cmd)
     cmd->arg[++j] = ft_strdup(str_split[i]);
   }
   // set cmd->cmd
-  char  **tmp_dir;
-  tmp_dir = ft_split("/bin/,/usr/local/bin/,/usr/bin/,/usr/sbin/,/sbin/", ',');
-  char  *tmp_join;
-  int   fd;
-  i = -1;
-  while (++i < 5)
+  if (!check_builtin(cmd->arg[0]))
   {
-    tmp_join = ft_strjoin(tmp_dir[i], cmd->arg[0]);
-    if ((fd = open(tmp_join, O_RDONLY, 0644)) > -1)
+    char  **tmp_dir;
+    tmp_dir = ft_split("/bin/,/usr/local/bin/,/usr/bin/,/usr/sbin/,/sbin/", ',');
+    char  *tmp_join;
+    int   fd;
+    i = -1;
+    while (++i < 5)
     {
-      cmd->cmd = tmp_join;
-      close(fd);
-      break ;
-    }
-    else
+      tmp_join = ft_strjoin(tmp_dir[i], cmd->arg[0]);
+      if ((fd = open(tmp_join, O_RDONLY, 0644)) > -1)
+      {
+        cmd->cmd = tmp_join;
+        close(fd);
+        break ;
+      }
+      else
       free(tmp_join);
+    }
+    freeall(0, tmp_dir);
   }
   // set redirection
   if (idx > -1)
@@ -305,7 +231,6 @@ void parse_tmp(char *line, t_cmd *cmd)
     }
   }
   freeall(0, str_split);
-  freeall(0, tmp_dir);
 
   printf("\n--\t<<PARSE>>\n");
   cmd_print(cmd);

@@ -1,15 +1,5 @@
 #include "minishell.h"
 
-/*
-**	<< BUILTIN COMMANDS THAT ARE EXECUTABLE WITH execve() >>
-**
-**  - pwd
-** 	- echo '-n'
-**	- env
-**
-**  - 'cd' exists, but only checks if the directory exists
-*/
-
 int		main(int argc, char **argv, char **envp)
 {
 	char	*line;

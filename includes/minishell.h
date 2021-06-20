@@ -39,16 +39,25 @@ typedef struct	s_cmd
 }				t_cmd;
 
 /*
+** init.c
+*/
+void init_cmd(t_cmd *cmd);
+
+/*
 ** parse.c
 */
 //
 void cmd_print(t_cmd *cmd);
 //
-void init_cmd(t_cmd *cmd);
 void free_cmd(t_cmd *cmd);
 char **split_line(char *line, t_cmd *cmd);
+void parse_tmp(char *line, t_cmd *cmd);
+
+/*
+** parse_check.c
+*/
+int  check_builtin(char *arg);
 int  check_closing_quotation(char *line, char c, int *a);
 int  check_env(char *line, t_cmd *cmd, int flag);
-void parse_tmp(char *line, t_cmd *cmd);
 
 #endif
