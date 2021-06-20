@@ -25,8 +25,8 @@ int		main(int argc, char **argv, char **envp)
 
 	while(1)
 	{
-		dir = ft_strrchr(getcwd(NULL, 0), '/') + 1;
-		dir = ft_strjoin(dir, "$ ");
+		// dir = ft_strrchr(getcwd(NULL, 0), '/') + 1;
+		dir = ft_strjoin(ft_strrchr(getcwd(NULL, 0), '/') + 1, "$ ");
 		line = readline(dir);
 		if (ft_strlen(line) > 0)
 		{

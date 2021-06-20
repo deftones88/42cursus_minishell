@@ -7,7 +7,7 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <list.h>
+// # include <list.h>
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
@@ -16,6 +16,14 @@
 # include <errno.h>
 # include <readline/readline.h>
 # include <readline/history.h>
+# include <limits.h>
+
+typedef struct	s_env
+{
+	int		is_env;				// env flag;
+	char	*env_str;			// env string;
+	int		len;					// env strlen;
+}			t_env;
 
 typedef struct	s_cmd
 {
@@ -26,6 +34,7 @@ typedef struct	s_cmd
 	char	*redout;			// >
 	char	*append;			// >>
 	char	*delimit;			// <<
+	t_env	env;					// env struct
 }				t_cmd;
 
 /*
@@ -36,8 +45,9 @@ void cmd_print(t_cmd *cmd);
 //
 void init_cmd(t_cmd *cmd);
 void free_cmd(t_cmd *cmd);
-char **split_line(char *line);
-int  closing_quotation_check(char *line, char c, int *a);
+char **split_line(char *line, t_cmd *cmd);
+int  check_closing_quotation(char *line, char c, int *a);
+int  check_env(char *line, t_cmd *cmd);
 void parse_tmp(char *line, t_cmd *cmd);
 
 #endif
