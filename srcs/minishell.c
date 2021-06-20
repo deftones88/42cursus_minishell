@@ -13,6 +13,25 @@ int		main(int argc, char **argv, char **envp)
 
 	//for debug
 	cmd.ret = 0;
+	int		fd;
+	char	*env_dir;
+
+	cmd.env.env_dir = ft_strjoin(getcwd(NULL, 0), TMP_ENV);
+	fd = open(cmd.env.env_dir, O_CREAT | O_WRONLY | O_TRUNC, 0644);
+	if (fd < 0)
+	{
+		printf("%s\n", strerror(errno));
+		exit(EXIT_FAILURE);
+	}
+	for (size_t i = 0; envp[i]; i++)
+	{
+		for (size_t j = 0; envp[i][j]; j++)
+		{
+			write(fd, &envp[i][j], 1);
+		}
+		write(fd, "\n", 1);
+	}
+	close(fd);
 	while(1)
 	{
 		// dir = ft_strrchr(getcwd(NULL, 0), '/') + 1;
@@ -39,8 +58,8 @@ int		main(int argc, char **argv, char **envp)
 					{
 						if (execve(cmd.arg[0], cmd.arg, envp) == -1)
 						{
-							printf("errno: %d (NEED to find a way to share this)\n", errno);
-							// cmd.ret = errno;
+							printf("errno: %d (Global variable?)\n", errno);
+							cmd.ret = errno;
 							printf("Error executing : %s\n", strerror(errno));
 						}
 						exit(0);
@@ -76,29 +95,48 @@ int		main(int argc, char **argv, char **envp)
 					else if (!ft_strcmp(cmd.arg[0], "pwd"))
 						printf(">> pwd: %s\n", getcwd(NULL, 0));
 					else if (!ft_strcmp(cmd.arg[0], "export"))
+					{
+						/*
+						**  problem with this method :
+						**     --> cannot use getenv()
+						*/
 						printf(">> export\n");
+						fd = open(cmd.env.env_dir, O_APPEND | O_WRONLY | O_EXCL, 0644);
+						if (fd < 0)
+						{
+							printf("%s\n", strerror(errno));
+							cmd.ret = errno;
+							exit(EXIT_FAILURE);
+						}
+						//check arg[1]
+						for (int i = 0; arg[1][i]; i++)
+							write(fd, &arg[1][i], 1);
+					}
 					else if (!ft_strcmp(cmd.arg[0], "unset"))
 						printf(">> unset\n");
 					else if (!ft_strcmp(cmd.arg[0], "env"))
 					{
-						/*
-						** << MY SUGGESTION >>
-						** create a env.txt file and copy all of **envp
-						** then, keep adding to it when 'export' is called
-						** erase when 'unset' is called
-						** env -> read from env.txt
-						*/
 						printf(">> env\n");
-						for (int i = 0; envp[i]; i++)
+						char *env_line;
+
+						fd = open(cmd.env.env_dir, O_RDONLY | O_EXCL, 0644);
+						if (fd < 0)
 						{
-							for (int j = 0; envp[i][j]; j++)
-								printf("%c", envp[i][j]);
-							printf("\n");
+							printf("%s\n", strerror(errno));
+							cmd.ret = errno;
+							exit(EXIT_FAILURE);
 						}
+						while (get_next_line(fd, &env_line) > 0)
+							printf("|%s|\n", env_line);
+						free(env_line);
+						close(fd);
 						cmd.ret = 0;
 					}
 					else if (!ft_strcmp(cmd.arg[0], "exit"))
+					{
+						close(fd);
 						exit(EXIT_SUCCESS);
+					}
 				}
 				free_cmd(&cmd);
 		}

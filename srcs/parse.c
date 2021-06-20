@@ -113,7 +113,7 @@ char **split_line(char *line, t_cmd *cmd)
         }
         else
         {
-          cmd->env.is_env = check_env(line + i, cmd, 1);
+          cmd->env.is_env = check_env(line + i + 1, cmd, 1);
           // printf("inside) env.len: %d\n", cmd->env.len);
           wlen += check_closing_quotation(line + i + 1, '\"', 0);
           // printf("wlen: %d\n", wlen);

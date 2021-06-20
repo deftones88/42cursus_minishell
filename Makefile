@@ -23,6 +23,7 @@ $(LIBFT) :
 clean :
 	@make clean -C ./libft
 	@rm -f $(OBJS) $(DEPS)
+	@rm -f tmp_env.txt
 
 fclean : clean
 	@rm -f $(LIBFT) ./libft/libft.a

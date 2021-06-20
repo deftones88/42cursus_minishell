@@ -20,6 +20,8 @@
 # include <limits.h>
 # include <dirent.h>
 
+# define TMP_ENV	"/tmp_env.txt"
+
 typedef struct	s_env
 {
 	int		is_env;				// env flag;
@@ -27,6 +29,7 @@ typedef struct	s_env
 	int		len;					// env strlen;
 	int		single;				// single quote flag;
 	int		env_ret;			// ret flag;
+	char	*env_dir;			// tmp_env.txt file dir
 }			t_env;
 
 typedef struct	s_cmd
@@ -38,6 +41,7 @@ typedef struct	s_cmd
 	char	*append;			// >>
 	char	*delimit;			// <<
 	int		ret;					// return value of previous execution
+											// global?
 	t_env	env;					// env struct
 }				t_cmd;
 

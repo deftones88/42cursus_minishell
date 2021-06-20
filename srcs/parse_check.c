@@ -37,10 +37,10 @@ int  check_env(char *line, t_cmd *cmd, int flag)
   i = -1;
   while (line[++i])
   {
-    // printf("1: %d\n", i);
+    // printf("1: %c(%d), flag: %d\n", line[i], i, flag);
     close_flag = 0;
     j = 0;
-    if (line[i] == ' ' && !flag)
+    if ((line[i] == ' ' && !flag) || (i > 0 && line[i] == '\"'))
       return (0);
     // printf("2\n");
     if (line[i] == '$')
