@@ -3,7 +3,6 @@
 //
 void cmd_print(t_cmd *cmd)
 {
-  printf("cmd:\t\t|%s|\n", cmd->cmd);
   printf("arg:");
   for(int i = 0; cmd->arg[i]; i++)
     printf("\t\t- |%s| (%lu)\n", cmd->arg[i], strlen(cmd->arg[i]));
@@ -17,7 +16,7 @@ void cmd_print(t_cmd *cmd)
 
 void free_cmd(t_cmd *cmd)
 {
-  freeall(cmd->cmd, cmd->arg);
+  freeall(cmd->env.env_str, cmd->arg);
   if (cmd->redin)
     free(cmd->redin);
   if (cmd->redout)
@@ -188,30 +187,36 @@ void parse_tmp(char *line, t_cmd *cmd)
   {
     if (i == idx || i == idx + 1)
       continue ;
+    if (i == 0 && !check_builtin(str_split[0]))
+    {
+      char  **tmp_dir;
+      tmp_dir = ft_split("/bin/,/usr/local/bin/,/usr/bin/,/usr/sbin/,/sbin/", ',');
+      char  *tmp_join;
+      int   fd;
+      int   k;
+      k = -1;
+      while (++k < 5)
+      {
+        tmp_join = ft_strjoin(tmp_dir[k], str_split[i]);
+        if ((fd = open(tmp_join, O_RDONLY, 0644)) > -1)
+        {
+          cmd->arg[++j] = tmp_join;
+          close(fd);
+          k = -1;
+          break ;
+        }
+        else
+          free(tmp_join);
+      }
+      freeall(0, tmp_dir);
+      if (k > -1)
+        cmd->arg[++j] = ft_strdup(str_split[i]);
+      continue ;
+    }
     cmd->arg[++j] = ft_strdup(str_split[i]);
   }
   // set cmd->cmd
-  if (!check_builtin(cmd->arg[0]))
-  {
-    char  **tmp_dir;
-    tmp_dir = ft_split("/bin/,/usr/local/bin/,/usr/bin/,/usr/sbin/,/sbin/", ',');
-    char  *tmp_join;
-    int   fd;
-    i = -1;
-    while (++i < 5)
-    {
-      tmp_join = ft_strjoin(tmp_dir[i], cmd->arg[0]);
-      if ((fd = open(tmp_join, O_RDONLY, 0644)) > -1)
-      {
-        cmd->cmd = tmp_join;
-        close(fd);
-        break ;
-      }
-      else
-      free(tmp_join);
-    }
-    freeall(0, tmp_dir);
-  }
+
   // set redirection
   if (idx > -1)
   {

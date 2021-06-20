@@ -28,7 +28,6 @@ typedef struct	s_env
 
 typedef struct	s_cmd
 {
-	char	*cmd;					// command
 	char	**arg;				// command + options
 	int		flag;					//
 	char	*redin;				// <

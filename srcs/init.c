@@ -2,7 +2,6 @@
 
 void init_cmd(t_cmd *cmd)
 {
-  cmd->cmd = 0;
   cmd->arg = 0;
   cmd->flag = 0;
   cmd->redin = 0;

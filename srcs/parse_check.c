@@ -2,13 +2,13 @@
 
 int  check_builtin(char *arg)
 {
-  return (!ft_strncmp(arg, "cd", 2)
+  return (!ft_strncmp(arg, "cd", (int)ft_strlen(arg))
   //|| !ft_strncmp(arg, "echo", 4)
-  || !ft_strncmp(arg, "pwd", 3)
-  || !ft_strncmp(arg, "export", 6)
-  || !ft_strncmp(arg, "unset", 5)
-  || !ft_strncmp(arg, "env", 3)
-  || !ft_strncmp(arg, "exit", 4));
+  || !ft_strncmp(arg, "pwd", (int)ft_strlen(arg))
+  || !ft_strncmp(arg, "export", (int)ft_strlen(arg))
+  || !ft_strncmp(arg, "unset", (int)ft_strlen(arg))
+  || !ft_strncmp(arg, "env", (int)ft_strlen(arg))
+  || !ft_strncmp(arg, "exit", (int)ft_strlen(arg)));
 }
 
 int  check_closing_quotation(char *line, char c, int *a)
