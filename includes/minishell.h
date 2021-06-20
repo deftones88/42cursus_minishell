@@ -23,6 +23,7 @@ typedef struct	s_env
 	int		is_env;				// env flag;
 	char	*env_str;			// env string;
 	int		len;					// env strlen;
+	int		single;				// single quote flag;
 }			t_env;
 
 typedef struct	s_cmd
@@ -47,7 +48,7 @@ void init_cmd(t_cmd *cmd);
 void free_cmd(t_cmd *cmd);
 char **split_line(char *line, t_cmd *cmd);
 int  check_closing_quotation(char *line, char c, int *a);
-int  check_env(char *line, t_cmd *cmd);
+int  check_env(char *line, t_cmd *cmd, int flag);
 void parse_tmp(char *line, t_cmd *cmd);
 
 #endif
