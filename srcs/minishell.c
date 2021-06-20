@@ -82,7 +82,7 @@ int		main(int argc, char **argv, char **envp)
 							i++;
 						}
 						while (cmd.arg[++i])
-							printf(" /%s/", cmd.arg[i]);
+							printf(" |%s|", cmd.arg[i]);
 						if (!flag)
 							printf("\n");
 						cmd.ret = 0;
@@ -109,8 +109,8 @@ int		main(int argc, char **argv, char **envp)
 							exit(EXIT_FAILURE);
 						}
 						//check arg[1]
-						for (int i = 0; arg[1][i]; i++)
-							write(fd, &arg[1][i], 1);
+						for (int i = 0; cmd.arg[1][i]; i++)
+							write(fd, &cmd.arg[1][i], 1);
 					}
 					else if (!ft_strcmp(cmd.arg[0], "unset"))
 						printf(">> unset\n");

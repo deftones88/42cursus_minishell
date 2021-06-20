@@ -17,11 +17,16 @@ int  check_closing_quotation(char *line, char c, int *a)
 
   i = -1;
   while (line[++i])
+  {
     if (line[i] == c)
       break ;
-  if (line[i])
-    ++a;
-  if (line[i] && i > 1)
+  }
+  if (line[i] && a)
+  {
+    ++(*a);
+    return (i + 1);
+  }
+  else if (line[i] && !a)
     return (i);
   return (0);
 }
