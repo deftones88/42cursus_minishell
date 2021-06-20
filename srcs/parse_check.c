@@ -3,7 +3,7 @@
 int  check_builtin(char *arg)
 {
   return (!ft_strncmp(arg, "cd", (int)ft_strlen(arg))
-  //|| !ft_strncmp(arg, "echo", 4)
+  || !ft_strncmp(arg, "echo", 4)
   || !ft_strncmp(arg, "pwd", (int)ft_strlen(arg))
   || !ft_strncmp(arg, "export", (int)ft_strlen(arg))
   || !ft_strncmp(arg, "unset", (int)ft_strlen(arg))
@@ -47,6 +47,19 @@ int  check_env(char *line, t_cmd *cmd, int flag)
     {
       // printf("2 - 1\n");
       i++;
+      if (line[i] == '?')
+      {
+        cmd->env.env_ret++;
+        cmd->env.len = ft_numlen(cmd->ret) - 2;
+        cmd->env.env_str = ft_calloc(sizeof(char), ft_numlen(cmd->ret) + 1);
+        if (!cmd->env.env_str)
+        {
+          printf("Malloc failed : %s\n", strerror(errno));
+          exit(errno);
+        }
+        cmd->env.env_str = ft_itoa(cmd->ret);
+        return (2);
+      }
       if (line[i] == '{' && ft_strchr(line + i + 1, '}'))
       {
         // printf("2 - 2\n");

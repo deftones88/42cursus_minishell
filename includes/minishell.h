@@ -3,11 +3,12 @@
 
 # include "get_next_line.h"
 # include "libft.h"
+# include "utils.h"
+// # include "list.h"
 
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-// # include <list.h>
 # include <sys/types.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
@@ -17,6 +18,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <limits.h>
+# include <dirent.h>
 
 typedef struct	s_env
 {
@@ -24,6 +26,7 @@ typedef struct	s_env
 	char	*env_str;			// env string;
 	int		len;					// env strlen;
 	int		single;				// single quote flag;
+	int		env_ret;			// ret flag;
 }			t_env;
 
 typedef struct	s_cmd
@@ -34,6 +37,7 @@ typedef struct	s_cmd
 	char	*redout;			// >
 	char	*append;			// >>
 	char	*delimit;			// <<
+	int		ret;					// return value of previous execution
 	t_env	env;					// env struct
 }				t_cmd;
 

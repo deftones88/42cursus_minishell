@@ -8,6 +8,5 @@ void init_cmd(t_cmd *cmd)
   cmd->redout = 0;
   cmd->append = 0;
   cmd->delimit = 0;
-  // cmd->env.len = 0;
-  // cmd->env.env_str = 0;
+  cmd->env.env_ret = 0;
 }

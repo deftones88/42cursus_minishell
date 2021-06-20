@@ -16,7 +16,7 @@ void cmd_print(t_cmd *cmd)
 
 void free_cmd(t_cmd *cmd)
 {
-  freeall(cmd->env.env_str, cmd->arg);
+  freeall(0, cmd->arg);
   if (cmd->redin)
     free(cmd->redin);
   if (cmd->redout)
@@ -25,6 +25,10 @@ void free_cmd(t_cmd *cmd)
     free(cmd->append);
   if (cmd->delimit)
     free(cmd->delimit);
+  if (cmd->env.env_ret)
+    free(cmd->env.env_str);
+  printf("--\tret: %d\n", cmd->ret);
+  cmd->ret %= 256;
 }
 
 char **split_line(char *line, t_cmd *cmd)
