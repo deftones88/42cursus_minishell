@@ -17,7 +17,6 @@ int		main(int argc, char **argv, char **envp)
 
 	signal(SIGINT, sig_handler); // ctrl + C
 	signal(SIGQUIT, SIG_IGN);		 // ctrl + \ (only works once)
-
 	//for debug
 	cmd.ret = 0;
 	int		fd;
