@@ -4,23 +4,22 @@ int		main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	char	*dir;
-	// t_list	*history;
 	t_cmd	cmd;
 	int		status;
+	// t_list	*history;
 
 	// history = 0;
 	setbuf(stdout, NULL);
 
-	/*
-	** ctrl commands
-	*/
-
+	/* ctrl commands */
 	signal(SIGINT, sig_handler); // ctrl + C
 	signal(SIGQUIT, SIG_IGN);		 // ctrl + \ (only works once)
-	//for debug
-	cmd.ret = 0;
-	int		fd;
 
+
+	cmd.ret = 0; 	// change to global?
+
+	/* copying envp to a file (can be changed) */
+	int		fd;
 	cmd.env.env_dir = ft_strjoin(getcwd(NULL, 0), TMP_ENV);
 	fd = open(cmd.env.env_dir, O_CREAT | O_WRONLY | O_TRUNC, 0644);
 	if (fd < 0)
@@ -37,9 +36,10 @@ int		main(int argc, char **argv, char **envp)
 		write(fd, "\n", 1);
 	}
 	close(fd);
+	/* ----- */
+
 	while(1)
 	{
-		// dir = ft_strrchr(getcwd(NULL, 0), '/') + 1;
 		dir = ft_strjoin(ft_strrchr(getcwd(NULL, 0), '/') + 1, "$ ");
 		line = readline(dir);
 		if (line && ft_strlen(line) > 0)
@@ -63,7 +63,7 @@ int		main(int argc, char **argv, char **envp)
 				{
 					if (execve(cmd.arg[0], cmd.arg, envp) == -1)
 					{
-						printf("errno: %d (Global variable?)\n", errno);
+						// printf("errno: %d\n", errno);
 						cmd.ret = errno;
 						printf("Error executing : %s\n", strerror(errno));
 					}
@@ -73,6 +73,7 @@ int		main(int argc, char **argv, char **envp)
 			}
 			else
 			{
+				/* builtin functions */
 				if (!ft_strcmp(cmd.arg[0], "echo"))
 				{
 					int		flag;
@@ -98,12 +99,16 @@ int		main(int argc, char **argv, char **envp)
 					cmd.ret = chdir(cmd.arg[1]);
 				}
 				else if (!ft_strcmp(cmd.arg[0], "pwd"))
-					printf(">> pwd: %s\n", getcwd(NULL, 0));
+				{
+					printf(">> pwd: ");
+					printf("%s\n", getcwd(NULL, 0));
+				}
 				else if (!ft_strcmp(cmd.arg[0], "export"))
 				{
 					/*
 					**  problem with this method :
-					**     --> cannot use getenv()
+					**     --> cannot use getenv() with new env
+					**		 --> duplicate entries
 					*/
 					printf(">> export\n");
 					fd = open(cmd.env.env_dir, O_APPEND | O_WRONLY | O_EXCL, 0644);
@@ -113,13 +118,34 @@ int		main(int argc, char **argv, char **envp)
 						cmd.ret = errno;
 						exit(EXIT_FAILURE);
 					}
-					//check arg[1]
-					for (int i = 0; cmd.arg[1][i]; i++)
-						write(fd, &cmd.arg[1][i], 1);
+					int		i = 0;
+					while (cmd.arg[++i])
+					{
+						if (!check_env_syx(cmd.arg[i]))
+						{
+							int		j = -1;
+							while (cmd.arg[i][++j])
+								write(fd, &cmd.arg[i][j], 1);
+							write(fd, "\n", 1);
+						}
+						else if (check_env_syx(cmd.arg[i]) == 1)
+							printf("%s: '%s': not a valid identifier\n", cmd.arg[0], cmd.arg[i]);
+					}
 					close(fd);
 				}
 				else if (!ft_strcmp(cmd.arg[0], "unset"))
+				{
 					printf(">> unset\n");
+					fd = open(cmd.env.env_dir, O_APPEND | O_WRONLY | O_EXCL, 0644);
+					if (fd < 0)
+					{
+						printf("%s\n", strerror(errno));
+						cmd.ret = errno;
+						exit(EXIT_FAILURE);
+					}
+					/* find and erase.... entry */
+					close(fd);
+				}
 				else if (!ft_strcmp(cmd.arg[0], "env"))
 				{
 					printf(">> env\n");
@@ -147,10 +173,8 @@ int		main(int argc, char **argv, char **envp)
 		}
 		else if (line == NULL)
 		{
-			/*
-			** only works when readline buffer is empty
-			*/
-			printf("\tctrl + D: eof\n");
+			/* ctrl + D (only works when readline buffer is empty) */
+			printf("<< EOF >>\n");
 			exit(EXIT_SUCCESS);
 		}
 		free(line);

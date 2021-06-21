@@ -62,10 +62,15 @@ char **split_line(char *line, t_cmd *cmd);
 void parse_tmp(char *line, t_cmd *cmd);
 
 /*
-** parse_check.c
+** check_parse.c
 */
 int  check_builtin(char *arg);
 int  check_closing_quotation(char *line, char c, int *a);
+
+/*
+** check_env.c
+*/
 int  check_env(char *line, t_cmd *cmd, int flag);
+char check_env_syx(const char *arg);
 
 #endif

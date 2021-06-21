@@ -33,7 +33,6 @@ void free_cmd(t_cmd *cmd)
 
 char **split_line(char *line, t_cmd *cmd)
 {
-  char **tmp;
   int  i;
   int  dbl;
   int  sgl;
@@ -79,7 +78,8 @@ char **split_line(char *line, t_cmd *cmd)
   if (dbl < 2 && sgl < 2 && !is_env)
     return (ft_split(line, ' '));
 
-  // printf("count:  %d\n", count);
+  /* parsing quotations */
+  char **tmp;
   tmp = ft_calloc(sizeof(char *), count + 1);
   i = 0;
   int   wcount = 0;
