@@ -4,6 +4,7 @@
 # include "get_next_line.h"
 # include "libft.h"
 # include "utils.h"
+# include "sig_handler.h"
 // # include "list.h"
 
 # include <stdio.h>

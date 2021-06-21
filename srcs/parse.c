@@ -94,15 +94,15 @@ char **split_line(char *line, t_cmd *cmd)
       i++;
     // printf("after) line[%d]: %c\n\n", i, line[i]);
     cmd->env.is_env = check_env(line + i, cmd, 0);
-    printf("env.len: %d\n", cmd->env.len);
+    // printf("env.len: %d\n", cmd->env.len);
     cmd->env.single = 0;
     while (line[i] != ' ' && line[i])
     {
-      printf("line[%d]: %c\n", i, line[i]);
-      printf("sgl: %d, dbl: %d\n", sgl, dbl);
+      // printf("line[%d]: %c\n", i, line[i]);
+      // printf("sgl: %d, dbl: %d\n", sgl, dbl);
       if ((line[i] == '\'' && sgl > 1) || (line[i] == '\"' && dbl > 1))
       {
-        printf("inside\n");
+        // printf("inside\n");
         if (line[i] == '\'')
         {
           cmd->env.len = 0;
@@ -113,9 +113,9 @@ char **split_line(char *line, t_cmd *cmd)
         else
         {
           cmd->env.is_env = check_env(line + i + 1, cmd, 1);
-          printf("inside) env.len: %d\n", cmd->env.len);
+          // printf("inside) env.len: %d\n", cmd->env.len);
           wlen += check_closing_quotation(line + i + 1, '\"', 0);
-          printf("wlen: %d\n", wlen);
+          // printf("wlen: %d\n", wlen);
           dbl -= 2;
         }
         if (wlen)
@@ -132,7 +132,7 @@ char **split_line(char *line, t_cmd *cmd)
     }
     if (wlen)
     {
-      printf("len: %d\n", wlen + 1 + cmd->env.len);
+      // printf("len: %d\n", wlen + 1 + cmd->env.len);
       tmp[wcount] = ft_calloc(sizeof(char), wlen + cmd->env.len + 1);
       int  tmp_idx = -1;
       int  line_idx = 0;;
@@ -154,7 +154,7 @@ char **split_line(char *line, t_cmd *cmd)
           }
           line_idx += cmd->env.is_env;
         }
-        printf("tmp)line[%d]: %c\n", i - wlen + line_idx, line[i - wlen + line_idx]);
+        // printf("tmp)line[%d]: %c\n", i - wlen + line_idx, line[i - wlen + line_idx]);
         tmp[wcount][tmp_idx] = line[i - wlen + line_idx];
         line_idx++;
       }
