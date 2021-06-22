@@ -25,11 +25,11 @@
 
 typedef struct	s_env
 {
-	int		is_env;				// env flag;
-	char	*env_str;			// env string;
-	int		len;					// env strlen;
-	int		single;				// single quote flag;
-	int		env_ret;			// ret flag;
+	int		is_env;				// env flag
+	char	*env_str;			// env string
+	int		len;					// env strlen
+	int		single;				// single quote flag
+	int		env_ret;			// strig malloc flag
 	char	*env_dir;			// tmp_env.txt file dir
 }			t_env;
 
