@@ -1,12 +1,16 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
-
+# ifndef ARG_MAX
+#  define ARG_MAX 2048
+# endif
 # include "get_next_line.h"
 # include "libft.h"
 # include "utils.h"
 # include "sig_handler.h"
-// # include "list.h"
 
+
+# include "list.h"
+# include "env.h"
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
@@ -47,7 +51,6 @@ typedef struct	s_cmd
 ** init.c
 */
 void	init_cmd(t_cmd *cmd);
-char	**init_env(char **envp);
 
 /*
 ** parse.c
@@ -56,8 +59,8 @@ char	**init_env(char **envp);
 void	cmd_print(t_cmd *cmd);
 //
 void	free_cmd(t_cmd *cmd);
-char	**split_line(char *line, t_cmd *cmd);
-void	parse_tmp(char *line, t_cmd *cmd);
+char	**split_line(char *line, t_cmd *cmd, t_list *envl);
+void	parse_tmp(char *line, t_cmd *cmd, t_list *envl);
 
 /*
 ** check_parse.c
@@ -68,7 +71,7 @@ int		check_closing_quotation(char *line, char c, int *a);
 /*
 ** check_env.c
 */
-int		check_env(char *line, t_cmd *cmd, int flag);
+int		check_env(char *line, t_cmd *cmd, int flag, t_list *envl);
 char	check_env_syx(const char *arg);
 
 #endif

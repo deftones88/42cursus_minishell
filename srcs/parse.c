@@ -31,7 +31,7 @@ void free_cmd(t_cmd *cmd)
 	cmd->ret %= 256;
 }
 
-char **split_line(char *line, t_cmd *cmd)
+char **split_line(char *line, t_cmd *cmd, t_list *envl)
 {
 	int		i;
 	int		dbl;
@@ -93,7 +93,7 @@ char **split_line(char *line, t_cmd *cmd)
 		while (line[i] == ' ')
 		i++;
 		printf("after) line[%d]: %c\n\n", i, line[i]);
-		cmd->env.is_env = check_env(line + i, cmd, 0);
+		cmd->env.is_env = check_env(line + i, cmd, 0, envl);
 		printf("env.len: %d\n", cmd->env.len);
 		cmd->env.single = 0;
 		while (line[i] != ' ' && line[i])
@@ -112,7 +112,7 @@ char **split_line(char *line, t_cmd *cmd)
 				}
 				else
 				{
-					cmd->env.is_env = check_env(line + i + 1, cmd, 1);
+					cmd->env.is_env = check_env(line + i + 1, cmd, 1, envl);
 					printf("inside) env.len: %d\n", cmd->env.len);
 					wlen += check_closing_quotation(line + i + 1, '\"', 0);
 					printf("wlen: %d\n", wlen);
@@ -164,14 +164,14 @@ char **split_line(char *line, t_cmd *cmd)
 	return (tmp);
 }
 
-void parse_tmp(char *line, t_cmd *cmd)
+void parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 {
 	char	**str_split;
 	int		i;
 	int		idx;
 	int		j;
 
-	str_split = split_line(line, cmd);
+	str_split = split_line(line, cmd, envl);
 	idx = -2;
 	i = -1;
 	while (str_split[++i])

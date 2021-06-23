@@ -1,14 +1,14 @@
 #include "list.h"
 
-t_list	*ft_lstnew(char *cmd)
+t_list	*ft_lstnew(char *key, char *value)
 {
 	t_list	*newlst;
 
 	if (!(newlst = (t_list*)malloc(sizeof(t_list))))
 		err_msg("malloc error\n");
-	newlst->cmd = ft_strdup(cmd);
+	newlst->key = ft_strdup(key);
+	newlst->value = ft_strdup(value);
 	newlst->next = 0;
-	newlst->bef = 0;
 	return (newlst);
 }
 
@@ -18,72 +18,38 @@ void	ft_lstadd_front(t_list **lst, t_list *new)
 		*lst = new;
 	else
 	{
-		new->bef = 0;
 		new->next = *lst;
-		(*lst)->bef = new;
 		*lst = new;
 	}
 }
 
-t_list	*ft_lstlast(t_list *lst)
+void	ft_lstdel_one(t_list *lst)
 {
-	if (!lst)
-		return (0);
-	while (lst->next)
-		lst = lst->next;
-	return (lst);
-}
-
-void	ft_lstadd_last(t_list **lst, t_list *new)
-{
-	t_list	*last;
-
-	last = ft_lstlast(*lst);
-	if (!last)
+	if (lst)
 	{
-		new->next = 0;
-		new->bef = 0;
-		*lst = new;
-	}
-	else
-	{
-		last->next = new;
-		new->bef = last;
-		new->next = 0;
+		if (lst->key)
+			free(lst->key);
+		if (lst->value)
+			free(lst->value);
+		free(lst);
 	}
 }
 
-int		ft_lstsize(t_list *lst)
+void	ft_lstdel_key(t_list **lst, char *key)
 {
-	int		i;
 	t_list	*cur;
 
-	i = 0;
-	cur = lst;
-	while (cur)
-	{
-		i++;
-		cur = cur->next;
-	}
-	return (i);
-}
-
-t_list	*ft_lstdel_front(t_list **lst)
-{
-	t_list	*tmp;
-
 	if (!*lst)
-		return 0;
-	tmp = *lst;
-	tmp->next->bef = tmp->bef;
-	tmp->bef->next = tmp->next;
-	if (tmp == tmp->next)
-		*lst = 0;
+		return ;
+	cur = *lst;
+	if (!ft_strcmp(cur->key, key))
+	{
+		*lst = cur->next;
+		ft_lstdel_one(cur);
+		return ;
+	}
 	else
-		*lst = tmp->next;
-	tmp->bef = tmp;
-	tmp->next = tmp;
-	return (tmp);
+		ft_lstdel_key(&cur->next, key);
 }
 
 void	ft_lstclear(t_list **lst)
@@ -92,6 +58,5 @@ void	ft_lstclear(t_list **lst)
 		return ;
 	if ((*lst)->next)
 		ft_lstclear(&((*lst)->next));
-	free((*lst)->cmd);
-	free(*lst);
+	ft_lstdel_one(*lst);
 }

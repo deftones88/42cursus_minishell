@@ -1,6 +1,6 @@
 #include "minishell.h"
 
-int  check_env(char *line, t_cmd *cmd, int flag)
+int  check_env(char *line, t_cmd *cmd, int flag, t_list *envl)
 {
 	int		i;
 	int		j;
@@ -48,7 +48,7 @@ int  check_env(char *line, t_cmd *cmd, int flag)
 			}
 			buf[j] = 0;
 			// printf("2 - 4: %s(%lu)\n", buf, strlen(buf));
-			cmd->env.env_str = getenv(buf);
+			cmd->env.env_str = find_value(envl, buf);
 			// printf("2 - 5: %s\n", cmd->env.env_str);
 			if (cmd->env.env_str)
 			cmd->env.len += (int)ft_strlen(cmd->env.env_str);
@@ -71,11 +71,11 @@ char	check_env_syx(const char *arg)
 	while (arg[++i])
 	{
 		if (arg[0] == ' ' || arg[0] == '=')
-		return (1);
+			return (1);
 		if (arg[i] == '=')
-		break ;
+			break ;
 	}
 	if (!arg[i])
-	return (2);
+		return (2);
 	return (0);
 }

@@ -6,10 +6,7 @@ int		main(int argc, char **argv, char **envp)
 	char	*dir;
 	t_cmd	cmd;
 	int		status;
-	// t_list	*history;
-
-	// history = 0;
-	setbuf(stdout, NULL);
+	t_list	*envl;
 
 	/* ctrl commands */
 	signal(SIGINT, sig_handler); // ctrl + C
@@ -18,8 +15,7 @@ int		main(int argc, char **argv, char **envp)
 
 	cmd.ret = 0; 	// change to global?
 
-	char	**env_list;
-	env_list = init_env(envp);
+	envl = init_env(envp);
 
 	while(1)
 	{
@@ -28,17 +24,9 @@ int		main(int argc, char **argv, char **envp)
 		if (line && ft_strlen(line) > 0)
 		{
 			add_history(line);
-			// printf("%s $ ", dir);
-			// if (get_next_line(STDOUT_FILENO, &line) != 1 || !line)
-			// {
-			// 	if (line)
-			// 		free(line);
-			// 	break ;
-			// }
 			init_cmd(&cmd);
-			parse_tmp(line, &cmd);
+			parse_tmp(line, &cmd, envl);
 
-			// ft_lstadd_front(&history, ft_lstnew(line));
 			if (!check_builtin(cmd.arg[0]))
 			{
 				pid_t pid = fork();
@@ -109,8 +97,8 @@ int		main(int argc, char **argv, char **envp)
 				else if (!ft_strcmp(cmd.arg[0], "env"))
 				{
 					printf(">> env\n");
-					for (int i = 0 ; env_list[i]; i++)
-						printf("%s\n", env_list[i]);
+					for (t_list *tmp = envl; tmp; tmp = tmp->next)
+						printf("%s=%s\n", tmp->key, tmp->value);
 					cmd.ret = 0;
 				}
 				else if (!ft_strcmp(cmd.arg[0], "exit"))
