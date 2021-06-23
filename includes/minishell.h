@@ -66,12 +66,10 @@ void	parse_tmp(char *line, t_cmd *cmd, t_list *envl);
 ** check_parse.c
 */
 int		check_builtin(char *arg);
-int		check_closing_quotation(char *line, char c, int *a);
 
 /*
 ** check_env.c
 */
-int		check_env(char *line, t_cmd *cmd, int flag, t_list *envl);
 char	check_env_syx(const char *arg);
 
 #endif

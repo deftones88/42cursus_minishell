@@ -48,7 +48,7 @@ char	*find_value(t_list *envl, char *key)
 			return (cur->value);
 		cur = cur->next;
 	}
-	return (0);
+	return (ft_strdup(""));
 }
 
 t_list	*init_env(char **envp)
@@ -62,7 +62,6 @@ t_list	*init_env(char **envp)
 		;
 	while (--i >= 0)
 		ft_lstadd_front(&root,
-				ft_lstnew(parse_key(envp[i]), parse_value(envp[i])));		
+				ft_lstnew(parse_key(envp[i]), parse_value(envp[i])));
 	return (root);
 }
-
