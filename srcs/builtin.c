@@ -63,13 +63,13 @@ void    builtin_echo(t_cmd *cmd)
 
 	flag = 0;
 	i = 0;
-	if (!ft_strncmp(cmd->arg[1], "-n", (int)ft_strlen(cmd->arg[1])))
+	if (cmd->arg[1] && !ft_strcmp(cmd->arg[1], "-n"))
 	{
 		flag = 1;
 		i++;
 	}
 	while (cmd->arg[++i])
-		printf("%s", cmd->arg[i]);
+		printf("%s ", cmd->arg[i]);
 	if (!flag)
 		printf("\n");
 	cmd->ret = 0;
@@ -78,16 +78,24 @@ void    builtin_echo(t_cmd *cmd)
 void    builtin_export(t_cmd *cmd, t_list **envl)
 {
 	int		i;
+	char	*key;
+	char	*val;
 
 	i = 0;
 	while (cmd->arg[++i])
 	{
-		char *key = parse_key(cmd->arg[i]);
-		char *val = parse_value(cmd->arg[i]);
+		key = parse_key(cmd->arg[i]);
+		val = parse_value(cmd->arg[i]);
 		if (key && val)
 			ft_lstadd_last(envl, ft_lstnew(key, val));
 		else
+		{
 			printf("%s: '%s': not a valid identifier\n", cmd->arg[0], cmd->arg[i]);
+			if (key)
+				free(key);
+			if (val)
+				free(val);
+		}
 	}
 }
 

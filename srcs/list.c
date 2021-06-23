@@ -21,8 +21,20 @@ void	ft_lstadd_last(t_list **lst, t_list *new)
 	else
 	{
 		tmp = *lst;
-		while (tmp->next)
+		while (1)
+		{
+			if (!ft_strcmp(tmp->key, new->key))
+			{
+				free(tmp->value);
+				tmp->value = new->value;
+				free(new->key);
+				free(new);
+				return ;
+			}
+			if (!tmp->next)
+				break ;
 			tmp = tmp->next;
+		}
 		tmp->next = new;
 		new->next = 0;
 	}
