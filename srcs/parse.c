@@ -1,22 +1,10 @@
 #include "minishell.h"
 
-//
-void cmd_print(t_cmd *cmd)
-{
-  printf("arg:");
-  for(int i = 0; cmd->arg[i]; i++)
-    printf("\t\t- |%s| (%lu)\n", cmd->arg[i], strlen(cmd->arg[i]));
-  printf("redin:\t\t|%s|\n", cmd->redin);
-  printf("redout:\t\t|%s|\n", cmd->redout);
-  printf("append:\t\t|%s|\n", cmd->append);
-  printf("delimit:\t|%s|\n", cmd->delimit);
-  printf("--\n");
-}
-//
-
 void free_cmd(t_cmd *cmd)
 {
 	freeall(0, cmd->arg);
+	if (cmd->cmd)
+		free(cmd->cmd);
 	if (cmd->redin)
 		free(cmd->redin);
 	if (cmd->redout)
@@ -27,219 +15,63 @@ void free_cmd(t_cmd *cmd)
 		free(cmd->delimit);
 	if (cmd->env.env_ret)
 		free(cmd->env.env_str);
-	printf("--\tret: %d\n", cmd->ret);
-	cmd->ret %= 256;
 }
 
-char **split_line(char *line, t_cmd *cmd, t_list *envl)
+static char	*get_key(char *line, int *i)
+{
+	char	buf[128];
+	int		k;
+
+	k = 0;
+	if (line[*i] == '$')
+		++*i;
+	if (line[*i] == '{')
+		++*i;
+	while (ft_isalpha(line[*i]) || ft_isdigit(line[*i]) || line[*i] == '_')
+		buf[k++] = line[(*i)++];
+	if (line[*i] == '}')
+		++*i;
+	buf[k] = 0;
+	return (ft_strdup(buf));
+}
+
+void	parse_var(char *buf, char *line, t_list *envl)
 {
 	int		i;
-	int		dbl;
-	int		sgl;
-	int		count;
-	int		flag;
-	int		is_env;
+	int		j;
+	int		k;
+	char	quot;
+	char	*key;
+	char	*val;
 
-	i = -1;
-	dbl = 0;
-	sgl = 0;
-	count = 0;
-	flag = 0;
-	is_env = 0;
-	while (line[++i])
+	quot = 0;
+	i = 0;
+	j = 0;
+	while (line[j])
 	{
-		if (line[i] == '\"')
+		if (!quot && (line[j] == '\'' || line[j] == '\"'))
+			quot = line[j];
+		else if (quot && line[j] == quot)
+			quot = 0;
+		if (quot != '\'' && line[j] == '$')
 		{
-			dbl++;
-			i += check_closing_quotation(line + i + 1, '\"', &dbl);
-			count++;
-		}
-		else if (line[i] == '\'')
-		{
-			sgl++;
-			i += check_closing_quotation(line + i + 1, '\'', &sgl);
-			count++;
-		}
-		else if (line[i] == '$')
-		is_env++;
-		else if (line[i] == ' ')
-		{
-			if (flag)
-			{
-				flag = 0;
-				count++;
-			}
+			key = get_key(line, &j);
+			val = find_value(envl, key);
+			k = -1;
+			while (val[++k])
+				buf[i++] = val[k];
+			free(key);
 		}
 		else
-		flag = 1;
+			buf[i++] = line[j++];
 	}
-	if (flag)
-		count++;
-	if (dbl < 2 && sgl < 2 && !is_env)
-		return (ft_split(line, ' '));
-
-	/* parsing quotations */
-	char	**tmp;
-	tmp = ft_calloc(sizeof(char *), count + 1);
-	i = 0;
-	int		wcount = 0;
-	int		q_flag = 0;
-	while (line[i])
-	{
-		i += q_flag;
-		q_flag = 0;
-		printf("first) line[%d]: %c\n", i, line[i]);
-		int		wlen = 0;
-		while (line[i] == ' ')
-		i++;
-		printf("after) line[%d]: %c\n\n", i, line[i]);
-		cmd->env.is_env = check_env(line + i, cmd, 0, envl);
-		printf("env.len: %d\n", cmd->env.len);
-		cmd->env.single = 0;
-		while (line[i] != ' ' && line[i])
-		{
-			printf("line[%d]: %c\n", i, line[i]);
-			printf("sgl: %d, dbl: %d\n", sgl, dbl);
-			if ((line[i] == '\'' && sgl > 1) || (line[i] == '\"' && dbl > 1))
-			{
-				printf("inside\n");
-				if (line[i] == '\'')
-				{
-					cmd->env.len = 0;
-					wlen += check_closing_quotation(line + i + 1, '\'', 0);
-					sgl -= 2;
-					cmd->env.single = 1;
-				}
-				else
-				{
-					cmd->env.is_env = check_env(line + i + 1, cmd, 1, envl);
-					printf("inside) env.len: %d\n", cmd->env.len);
-					wlen += check_closing_quotation(line + i + 1, '\"', 0);
-					printf("wlen: %d\n", wlen);
-					dbl -= 2;
-				}
-				if (wlen)
-				{
-					i += wlen + 1;
-					// q_flag = 1;
-				}
-				else
-				i += 2;
-				break ;
-			}
-			wlen++;
-			i++;
-		}
-		if (wlen)
-		{
-			printf("len: %d\n", wlen + 1 + cmd->env.len);
-			tmp[wcount] = ft_calloc(sizeof(char), wlen + cmd->env.len + 1);
-			int		tmp_idx = -1;
-			int		line_idx = 0;;
-			while (++tmp_idx < wlen + cmd->env.len)
-			{
-				if (line[i - wlen + line_idx] == '$' && !cmd->env.single)
-				{
-					int		str_idx = -1;
-					while (cmd->env.env_str && ++str_idx < (int)ft_strlen(cmd->env.env_str))
-					{
-						tmp[wcount][tmp_idx] = cmd->env.env_str[str_idx];
-						tmp_idx++;
-					}
-					printf("%s(%lu)\n", tmp[wcount], strlen(tmp[wcount]));
-					if (tmp_idx >= wlen + cmd->env.len)
-					{
-						printf("tmp_idx: %d\n", tmp_idx);
-						break ;
-					}
-					line_idx += cmd->env.is_env;
-				}
-				printf("tmp)line[%d]: %c\n", i - wlen + line_idx, line[i - wlen + line_idx]);
-				tmp[wcount][tmp_idx] = line[i - wlen + line_idx];
-				line_idx++;
-			}
-			wcount++;
-		}
-	}
-	return (tmp);
+	buf[i] = 0;
 }
 
-void parse_tmp(char *line, t_cmd *cmd, t_list *envl)
+void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 {
-	char	**str_split;
-	int		i;
-	int		idx;
-	int		j;
+	char		buf[65536];
 
-	str_split = split_line(line, cmd, envl);
-	idx = -2;
-	i = -1;
-	while (str_split[++i])
-	if (str_split[i][0] == '<' || str_split[i][0] == '>')
-		idx = i;
-	if (idx > -1)
-		i -= 1;
-	else
-		i++;
-	cmd->arg = ft_calloc(sizeof(char *), i);
-	if (!cmd->arg)
-		return ;
-	i = -1;
-	j = -1;
-	while (str_split[++i])
-	{
-		if (i == idx || i == idx + 1)
-			continue ;
-		if (i == 0 && !check_builtin(str_split[0]))
-		{
-			char	**tmp_dir;
-			tmp_dir = ft_split("/bin/,/usr/local/bin/,/usr/bin/,/usr/sbin/,/sbin/", ',');
-			char	*tmp_join;
-			int		fd;
-			int		k;
-			k = -1;
-			while (++k < 5)
-			{
-				tmp_join = ft_strjoin(tmp_dir[k], str_split[i]);
-				if ((fd = open(tmp_join, O_RDONLY, 0644)) > -1)
-				{
-					cmd->arg[++j] = tmp_join;
-					close(fd);
-					k = -1;
-					break ;
-				}
-				else
-				free(tmp_join);
-			}
-			freeall(0, tmp_dir);
-			if (k > -1)
-				cmd->arg[++j] = ft_strdup(str_split[i]);
-			continue ;
-		}
-		cmd->arg[++j] = ft_strdup(str_split[i]);
-	}
-	// set cmd->cmd
-
-	// set redirection
-	if (idx > -1)
-	{
-		if (str_split[idx][0] == '<')
-		{
-			if (str_split[idx][1] == '<')
-				cmd->delimit = ft_strdup(str_split[idx + 1]);
-			else
-				cmd->redin = ft_strdup(str_split[idx + 1]);
-		}
-		else if (str_split[idx][0] == '>')
-		{
-			if (str_split[idx][1] == '>')
-				cmd->append = ft_strdup(str_split[idx + 1]);
-			else
-				cmd->redout = ft_strdup(str_split[idx + 1]);
-		}
-	}
-	freeall(0, str_split);
-
-	printf("\n--\t<<PARSE>>\n");
-	cmd_print(cmd);
+	parse_var(buf, line, envl);
+	cmd->arg = ft_split(buf, ' ');
 }

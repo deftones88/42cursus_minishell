@@ -1,5 +1,33 @@
 #include "env.h"
 
+char	**list2arr(t_list *envl)
+{
+	t_list	*cur;
+	char	**ret;
+	char	*tmp;
+	int		n;
+
+	cur = envl;
+	n = 0;
+	while (cur)
+	{
+		cur = cur->next;
+		n++;
+	}
+	ret = (char**)ft_calloc(n + 1, sizeof(char*));
+	n = 0;
+	cur = envl;
+	while (cur)
+	{
+		tmp = ft_strjoin(cur->key, "=");
+		ret[n] = ft_strjoin(tmp, cur->value);
+		free(tmp);
+		n++;
+		cur = cur->next;
+	}
+	return (ret);
+}
+
 char	*parse_key(char *str)
 {
 	int		i;

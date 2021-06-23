@@ -17,45 +17,56 @@ static int		countstrs(const char *str, char c)
 	int		i;
 	int		flag;
 	int		n;
+	char	quot;
 
 	n = 0;
 	i = -1;
 	flag = 0;
-	if (!str)
-		return (0);
+	quot = 0;
 	while (str[++i])
-		if (str[i] == c)
+		if (!quot && str[i] == c)
 		{
-			if (flag == 1)
-			{
-				n++;
+			if (flag == 1 && ++n)
 				flag = 0;
-			}
 		}
 		else
+		{
+			if (!quot && (str[i] == '\'' || str[i] == '\"'))
+				quot = str[i];
+			else if (quot && str[i] == quot)
+				quot = 0;
 			flag = 1;
-	if (flag == 1)
-		n++;
-	return (n);
+		}
+	return (n + flag);
 }
 
 static char		*istr(int *k, const char *str, char c)
 {
 	int		n;
-	char	*ret;
-	int		i;
+	char	ret[65536];
+	char	quot;
 
 	n = 0;
-	while (str[*k + n] && str[*k + n] != c)
-		n++;
-	if (!(ret = (char*)malloc((n + 1) * sizeof(char))))
-		return (0);
+	quot = 0;
+	while (str[*k])
+	{
+		if (!quot)
+		{
+			if (str[*k] == c)
+				break ;
+			if (str[*k] == '\'' || str[*k] == '\"')
+				quot = str[*k];
+			else
+				ret[n++] = str[*k];
+		}
+		else if (str[*k] != quot)
+			ret[n++] = str[*k];
+		else
+			quot = 0;
+		++*k;
+	}
 	ret[n] = 0;
-	*k += n;
-	i = 0;
-	while (--n >= 0)
-		ret[n] = str[*k - ++i];
-	return (ret);
+	return (ft_strdup(ret));
 }
 
 char			**ft_split(char const *str, char c)

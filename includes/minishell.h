@@ -8,7 +8,6 @@
 # include "utils.h"
 # include "sig_handler.h"
 
-
 # include "list.h"
 # include "env.h"
 # include <stdio.h>
@@ -36,6 +35,7 @@ typedef struct	s_env
 
 typedef struct	s_cmd
 {
+	char	*cmd;
 	char	**arg;				// command + options
 	int		flag;					//
 	char	*redin;				// <
@@ -47,6 +47,7 @@ typedef struct	s_cmd
 	t_env	env;					// env struct
 }				t_cmd;
 
+# include "builtin.h"
 /*
 ** init.c
 */
