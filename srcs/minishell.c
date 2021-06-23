@@ -77,14 +77,13 @@ int		main(int argc, char **argv, char **envp)
 				else if (!ft_strcmp(cmd.arg[0], "export"))
 				{
 					printf(">> export\n");
-
 					int		i = -1;
 					while (cmd.arg[++i])
 					{
-						if (!check_env_syx(cmd.arg[i]))
-						{
-							
-						}
+						char *key = parse_key(cmd.arg[i]);
+						char *val = parse_value(cmd.arg[i]);
+						if (key && val)
+							ft_lstadd_last(&envl, ft_lstnew(key, val));
 						else if (check_env_syx(cmd.arg[i]) == 1)
 							printf("%s: '%s': not a valid identifier\n", cmd.arg[0], cmd.arg[i]);
 					}
@@ -92,7 +91,11 @@ int		main(int argc, char **argv, char **envp)
 				else if (!ft_strcmp(cmd.arg[0], "unset"))
 				{
 					printf(">> unset\n");
-
+					int		i = -1;
+					while (cmd.arg[++i])
+					{
+						ft_lstdel_key(&envl, cmd.arg[i]);
+					}
 				}
 				else if (!ft_strcmp(cmd.arg[0], "env"))
 				{

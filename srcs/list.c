@@ -12,14 +12,19 @@ t_list	*ft_lstnew(char *key, char *value)
 	return (newlst);
 }
 
-void	ft_lstadd_front(t_list **lst, t_list *new)
+void	ft_lstadd_last(t_list **lst, t_list *new)
 {
+	t_list	*tmp;
+
 	if (!*lst)
 		*lst = new;
 	else
 	{
-		new->next = *lst;
-		*lst = new;
+		tmp = *lst;
+		while (tmp->next)
+			tmp = tmp->next;
+		tmp->next = new;
+		new->next = 0;
 	}
 }
 

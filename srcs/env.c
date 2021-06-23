@@ -59,9 +59,8 @@ t_list	*init_env(char **envp)
 	i = -1;
 	root = 0;
 	while (envp[++i])
-		;
-	while (--i >= 0)
-		ft_lstadd_front(&root,
+		ft_lstadd_last(&root,
 				ft_lstnew(parse_key(envp[i]), parse_value(envp[i])));
 	return (root);
 }
+
