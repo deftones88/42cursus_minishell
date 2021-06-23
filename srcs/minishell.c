@@ -18,25 +18,8 @@ int		main(int argc, char **argv, char **envp)
 
 	cmd.ret = 0; 	// change to global?
 
-	/* copying envp to a file (can be changed) */
-	int		fd;
-	cmd.env.env_dir = ft_strjoin(getcwd(NULL, 0), TMP_ENV);
-	fd = open(cmd.env.env_dir, O_CREAT | O_WRONLY | O_TRUNC, 0644);
-	if (fd < 0)
-	{
-		printf("%s\n", strerror(errno));
-		exit(EXIT_FAILURE);
-	}
-	for (size_t i = 0; envp[i]; i++)
-	{
-		for (size_t j = 0; envp[i][j]; j++)
-		{
-			write(fd, &envp[i][j], 1);
-		}
-		write(fd, "\n", 1);
-	}
-	close(fd);
-	/* ----- */
+	char	**env_list;
+	env_list = init_env(envp);
 
 	while(1)
 	{
@@ -105,63 +88,29 @@ int		main(int argc, char **argv, char **envp)
 				}
 				else if (!ft_strcmp(cmd.arg[0], "export"))
 				{
-					/*
-					**  problem with this method :
-					**     --> cannot use getenv() with new env
-					**		 --> duplicate entries
-					*/
 					printf(">> export\n");
-					fd = open(cmd.env.env_dir, O_APPEND | O_WRONLY | O_EXCL, 0644);
-					if (fd < 0)
-					{
-						printf("%s\n", strerror(errno));
-						cmd.ret = errno;
-						exit(EXIT_FAILURE);
-					}
-					int		i = 0;
+
+					int		i = -1;
 					while (cmd.arg[++i])
 					{
 						if (!check_env_syx(cmd.arg[i]))
 						{
-							int		j = -1;
-							while (cmd.arg[i][++j])
-								write(fd, &cmd.arg[i][j], 1);
-							write(fd, "\n", 1);
+							
 						}
 						else if (check_env_syx(cmd.arg[i]) == 1)
 							printf("%s: '%s': not a valid identifier\n", cmd.arg[0], cmd.arg[i]);
 					}
-					close(fd);
 				}
 				else if (!ft_strcmp(cmd.arg[0], "unset"))
 				{
 					printf(">> unset\n");
-					fd = open(cmd.env.env_dir, O_APPEND | O_WRONLY | O_EXCL, 0644);
-					if (fd < 0)
-					{
-						printf("%s\n", strerror(errno));
-						cmd.ret = errno;
-						exit(EXIT_FAILURE);
-					}
-					/* find and erase.... entry */
-					close(fd);
+
 				}
 				else if (!ft_strcmp(cmd.arg[0], "env"))
 				{
 					printf(">> env\n");
-					char *env_line;
-
-					fd = open(cmd.env.env_dir, O_RDONLY | O_EXCL, 0644);
-					if (fd < 0)
-					{
-						printf("%s\n", strerror(errno));
-						cmd.ret = errno;
-						exit(EXIT_FAILURE);
-					}
-					while (get_next_line(fd, &env_line) > 0)
-						printf("|%s|\n", env_line);
-					free(env_line);
-					close(fd);
+					for (int i = 0 ; env_list[i]; i++)
+						printf("%s\n", env_list[i]);
 					cmd.ret = 0;
 				}
 				else if (!ft_strcmp(cmd.arg[0], "exit"))

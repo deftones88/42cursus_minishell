@@ -13,20 +13,20 @@ int  check_builtin(char *arg)
 
 int  check_closing_quotation(char *line, char c, int *a)
 {
-  int   i;
+	int		i;
 
-  i = -1;
-  while (line[++i])
-  {
-    if (line[i] == c)
-      break ;
-  }
-  if (line[i] && a)
-  {
-    ++(*a);
-    return (i + 1);
-  }
-  else if (line[i] && !a)
-    return (i);
-  return (0);
+	i = -1;
+	while (line[++i])
+	{
+		if (line[i] == c)
+			break ;
+	}
+	if (line[i] && a)
+	{
+		++(*a);
+		return (i + 1);
+	}
+	else if (line[i] && !a)
+		return (i);
+	return (0);
 }

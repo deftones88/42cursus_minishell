@@ -19,9 +19,7 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <limits.h>
-# include <dirent.h>
-
-# define TMP_ENV	"/tmp_env.txt"
+// # include <dirent.h>
 
 typedef struct	s_env
 {
@@ -30,7 +28,6 @@ typedef struct	s_env
 	int		len;					// env strlen
 	int		single;				// single quote flag
 	int		env_ret;			// strig malloc flag
-	char	*env_dir;			// tmp_env.txt file dir
 }			t_env;
 
 typedef struct	s_cmd
@@ -49,28 +46,29 @@ typedef struct	s_cmd
 /*
 ** init.c
 */
-void init_cmd(t_cmd *cmd);
+void	init_cmd(t_cmd *cmd);
+char	**init_env(char **envp);
 
 /*
 ** parse.c
 */
 //
-void cmd_print(t_cmd *cmd);
+void	cmd_print(t_cmd *cmd);
 //
-void free_cmd(t_cmd *cmd);
-char **split_line(char *line, t_cmd *cmd);
-void parse_tmp(char *line, t_cmd *cmd);
+void	free_cmd(t_cmd *cmd);
+char	**split_line(char *line, t_cmd *cmd);
+void	parse_tmp(char *line, t_cmd *cmd);
 
 /*
 ** check_parse.c
 */
-int  check_builtin(char *arg);
-int  check_closing_quotation(char *line, char c, int *a);
+int		check_builtin(char *arg);
+int		check_closing_quotation(char *line, char c, int *a);
 
 /*
 ** check_env.c
 */
-int  check_env(char *line, t_cmd *cmd, int flag);
-char check_env_syx(const char *arg);
+int		check_env(char *line, t_cmd *cmd, int flag);
+char	check_env_syx(const char *arg);
 
 #endif
