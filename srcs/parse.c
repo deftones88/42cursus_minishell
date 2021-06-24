@@ -68,10 +68,69 @@ void	parse_var(char *buf, char *line, t_list *envl)
 	buf[i] = 0;
 }
 
+void	parse_red(char *buf, t_cmd *cmd)
+{
+	int		i;
+	char	quot;
+	char	**tmp;
+
+	quot = 0;
+	i = -1;
+	while (buf[++i])
+	{
+		if (!quot && (buf[i] == '\'' || buf[i] == '\"'))
+			quot = buf[i];
+		else if (quot && buf[i] == quot)
+			quot = 0;
+		if (!quot && (buf[i] == '<' || buf[i] == '>'))
+		{
+			if (buf[i + 1] == buf[i])
+				tmp = ft_split(buf + i + 2, " <>");
+			else
+				tmp = ft_split(buf + i + 1, " <>");
+			if (!tmp[0])
+				err_msg("parse_error!\n");
+			if (buf[i] == '<')
+			{
+				if (buf[i + 1] == '<')
+					cmd->delimit = ft_strdup(tmp[0]);
+				else
+					cmd->redin = ft_strdup(tmp[0]);
+			}
+			else
+			{
+				if (buf[i + 1] == '>')
+					cmd->append = ft_strdup(tmp[0]);
+				else
+					cmd->redout = ft_strdup(tmp[0]);
+			}
+			if (buf[i + 1] == buf[i])
+				buf[i + 1] = ' ';
+			buf[i++] = ' ';
+			while (buf[i] == ' ')
+				i++;
+			while (quot || buf[i] != ' ')
+			{
+				if (!quot && (buf[i] == '\'' || buf[i] == '\"'))
+					quot = buf[i];
+				else if (quot && buf[i] == quot)
+					quot = 0;
+				if (!quot && (buf[i] == '<' || buf[i] == '>'))
+					err_msg("parse_error!\n");
+				buf[i++] = ' ';
+			}
+			i--;
+			free_all(tmp);
+		}
+	}
+}
+
 void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 {
 	char		buf[65536];
 
 	parse_var(buf, line, envl);
-	cmd->arg = ft_split(buf, ' ');
+	parse_red(buf, cmd);
+	printf("%s\n%s\n%s\n%s\n",cmd->redin, cmd->redout, cmd->append, cmd->delimit);
+	cmd->arg = ft_split(buf, " ");
 }

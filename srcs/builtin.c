@@ -1,15 +1,5 @@
 #include "builtin.h"
 
-void	free_all(char **strs)
-{
-	int		i;
-
-	i = -1;
-	while (strs[++i])
-		free(strs[i]);
-	free(strs);
-}
-
 void	merge_path(t_cmd *cmd, char *str)
 {
 	char		**path;
@@ -17,7 +7,7 @@ void	merge_path(t_cmd *cmd, char *str)
 	char		*tmp[2];
 	struct stat	s;
 
-	path = ft_split(str, ':');
+	path = ft_split(str, ":");
 	i = -1;
 	while (path[++i])
 	{

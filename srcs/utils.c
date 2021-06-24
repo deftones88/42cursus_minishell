@@ -1,5 +1,15 @@
 #include "utils.h"
 
+void	free_all(char **strs)
+{
+	int		i;
+
+	i = -1;
+	while (strs[++i])
+		free(strs[i]);
+	free(strs);
+}
+
 int		ft_strcmp(const char *s1, const char *s2)
 {
 	int				ret;
