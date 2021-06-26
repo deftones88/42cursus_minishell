@@ -1,28 +1,19 @@
 #ifndef MINISHELL_H
 # define MINISHELL_H
 
-typedef struct	s_env
+typedef struct		s_cmd
 {
-	int		is_env;				// env flag
-	char	*env_str;			// env string
-	int		len;					// env strlen
-	int		single;				// single quote flag
-	int		env_ret;			// strig malloc flag
-}			t_env;
-
-typedef struct	s_cmd
-{
-	char	*cmd;
-	char	**arg;				// command + options
-	int		flag;					//
-	char	*redin;				// <
-	char	*redout;			// >
-	char	*append;			// >>
-	char	*delimit;			// <<
-	int		ret;					// return value of previous execution
+	char			*cmd;
+	char			**arg;				// command + options
+	int				flag;				// represent |(1) or ;(2)
+	char			*redin;				// <
+	char			*redout;			// >
+	char			*append;			// >>
+	char			*delimit;			// <<
+	int				ret;					// return value of previous execution
 											// global?
-	t_env	env;					// env struct
-}				t_cmd;
+	struct s_cmd	*next;
+}					t_cmd;
 
 # include "get_next_line.h"
 # include "libft.h"
@@ -53,7 +44,7 @@ typedef struct	s_cmd
 /*
 ** init.c
 */
-void	init_cmd(t_cmd *cmd);
+t_cmd	*init_cmd(char *line, t_list *envl);
 
 /*
 ** parse.c
@@ -61,7 +52,7 @@ void	init_cmd(t_cmd *cmd);
 //
 void	cmd_print(t_cmd *cmd);
 //
-void	free_cmd(t_cmd *cmd);
+t_cmd	*free_next(t_cmd *cmd);
 char	**split_line(char *line, t_cmd *cmd, t_list *envl);
 void	parse_tmp(char *line, t_cmd *cmd, t_list *envl);
 

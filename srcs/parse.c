@@ -1,8 +1,11 @@
 #include "minishell.h"
 
-void free_cmd(t_cmd *cmd)
+t_cmd	*free_next(t_cmd *cmd)
 {
-	freeall(0, cmd->arg);
+	t_cmd	*next;
+
+	next = cmd->next;
+	free_all(cmd->arg);
 	if (cmd->cmd)
 		free(cmd->cmd);
 	if (cmd->redin)
@@ -13,8 +16,7 @@ void free_cmd(t_cmd *cmd)
 		free(cmd->append);
 	if (cmd->delimit)
 		free(cmd->delimit);
-	if (cmd->env.env_ret)
-		free(cmd->env.env_str);
+	return (next);
 }
 
 static char	*get_key(char *line, int *i)
@@ -133,6 +135,6 @@ void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 
 	parse_var(buf, line, envl);
 	parse_red(buf, cmd);
-	printf("%s\n%s\n%s\n%s\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);
+	//printf("\n%s\n%s\n%s\n%s\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);
 	cmd->arg = ft_split(buf, " ");
 }
