@@ -65,6 +65,8 @@ void	parse_var(char *buf, char *line, t_list *envl)
 		else
 			buf[i++] = line[j++];
 	}
+	if (quot)
+		err_msg("parse error:quot");
 	buf[i] = 0;
 }
 
@@ -109,7 +111,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 			buf[i++] = ' ';
 			while (buf[i] == ' ')
 				i++;
-			while (quot || buf[i] != ' ')
+			while (buf[i] && (quot || buf[i] != ' '))
 			{
 				if (!quot && (buf[i] == '\'' || buf[i] == '\"'))
 					quot = buf[i];
@@ -127,10 +129,10 @@ void	parse_red(char *buf, t_cmd *cmd)
 
 void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 {
-	char		buf[65536];
+	char		buf[10000];
 
 	parse_var(buf, line, envl);
 	parse_red(buf, cmd);
-	printf("%s\n%s\n%s\n%s\n",cmd->redin, cmd->redout, cmd->append, cmd->delimit);
+	printf("%s\n%s\n%s\n%s\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);
 	cmd->arg = ft_split(buf, " ");
 }
