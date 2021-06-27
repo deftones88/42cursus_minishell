@@ -52,23 +52,3 @@ void	err_msg(char *str)
 	write(2, str, i);
 	exit(1);
 }
-
-int		ft_numlen(int ret)
-{
-	int		count;
-
-	count = 0;
-	if (ret < 0)
-	{
-		count++;
-		ret *= -1;
-	}
-	else if (ret == 0)
-		return (1);
-	while (ret)
-	{
-		count++;
-		ret /= 10;
-	}
-	return (count);
-}

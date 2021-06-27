@@ -3,8 +3,9 @@
 
 # include <stdio.h>
 # include <signal.h>
-// # include <readline/readline.h>
-// # include <readline/history.h>
+# include <readline/readline.h>
+# include <readline/history.h>
+# include <termios.h>
 
 void sig_handler(int sig);
 

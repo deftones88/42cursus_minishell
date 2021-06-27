@@ -9,7 +9,15 @@ int		main(int argc, char **argv, char **envp)
 
 	/* ctrl commands */
 	signal(SIGINT, sig_handler); // ctrl + C
-	signal(SIGQUIT, SIG_IGN);		 // ctrl + \ (only works once)
+	signal(SIGQUIT, SIG_IGN);
+
+	/* termios for muting "^C" */
+	struct termios	t_old;
+	struct termios	t_new;
+	tcgetattr(STDIN_FILENO, &t_old);
+	tcgetattr(STDIN_FILENO, &t_new);
+	t_new.c_lflag &= ~(ECHOCTL);
+	tcsetattr(STDIN_FILENO, TCSANOW, &t_new);
 
 	envl = init_env(envp);
 
@@ -36,7 +44,10 @@ int		main(int argc, char **argv, char **envp)
 				else if (!ft_strcmp(cmd->arg[0], "env"))
 					builtin_env(cmd, envl);
 				else if (!ft_strcmp(cmd->arg[0], "exit"))
+				{
+					tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
 					exit(EXIT_SUCCESS);
+				}
 				else
 					ft_exec(cmd, envl);
 				cmd = free_next(cmd);
@@ -44,8 +55,7 @@ int		main(int argc, char **argv, char **envp)
 		}
 		else if (line == NULL)
 		{
-			/* ctrl + D (only works when readline buffer is empty) */
-			printf("<< EOF >>\n");
+			tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
 			exit(EXIT_SUCCESS);
 		}
 		free(line);

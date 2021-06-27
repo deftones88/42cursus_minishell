@@ -31,8 +31,6 @@ typedef struct		s_cmd
 # include <unistd.h>
 # include <fcntl.h>
 # include <errno.h>
-# include <readline/readline.h>
-# include <readline/history.h>
 # include <limits.h>
 // # include <dirent.h>
 

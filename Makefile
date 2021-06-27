@@ -3,17 +3,24 @@ NAME 			= minishell
 CC 				= gcc
 CFLAGS 		= -Wall -Wextra #-Werror
 
+
 LIBFT 		= libft.a
 INCLUDE 	= includes/
 SRCS_DIR 	= ./srcs/
 
-SRCS 			= $(wildcard ./srcs/*.c)
+RL				= -lreadline
+RL_DIR		= /usr/local/opt/readline/
+#42DIR		= /Users/$(USER)/.brew/opt/readline/
+RL_LIB		= -L $(RL_DIR)lib
+RL_INC		= -I $(RL_DIR)include
+
+SRCS 			= $(wildcard $(SRCS_DIR)*.c)
 OBJS 			= $(SRCS:.c=.o)
 DEPS 			= $(SRCS:.c=.d)
 
 all : $(NAME)
 $(NAME) : $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft -lreadline
+	@$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft $(RL) $(RL_LIB) $(RL_INC)
 
 $(LIBFT) :
 	@make all -C ./libft
@@ -31,7 +38,7 @@ fclean : clean
 re : fclean all
 
 .c.o :
-	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) -L. -lft
+	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) -L. -lft $(RL_LIB) $(RL_INC)
 
 -include $(DEPS)
 
