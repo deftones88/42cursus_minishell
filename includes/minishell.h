@@ -5,7 +5,7 @@ typedef struct		s_cmd
 {
 	char			*cmd;
 	char			**arg;				// command + options
-	int				flag;				// represent |(1) or ;(2)
+	int				flag;					// represent |(1) or ;(2)
 	char			*redin;				// <
 	char			*redout;			// >
 	char			*append;			// >>
@@ -49,23 +49,8 @@ t_cmd	*init_cmd(char *line, t_list *envl);
 /*
 ** parse.c
 */
-//
-void	cmd_print(t_cmd *cmd);
-//
 t_cmd	*free_next(t_cmd *cmd);
 char	**split_line(char *line, t_cmd *cmd, t_list *envl);
 void	parse_tmp(char *line, t_cmd *cmd, t_list *envl);
-
-/*
-** check_parse.c
-*/
-int		check_builtin(char *arg);
-int		check_closing_quotation(char *line, char c, int *a);
-
-/*
-** check_env.c
-*/
-int		check_env(char *line, t_cmd *cmd, int flag, t_list *envl);
-char	check_env_syx(const char *arg);
 
 #endif

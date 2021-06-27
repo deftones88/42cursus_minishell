@@ -38,7 +38,7 @@ char	*parse_key(char *str)
 	buf = ft_strdup(str);
 	while (buf[++i] && buf[i] != '=')
 		;
-	if (buf[i] == '=')
+	if (i != 0 && buf[i] == '=')
 	{
 		buf[i] = 0;
 		key = ft_strdup(buf);
@@ -59,7 +59,7 @@ char	*parse_value(char *str)
 	i = -1;
 	while (str[++i] && str[i] != '=')
 		;
-	if (str[i] == '=')
+	if (i != 0 && str[i] == '=')
 		return (ft_strdup(str + i + 1));
 	else
 		return (0);
@@ -91,4 +91,3 @@ t_list	*init_env(char **envp)
 				ft_lstnew(parse_key(envp[i]), parse_value(envp[i])));
 	return (root);
 }
-

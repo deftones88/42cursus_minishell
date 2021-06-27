@@ -28,7 +28,7 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 {
 	pid_t	pid;
 	char	**envp;
-	
+
 	envp = list2arr(envl);
 	merge_path(cmd, find_value(envl, "PATH"));
 	pid = fork();
@@ -80,7 +80,8 @@ void    builtin_export(t_cmd *cmd, t_list **envl)
 			ft_lstadd_last(envl, ft_lstnew(key, val));
 		else
 		{
-			printf("%s: '%s': not a valid identifier\n", cmd->arg[0], cmd->arg[i]);
+			if (cmd->arg[i][0] == ' ' || cmd->arg[i][0] == '=')
+				printf("%s: '%s': not a valid identifier\n", cmd->arg[0], cmd->arg[i]);
 			if (key)
 				free(key);
 			if (val)
