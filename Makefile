@@ -20,7 +20,7 @@ DEPS 			= $(SRCS:.c=.d)
 
 all : $(NAME)
 $(NAME) : $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft $(RL) $(RL_LIB) $(RL_INC)
+	@$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft $(RL) $(RL_LIB)
 
 $(LIBFT) :
 	@make all -C ./libft
@@ -38,7 +38,7 @@ fclean : clean
 re : fclean all
 
 .c.o :
-	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) -L. -lft $(RL_LIB) $(RL_INC)
+	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) -L. -lft $(RL_INC)
 
 -include $(DEPS)
 

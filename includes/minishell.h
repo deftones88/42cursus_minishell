@@ -42,6 +42,7 @@ typedef struct		s_cmd
 /*
 ** init.c
 */
+void	add_cmd(t_cmd **first, t_cmd *new);
 t_cmd	*init_cmd(char *line, t_list *envl);
 
 /*

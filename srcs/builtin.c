@@ -40,7 +40,7 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 			printf("Error executing : %s\n", strerror(errno));
 		}
 		else
-			printf("Command not found: %s\n", cmd->arg[0]);
+			printf("%s: command not found\n", cmd->arg[0]);
 		exit(0);
 	}
 	wait(0);
@@ -71,6 +71,11 @@ void    builtin_export(t_cmd *cmd, t_list **envl)
 	char	*key;
 	char	*val;
 
+	if (!cmd->arg[1])
+	{
+		builtin_env(cmd, *envl, 1);
+		return ;
+	}
 	i = 0;
 	while (cmd->arg[++i])
 	{
@@ -99,14 +104,19 @@ void    builtin_unset(t_cmd *cmd, t_list **envl)
 		ft_lstdel_key(envl, cmd->arg[i]);
 }
 
-void    builtin_env(t_cmd *cmd, t_list *envl)
+void    builtin_env(t_cmd *cmd, t_list *envl, int flag)
 {
 	t_list	*tmp;
 
 	tmp = envl;
 	while (tmp)
 	{
-		printf("%s=%s\n", tmp->key, tmp->value);
+		if (flag)
+		{
+			printf("declare -x %s=\"%s\"\n", tmp->key, tmp->value);
+		}
+		else
+			printf("%s=%s\n", tmp->key, tmp->value);
 		tmp = tmp->next;
 	}
 	cmd->ret = 0;

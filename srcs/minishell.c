@@ -1,5 +1,29 @@
 #include "minishell.h"
 
+void show_logo(void)
+{
+	printf("                    ╔╗  ╔╦═╦╗ \n");
+	printf("                 ╔══╬╬═╦╬╣═╣╚╦═╦╗╦╗ \n");
+	printf("  ╬══════════════║║║║║║║║╠═║║║╩╣╚╣╚╗══════════════╬  \n");
+	printf("  ╬══════════════╚╩╩╩╩╩═╩╩═╩╩╩═╩═╝═╝══════════════╬  \n");
+	printf("  ║                                               ║  \n");
+	printf("  ║    ▒ ▒            ██████████            ▒ ▒   ║  \n");
+	printf("  ║     ▒          ███          ██           ▒    ║  \n");
+//	printf("  ║               ██             ██               ║  \n");
+//	printf("  ║               █               ██      ▀       ║  \n");
+	printf("  ║               █                █              ║  \n");
+	printf("  ║              ██   █        █   ██             ║  \n");
+	printf("  ║     ▒ ▒      █     ███████      █    ▒ ▒      ║  \n");
+//	printf("  ║             █                   █             ║  \n");
+	printf("  ║      ▒      ██                  █     ▒       ║  \n");
+	//printf("  ║              ███               ██             ║  \n");
+	printf("  ║╔╗    ╔╗╔╗      ████████████████     ╔╗  ╔╗╔╗  ║  \n");
+	printf("  ╔╬╬═╦╦╦╣╠╬╬══╗      █        █       ╔╬╬══╣╠╬╬══╗  \n");
+	printf("  ╠╣║║║║║║═╣║║║║                       ╠╣╠══╣═╣║║║║  \n");
+	printf(" ╔╝╠╩╩═╩═╩╩╩╩╩╩╝══════════════════════╔╝╠╝══╚╩╩╩╩╩╝  \n");
+	printf(" ╚═╝══════════════════════════════════╚═╝═════════╬  \n");
+}
+
 int		main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -8,18 +32,16 @@ int		main(int argc, char **argv, char **envp)
 	t_list	*envl;
 
 	/* ctrl commands */
-	signal(SIGINT, sig_handler); // ctrl + C
+	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
 
 	/* termios for muting "^C" */
 	struct termios	t_old;
-	struct termios	t_new;
 	tcgetattr(STDIN_FILENO, &t_old);
-	tcgetattr(STDIN_FILENO, &t_new);
-	t_new.c_lflag &= ~(ECHOCTL);
-	tcsetattr(STDIN_FILENO, TCSANOW, &t_new);
+	set_term();
 
 	envl = init_env(envp);
+	show_logo();
 
 	while(1)
 	{
@@ -42,7 +64,7 @@ int		main(int argc, char **argv, char **envp)
 				else if (!ft_strcmp(cmd->arg[0], "unset"))
 					builtin_unset(cmd, &envl);
 				else if (!ft_strcmp(cmd->arg[0], "env"))
-					builtin_env(cmd, envl);
+					builtin_env(cmd, envl, 0);
 				else if (!ft_strcmp(cmd->arg[0], "exit"))
 				{
 					tcsetattr(STDIN_FILENO, TCSANOW, &t_old);

@@ -38,7 +38,7 @@ char	*parse_key(char *str)
 	buf = ft_strdup(str);
 	while (buf[++i] && buf[i] != '=')
 		;
-	if (i != 0 && buf[i] == '=')
+	if (i != 0 && buf[i] == '=' && buf[0] != ' ')
 	{
 		buf[i] = 0;
 		key = ft_strdup(buf);

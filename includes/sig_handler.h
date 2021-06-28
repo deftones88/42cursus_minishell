@@ -8,5 +8,6 @@
 # include <termios.h>
 
 void sig_handler(int sig);
+void set_term(void);
 
 #endif

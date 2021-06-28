@@ -10,3 +10,12 @@ void sig_handler(int sig)
 		rl_redisplay();
 	}
 }
+
+void set_term(void)
+{
+	struct termios	t_new;
+
+	tcgetattr(0, &t_new);
+	t_new.c_lflag &= ~(ECHOCTL);
+	tcsetattr(0, TCSANOW, &t_new);
+}
