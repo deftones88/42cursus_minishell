@@ -37,7 +37,7 @@ fclean : clean
 re : fclean all
 
 .c.o :
-	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) -L. -lft $(RL_INC)
+	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) $(RL_INC)
 
 -include $(DEPS)
 
