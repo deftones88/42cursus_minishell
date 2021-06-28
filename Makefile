@@ -9,8 +9,7 @@ INCLUDE 	= includes/
 SRCS_DIR 	= ./srcs/
 
 RL				= -lreadline
-RL_DIR		= /usr/local/opt/readline/
-#42DIR		= /Users/$(USER)/.brew/opt/readline/
+RL_DIR		= /Users/$(USER)/.brew/opt/readline/
 RL_LIB		= -L $(RL_DIR)lib
 RL_INC		= -I $(RL_DIR)include
 
