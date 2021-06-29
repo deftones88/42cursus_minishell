@@ -87,15 +87,32 @@ void	parse_red(char *buf, t_cmd *cmd)
 			else
 				tmp = ft_split(buf + i + 1, " <>");
 			if (!tmp[0])
-				err_msg("parse_error!\n");
+			{
+				printf("minishell: syntax error near unexpected token 'newline'\n");
+				cmd->ret = 258;
+				return ;
+			}
 			if (buf[i] == '<')
 			{
 				if (buf[i + 1] == '<')
 				{
-					//heredoc exit string
-					cmd->delimit = ft_strdup(tmp[0]);
-					//execute right away
-					free(cmd->delimit);
+					// cmd->delimit = ft_strdup(tmp[0]);
+					char	*line = 0;
+					while (1)
+					{
+						line = readline("> ");
+						if (!line)
+							break ;
+						if (!ft_strcmp(line, tmp[0]))
+						{
+							free(line);
+							break ;
+						}
+						printf("%s\n", line);
+						free(line);
+					}
+					// free(cmd->delimit);
+					// re-parse the rest........
 				}
 				else
 				{
@@ -113,6 +130,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 			}
 			else
 			{
+				// cat 1 >2 (not working)
 				if (buf[i + 1] == '>')
 				{
 					if (cmd->append > -1)
@@ -148,7 +166,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 				else if (quot && buf[i] == quot)
 					quot = 0;
 				if (!quot && (buf[i] == '<' || buf[i] == '>'))
-					err_msg("parse_error!\n");
+					err_msg("parse_error!!!\n");
 				buf[i++] = ' ';
 			}
 			i--;
@@ -166,6 +184,6 @@ void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	cmd->append = -1;
 	parse_var(buf, line, envl);
 	parse_red(buf, cmd);
-	//printf("\n%s\n%s\n%s\n%s\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);
+	// printf("\n%s\n%d\n%d\n%d\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);
 	cmd->arg = ft_split(buf, " ");
 }

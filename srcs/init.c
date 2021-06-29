@@ -50,6 +50,9 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 		i++;
 	}
 	if (quot)
-		err_msg("parse error:quot\n");
+	{
+		printf("minishell: '%c': syntax error\n", quot);
+		return (0);
+	}
 	return (head);
 }

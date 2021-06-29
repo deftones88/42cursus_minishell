@@ -55,7 +55,7 @@ int		main(int argc, char **argv, char **envp)
 		{
 			add_history(line);
 			cmd = init_cmd(line, envl);
-			if (cmd->ret > 0)
+			if (!cmd || cmd->ret > 0)
 				continue ;
 			while (cmd)
 			{
