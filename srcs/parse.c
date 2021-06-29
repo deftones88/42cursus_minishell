@@ -8,12 +8,6 @@ t_cmd	*free_next(t_cmd *cmd)
 	free_all(cmd->arg);
 	if (cmd->cmd)
 		free(cmd->cmd);
-	if (cmd->redin)
-		free(cmd->redin);
-	if (cmd->redout)
-		free(cmd->redout);
-	if (cmd->append)
-		free(cmd->append);
 	if (cmd->delimit)
 		free(cmd->delimit);
 	return (next);
@@ -97,16 +91,50 @@ void	parse_red(char *buf, t_cmd *cmd)
 			if (buf[i] == '<')
 			{
 				if (buf[i + 1] == '<')
+				{
+					//heredoc exit string
 					cmd->delimit = ft_strdup(tmp[0]);
+					//execute right away
+					free(cmd->delimit);
+				}
 				else
-					cmd->redin = ft_strdup(tmp[0]);
+				{
+					if (cmd->redin > -1)
+						close(cmd->redin);
+					cmd->redin = open(tmp[0], O_RDONLY, 0);
+					if (cmd->redin < 0)
+					{
+						printf("minishell: %s: %s\n", tmp[0], strerror(errno));
+						cmd->ret = errno;
+						free_all(tmp);
+						return ;
+					}
+				}
 			}
 			else
 			{
 				if (buf[i + 1] == '>')
-					cmd->append = ft_strdup(tmp[0]);
+				{
+					if (cmd->append > -1)
+						close(cmd->append);
+					cmd->append = open(tmp[0], O_CREAT | O_APPEND | O_WRONLY, 0644);
+					if (cmd->redout > -1)
+					{
+						close(cmd->redout);
+						cmd->redout = -1;
+					}
+				}
 				else
-					cmd->redout = ft_strdup(tmp[0]);
+				{
+					if (cmd->redout > -1)
+						close(cmd->redout);
+					cmd->redout = open(tmp[0], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+					if (cmd->append > -1)
+					{
+						close(cmd->append);
+						cmd->append = -1;
+					}
+				}
 			}
 			if (buf[i + 1] == buf[i])
 				buf[i + 1] = ' ';
@@ -133,6 +161,9 @@ void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 {
 	char		buf[10000];
 
+	cmd->redin = -1;
+	cmd->redout = -1;
+	cmd->append = -1;
 	parse_var(buf, line, envl);
 	parse_red(buf, cmd);
 	//printf("\n%s\n%s\n%s\n%s\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);

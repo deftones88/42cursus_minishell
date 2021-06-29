@@ -40,7 +40,7 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 			printf("Error executing : %s\n", strerror(errno));
 		}
 		else
-			printf("%s: command not found\n", cmd->arg[0]);
+			printf("minishell: %s: command not found\n", cmd->arg[0]);
 		exit(0);
 	}
 	wait(0);
@@ -59,9 +59,24 @@ void    builtin_echo(t_cmd *cmd)
 		i++;
 	}
 	while (cmd->arg[++i])
-		printf("%s ", cmd->arg[i]);
+	{
+		if (cmd->append > -1 || cmd->redout > -1)
+		{
+			write(cmd->append + cmd->redout + 1, cmd->arg[i], (int)ft_strlen(cmd->arg[i]));
+			write(cmd->append + cmd->redout + 1, " ", 1);
+		}
+		else
+			printf("%s ", cmd->arg[i]);
+	}
 	if (!flag)
-		printf("\n");
+	{
+		if (cmd->append > -1 || cmd->redout > -1)
+			write(cmd->append + cmd->redout + 1, "\n", 1);
+		else
+			printf("\n");
+	}
+	if (cmd->append > -1 || cmd->redout > -1)
+		close(cmd->append + cmd->redout + 1);
 	cmd->ret = 0;
 }
 
@@ -86,7 +101,7 @@ void    builtin_export(t_cmd *cmd, t_list **envl)
 		else
 		{
 			if (cmd->arg[i][0] == ' ' || cmd->arg[i][0] == '=')
-				printf("%s: '%s': not a valid identifier\n", cmd->arg[0], cmd->arg[i]);
+				printf("minishell: %s: '%s': not a valid identifier\n", cmd->arg[0], cmd->arg[i]);
 			if (key)
 				free(key);
 			if (val)

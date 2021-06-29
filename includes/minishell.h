@@ -6,9 +6,9 @@ typedef struct		s_cmd
 	char			*cmd;
 	char			**arg;				// command + options
 	int				flag;					// represent |(1) or ;(2)
-	char			*redin;				// <
-	char			*redout;			// >
-	char			*append;			// >>
+	int				redin;				// <
+	int				redout;				// >
+	int				append;				// >>
 	char			*delimit;			// <<
 	int				ret;					// return value of previous execution
 											// global?
