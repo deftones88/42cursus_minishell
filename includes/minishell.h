@@ -32,7 +32,6 @@ typedef struct		s_cmd
 # include <fcntl.h>
 # include <errno.h>
 # include <limits.h>
-// # include <dirent.h>
 
 # ifndef ARG_MAX
 #  define ARG_MAX 2048

@@ -22,10 +22,10 @@ RL_M2 = -I//usr/local/opt/readline/include
 
 all : $(NAME)
 $(NAME) : $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft $(RL) $(RL_LIB)
+	@$(CC) $(CFLAGS) $(OBJS) -o $@ -L. -lft $(RL) $(RL_LIB) -lncurses
 
 mine : $(OBJS) $(LIBFT)
-	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -L. -lft $(RL) $(RL_M1)
+	@$(CC) $(CFLAGS) $(OBJS) -o $(NAME) -L. -lft $(RL) $(RL_M1) -lncurses
 
 $(LIBFT) :
 	@make all -C ./libft
@@ -43,7 +43,7 @@ fclean : clean
 re : fclean all
 
 .c.o :
-	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) $(RL_INC) $(RL_M2)
+	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) $(RL_INC) $(RL_M2) #-I ltermcap
 
 -include $(DEPS)
 

@@ -43,7 +43,7 @@ int		main(int argc, char **argv, char **envp)
 	/* termios for muting "^C" */
 	struct termios	t_old;
 	tcgetattr(STDIN_FILENO, &t_old);
-	set_term();
+	set_termios(0);
 
 	envl = init_env(envp);
 	show_logo();
@@ -83,6 +83,19 @@ int		main(int argc, char **argv, char **envp)
 		}
 		else if (line == NULL)
 		{
+			set_termios(1);
+			/* init  termcap */
+			char	*cm;
+			char	*ce;
+			int		col;
+			int		row;
+
+			tgetent(NULL, "xterm");
+			cm  = tgetstr("cm", NULL);
+			ce  = tgetstr("ce", NULL);
+			get_cursor_position(&col, &row);
+			set_line(col, row, cm, ce);
+			printf("minishell$ exit\n");
 			tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
 			exit(EXIT_SUCCESS);
 		}
