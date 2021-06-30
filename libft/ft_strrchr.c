@@ -22,5 +22,7 @@ char	*ft_strrchr(const char *s, int c)
 			break ;
 		else
 			i--;
-	return (i == -1 ? (char*)0 : (char*)s + i);
+	if (i == -1)
+		return ((char*)0);
+	return ((char*)s + i);
 }

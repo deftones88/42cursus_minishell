@@ -17,11 +17,17 @@ char	*ft_strjoin(char const *s1, char const *s2)
 	char	*p;
 	int		i;
 	int		idx;
+	int		str_len[2];
 
 	idx = 0;
 	i = -1;
-	p = (char*)ft_calloc((s1 ? ft_strlen(s1) : 0) + (s2 ? ft_strlen(s2) : 0)
-			+ 1, sizeof(char));
+	str_len[0] = 0;
+	str_len[1] = 0;
+	if (s1)
+		str_len[0] = ft_strlen(s1);
+	if (s2)
+		str_len[1] = ft_strlen(s2);
+	p = (char*)ft_calloc(str_len[0] + str_len[1] + 1, sizeof(char));
 	if (!p)
 		return (p);
 	if (s1)

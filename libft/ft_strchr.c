@@ -22,5 +22,7 @@ char	*ft_strchr(const char *s, int c)
 			break ;
 		else
 			i++;
-	return (s[i] == 0 && c != 0 ? (char*)0 : (char*)s + i);
+	if (s[i] == 0 && c != 0)
+		return ((char*)0);
+	return ((char*)s + i);
 }

@@ -15,7 +15,7 @@
 static int		isin(char n, char *str)
 {
 	int		i;
-	
+
 	i = -1;
 	while (str[++i])
 		if (n == str[i])
@@ -88,7 +88,8 @@ char			**ft_split(char const *str, char *c)
 	char	**ret;
 
 	n = countstrs(str, c);
-	if (!(ret = (char**)ft_calloc((n + 1), sizeof(char*))))
+	ret = (char**)ft_calloc((n + 1), sizeof(char*));
+	if (!ret)
 		return (0);
 	i = -1;
 	k = 0;
