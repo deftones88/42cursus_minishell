@@ -10,8 +10,6 @@ t_cmd	*free_next(t_cmd *cmd)
 	free_all(cmd->arg);
 	if (cmd->cmd)
 		free(cmd->cmd);
-	if (cmd->delimit)
-		free(cmd->delimit);
 	return (next);
 }
 
@@ -160,12 +158,17 @@ void	parse_red(char *buf, t_cmd *cmd)
 						}
 						else
 						{
-							while (read(fd[0], buff, ARG_MAX))
+							if (buf[0] != '<') // need fixing lol
+								cmd->delimit = fd[0];
+							else
 							{
-								printf("%s", buff);
+								while (read(fd[0], buff, ARG_MAX))
+								{
+									printf("%s", buff);
+								}
+								close(fd[0]);
 							}
 						}
-						close(fd[0]);
 					}
 				}
 				else
@@ -253,6 +256,7 @@ void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	cmd->redin = -1;
 	cmd->redout = -1;
 	cmd->append = -1;
+	cmd->delimit = -1;
 	cmd->ret = 0;
 	parse_var(buf, line, envl, cmd);
 	parse_red(buf, cmd);

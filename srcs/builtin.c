@@ -31,7 +31,10 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 	pid_t	pid;
 	char	**envp;
 	int		status;
+	int		fd[2];
 
+	fd[0] = dup(STDIN_FILENO);
+	fd[1] = dup(STDOUT_FILENO);
 	envp = list2arr(envl);
 	merge_path(cmd, find_value(envl, "PATH"));
 	pid = fork();
@@ -39,6 +42,21 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 		err_msg("fork failed\n");
 	if (pid == 0)
 	{
+		if (cmd->delimit)
+		{
+			dup2(cmd->delimit, STDIN_FILENO);
+			close(cmd->delimit);
+		}
+		if (cmd->redin)
+		{
+			dup2(cmd->redin, STDIN_FILENO);
+			close(cmd->redin);
+		}
+		if (cmd->redout || cmd->append)
+		{
+			dup2(cmd->redout + cmd->append + 1, STDOUT_FILENO);
+			close(cmd->redout + cmd->append + 1);
+		}
 		if (cmd->cmd && execve(cmd->cmd, cmd->arg, envp) == -1)
 		{
 			g_ret = errno;
@@ -52,6 +70,10 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 		exit(g_ret);
 	}
 	wait(&status);
+	dup2(fd[0], STDIN_FILENO);
+	dup2(fd[1], STDOUT_FILENO);
+	close(fd[0]);
+	close(fd[1]);
 	if (WIFEXITED(status))
 		g_ret = WEXITSTATUS(status);
 }

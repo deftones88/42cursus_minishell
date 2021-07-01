@@ -9,7 +9,7 @@ typedef struct		s_cmd
 	int				redin;				// <
 	int				redout;				// >
 	int				append;				// >>
-	char			*delimit;			// <<
+	int				delimit;			// <<
 	int				ret;					// return value of previous execution
 											// global?
 	struct s_cmd	*next;
