@@ -35,6 +35,8 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 	envp = list2arr(envl);
 	merge_path(cmd, find_value(envl, "PATH"));
 	pid = fork();
+	if (pid < 0)
+		err_msg("fork failed\n");
 	if (pid == 0)
 	{
 		if (cmd->cmd && execve(cmd->cmd, cmd->arg, envp) == -1)
@@ -96,7 +98,7 @@ void    builtin_export(t_cmd *cmd, t_list **envl)
 
 	if (!cmd->arg[1])
 	{
-		builtin_env(cmd, *envl, 1);
+		builtin_env(*envl, 1);
 		return ;
 	}
 	i = 0;
@@ -134,7 +136,7 @@ void    builtin_unset(t_cmd *cmd, t_list **envl)
 	g_ret = 0;
 }
 
-void    builtin_env(t_cmd *cmd, t_list *envl, int flag)
+void    builtin_env(t_list *envl, int flag)
 {
 	t_list	*tmp;
 
@@ -142,12 +144,24 @@ void    builtin_env(t_cmd *cmd, t_list *envl, int flag)
 	while (tmp)
 	{
 		if (flag)
-		{
 			printf("declare -x %s=\"%s\"\n", tmp->key, tmp->value);
-		}
 		else
 			printf("%s=%s\n", tmp->key, tmp->value);
 		tmp = tmp->next;
 	}
 	g_ret = 0;
+}
+
+void    builtin_cd(t_cmd *cmd)
+{
+	int		status;
+
+	status = chdir(cmd->arg[1]);
+	if (status < 0)
+	{
+		printf("minishell: %s: %s: %s\n", cmd->arg[0], cmd->arg[1], strerror(errno));
+		g_ret = 1;
+	}
+	else
+		g_ret = 0;
 }

@@ -33,7 +33,7 @@ static char	*get_key(char *line, int *i)
 	return (ft_strdup(buf));
 }
 
-void	parse_var(char *buf, char *line, t_list *envl)
+void	parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 {
 	int		i;
 	int		j;
@@ -73,8 +73,9 @@ void	parse_var(char *buf, char *line, t_list *envl)
 	}
 	if (quot)
 	{
-		err_msg("parse error: quot");
+		printf("parse error: quot");
 		g_ret = 1;
+		cmd->ret = 1;
 	}
 	buf[i] = 0;
 }
@@ -110,22 +111,62 @@ void	parse_red(char *buf, t_cmd *cmd)
 			{
 				if (buf[i + 1] == '<')
 				{
-					cmd->delimit = ft_strdup(tmp[0]);
-					// char	*line = 0;
-					// while (1)
-					// {
-					// 	line = readline("> ");
-					// 	if (!line)
-					// 		break ;
-					// 	if (!ft_strcmp(line, tmp[0]))
-					// 	{
-					// 		free(line);
-					// 		break ;
-					// 	}
-					// 	printf("%s\n", line);
-					// 	free(line);
-					// }
-					// free(cmd->delimit);
+					int		fd[2];
+					pid_t	pid;
+
+					if (pipe(fd) == -1)
+						err_msg("pipe failed\n");
+					pid = fork();
+					if (pid < 0)
+						err_msg("fork failed\n");
+					if (pid == 0)
+					{
+						char	*line;
+
+						close(fd[0]);
+						while (1)
+						{
+							line = readline("> ");
+							if (!line)
+							{
+								write(fd[1], "\b\b\0", 1);
+								exit(1);
+							}
+							if (!ft_strcmp(line, tmp[0]))
+							{
+								free(line);
+								write(fd[1], "\b\b\0", 1);
+								exit(EXIT_SUCCESS);
+							}
+							write(fd[1], line, (int)ft_strlen(line));
+							write(fd[1], "\n", 1);
+							free(line);
+						}
+						close(fd[1]);
+					}
+					else
+					{
+						// in cases such as 'cat << hi >1'
+						// connect to ... first cmd (ie. cat)?
+						char	buff[ARG_MAX];
+						int		status;
+						int		ret;
+						close(fd[1]);
+						wait(&status);
+						ret = WEXITSTATUS(status);
+						if (ret == 1)
+						{
+							continue ;
+						}
+						else
+						{
+							while (read(fd[0], buff, ARG_MAX))
+							{
+								printf("%s", buff);
+							}
+						}
+						close(fd[0]);
+					}
 				}
 				else
 				{
@@ -193,7 +234,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 					quot = 0;
 				if (!quot && (buf[i] == '<' || buf[i] == '>'))
 				{
-					err_msg("parse_error!!!\n");
+					printf("parse error\n");
 					cmd->ret = 1;
 					g_ret = 1;
 				}
@@ -213,7 +254,7 @@ void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	cmd->redout = -1;
 	cmd->append = -1;
 	cmd->ret = 0;
-	parse_var(buf, line, envl);
+	parse_var(buf, line, envl, cmd);
 	parse_red(buf, cmd);
 	// printf("\n%s\n%d\n%d\n%d\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);
 	cmd->arg = ft_split(buf, " ");

@@ -64,15 +64,18 @@ int		main(int argc, char **argv, char **envp)
 				if (!ft_strcmp(cmd->arg[0], "echo"))
 					builtin_echo(cmd);
 				else if (!ft_strcmp(cmd->arg[0], "cd"))
-					g_ret = chdir(cmd->arg[1]);
+					builtin_cd(cmd);
 				else if (!ft_strcmp(cmd->arg[0], "pwd"))
+				{
 					printf("%s\n", getcwd(NULL, 0));
+					g_ret = 0;
+				}
 				else if (!ft_strcmp(cmd->arg[0], "export"))
 					builtin_export(cmd, &envl);
 				else if (!ft_strcmp(cmd->arg[0], "unset"))
 					builtin_unset(cmd, &envl);
 				else if (!ft_strcmp(cmd->arg[0], "env"))
-					builtin_env(cmd, envl, 0);
+					builtin_env(envl, 0);
 				else if (!ft_strcmp(cmd->arg[0], "exit"))
 				{
 					tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
