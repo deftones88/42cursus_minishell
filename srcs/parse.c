@@ -144,11 +144,10 @@ void	parse_red(char *buf, t_cmd *cmd)
 					}
 					else
 					{
-						// in cases such as 'cat << hi >1'
-						// connect to ... first cmd (ie. cat)?
-						char	buff[ARG_MAX];
+						char	buffer[ARG_MAX];
 						int		status;
 						int		ret;
+						
 						close(fd[1]);
 						wait(&status);
 						ret = WEXITSTATUS(status);
@@ -162,9 +161,9 @@ void	parse_red(char *buf, t_cmd *cmd)
 								cmd->delimit = fd[0];
 							else
 							{
-								while (read(fd[0], buff, ARG_MAX))
+								while (read(fd[0], buffer, ARG_MAX))
 								{
-									printf("%s", buff);
+									printf("%s", buffer);
 								}
 								close(fd[0]);
 							}
@@ -188,7 +187,6 @@ void	parse_red(char *buf, t_cmd *cmd)
 			}
 			else
 			{
-				// cat 1 >2 (not working)
 				if (buf[i + 1] == '>')
 				{
 					if (cmd->append > -1)
