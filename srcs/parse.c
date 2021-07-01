@@ -1,5 +1,7 @@
 #include "minishell.h"
 
+extern int		g_ret;
+
 t_cmd	*free_next(t_cmd *cmd)
 {
 	t_cmd	*next;
@@ -51,18 +53,29 @@ void	parse_var(char *buf, char *line, t_list *envl)
 			quot = 0;
 		if (quot != '\'' && line[j] == '$')
 		{
-			key = get_key(line, &j);
-			val = find_value(envl, key);
+			if (line[j + 1] == '?')
+			{
+				val = ft_itoa(g_ret);
+				j += 2;
+			}
+			else
+			{
+				key = get_key(line, &j);
+				val = find_value(envl, key);
+				free(key);
+			}
 			k = -1;
 			while (val[++k])
 				buf[i++] = val[k];
-			free(key);
 		}
 		else
 			buf[i++] = line[j++];
 	}
 	if (quot)
-		err_msg("parse error:quot");
+	{
+		err_msg("parse error: quot");
+		g_ret = 1;
+	}
 	buf[i] = 0;
 }
 
@@ -89,30 +102,30 @@ void	parse_red(char *buf, t_cmd *cmd)
 			if (!tmp[0])
 			{
 				printf("minishell: syntax error near unexpected token 'newline'\n");
-				cmd->ret = 258;
+				cmd->ret = 1;
+				g_ret = 258;
 				return ;
 			}
 			if (buf[i] == '<')
 			{
 				if (buf[i + 1] == '<')
 				{
-					// cmd->delimit = ft_strdup(tmp[0]);
-					char	*line = 0;
-					while (1)
-					{
-						line = readline("> ");
-						if (!line)
-							break ;
-						if (!ft_strcmp(line, tmp[0]))
-						{
-							free(line);
-							break ;
-						}
-						printf("%s\n", line);
-						free(line);
-					}
+					cmd->delimit = ft_strdup(tmp[0]);
+					// char	*line = 0;
+					// while (1)
+					// {
+					// 	line = readline("> ");
+					// 	if (!line)
+					// 		break ;
+					// 	if (!ft_strcmp(line, tmp[0]))
+					// 	{
+					// 		free(line);
+					// 		break ;
+					// 	}
+					// 	printf("%s\n", line);
+					// 	free(line);
+					// }
 					// free(cmd->delimit);
-					// re-parse the rest........
 				}
 				else
 				{
@@ -122,7 +135,8 @@ void	parse_red(char *buf, t_cmd *cmd)
 					if (cmd->redin < 0)
 					{
 						printf("minishell: %s: %s\n", tmp[0], strerror(errno));
-						cmd->ret = errno;
+						cmd->ret = 1;
+						g_ret = errno;
 						free_all(tmp);
 						return ;
 					}
@@ -136,6 +150,12 @@ void	parse_red(char *buf, t_cmd *cmd)
 					if (cmd->append > -1)
 						close(cmd->append);
 					cmd->append = open(tmp[0], O_CREAT | O_APPEND | O_WRONLY, 0644);
+					if (cmd->append < 0)
+					{
+						g_ret = cmd->append;
+						cmd->ret = 1;
+						continue ;
+					}
 					if (cmd->redout > -1)
 					{
 						close(cmd->redout);
@@ -147,6 +167,12 @@ void	parse_red(char *buf, t_cmd *cmd)
 					if (cmd->redout > -1)
 						close(cmd->redout);
 					cmd->redout = open(tmp[0], O_CREAT | O_TRUNC | O_WRONLY, 0644);
+					if (cmd->redout < 0)
+					{
+						g_ret = cmd->redout;
+						cmd->ret = 1;
+						continue ;
+					}
 					if (cmd->append > -1)
 					{
 						close(cmd->append);
@@ -166,7 +192,11 @@ void	parse_red(char *buf, t_cmd *cmd)
 				else if (quot && buf[i] == quot)
 					quot = 0;
 				if (!quot && (buf[i] == '<' || buf[i] == '>'))
+				{
 					err_msg("parse_error!!!\n");
+					cmd->ret = 1;
+					g_ret = 1;
+				}
 				buf[i++] = ' ';
 			}
 			i--;
@@ -182,6 +212,7 @@ void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	cmd->redin = -1;
 	cmd->redout = -1;
 	cmd->append = -1;
+	cmd->ret = 0;
 	parse_var(buf, line, envl);
 	parse_red(buf, cmd);
 	// printf("\n%s\n%d\n%d\n%d\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);

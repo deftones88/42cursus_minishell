@@ -1,5 +1,7 @@
 #include "sig_handler.h"
 
+extern int		g_ret;
+
 void sig_handler(int sig)
 {
 	if (sig)
@@ -9,6 +11,7 @@ void sig_handler(int sig)
 		rl_replace_line("", 0);
 		rl_redisplay();
 	}
+	g_ret = 1;
 }
 
 void set_termios(int i)

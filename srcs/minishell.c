@@ -30,6 +30,8 @@ void show_logo(void)
 	printf("-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-\n\n");
 }
 
+int		g_ret = 0;
+
 int		main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -62,7 +64,7 @@ int		main(int argc, char **argv, char **envp)
 				if (!ft_strcmp(cmd->arg[0], "echo"))
 					builtin_echo(cmd);
 				else if (!ft_strcmp(cmd->arg[0], "cd"))
-					cmd->ret = chdir(cmd->arg[1]);
+					g_ret = chdir(cmd->arg[1]);
 				else if (!ft_strcmp(cmd->arg[0], "pwd"))
 					printf("%s\n", getcwd(NULL, 0));
 				else if (!ft_strcmp(cmd->arg[0], "export"))
