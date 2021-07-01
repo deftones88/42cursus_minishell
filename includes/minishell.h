@@ -10,8 +10,7 @@ typedef struct		s_cmd
 	int				redout;				// >
 	int				append;				// >>
 	int				delimit;			// <<
-	int				ret;					// return value of previous execution
-											// global?
+	int				ret;					// skip executing cmd
 	struct s_cmd	*next;
 }					t_cmd;
 
@@ -36,7 +35,6 @@ typedef struct		s_cmd
 # ifndef ARG_MAX
 #  define ARG_MAX 2048
 # endif
-
 
 /*
 ** init.c

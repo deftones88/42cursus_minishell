@@ -90,16 +90,7 @@ int		main(int argc, char **argv, char **envp)
 		{
 			set_termios(1);
 			/* init  termcap */
-			char	*cm;
-			char	*ce;
-			int		col;
-			int		row;
-
-			tgetent(NULL, "xterm");
-			cm  = tgetstr("cm", NULL);
-			ce  = tgetstr("ce", NULL);
-			get_cursor_position(&col, &row);
-			set_line(col, row, cm, ce);
+			set_termcap(0);
 			printf("minishell$ exit\n");
 			tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
 			exit(EXIT_SUCCESS);

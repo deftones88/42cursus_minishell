@@ -17,6 +17,6 @@ void	set_termios(int i);
 void	get_cursor_position(int *col, int *rows);
 void	set_line(int col, int row, char *cm, char *ce);
 int		ft_putchar(int c);
-// void	set_termcap(void);
+void	set_termcap(int flag);
 
 #endif

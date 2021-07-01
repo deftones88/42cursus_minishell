@@ -34,12 +34,12 @@ void	get_cursor_position(int *col, int *rows)
 {
 	int		a;
 	int		i;
-	char	buf[4];
+	char	buf[254];
 
 	a = 0;
 	i = -1;
 	write(1, "\033[6n", 4);
-	read(1, buf, 4);
+	read(1, buf, 254);
 	while (buf[++i])
 	{
 		if (buf[i] >= '0' && buf[i] <= '9')
@@ -47,7 +47,9 @@ void	get_cursor_position(int *col, int *rows)
 			if (a == 0)
 				*rows = ft_atoi(&buf[i]) - 1;
 			else
+			{
 				*col = ft_atoi(&buf[i]) - 1;
+			}
 			a++;
 		}
 	}
@@ -64,8 +66,8 @@ int		ft_putchar(int c)
 	write(1, &c, 1);
 	return (0);
 }
-/*
-void set_termcap(void)
+
+void set_termcap(int flag)
 {
 	char	*cm;
 	char	*ce;
@@ -76,6 +78,6 @@ void set_termcap(void)
 	cm  = tgetstr("cm", NULL);
 	ce  = tgetstr("ce", NULL);
 	get_cursor_position(&col, &row);
-	delete_line(col, row, cm, ce);
+	col = flag;
+	set_line(col, row, cm, ce);
 }
-*/
