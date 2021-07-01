@@ -74,6 +74,7 @@ void set_termcap(int flag)
 	int		col;
 	int		row;
 
+	set_termios(1);
 	tgetent(NULL, "xterm");
 	cm  = tgetstr("cm", NULL);
 	ce  = tgetstr("ce", NULL);

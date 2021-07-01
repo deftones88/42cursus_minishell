@@ -88,8 +88,6 @@ int		main(int argc, char **argv, char **envp)
 		}
 		else if (line == NULL)
 		{
-			set_termios(1);
-			/* init  termcap */
 			set_termcap(0);
 			printf("minishell$ exit\n");
 			tcsetattr(STDIN_FILENO, TCSANOW, &t_old);

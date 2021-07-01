@@ -127,7 +127,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 							line = readline("> ");
 							if (!line)
 							{
-								write(fd[1], "\b\b\0", 3);
+								write(fd[1], "\0", 1);
 								exit(1);
 							}
 							if (!ft_strcmp(line, tmp[0]))
@@ -144,23 +144,26 @@ void	parse_red(char *buf, t_cmd *cmd)
 					}
 					else
 					{
-						char	buffer[ARG_MAX];
+						char	buffer[100 + 1];
 						int		status;
 						int		ret;
 						struct termios	t_before;
+
 						close(fd[1]);
 						wait(&status);
 						ret = WEXITSTATUS(status);
 						if (ret == 1)
 						{
 							int		k;
+
+							if (i != 0)
+								cmd->delimit = fd[0];
 							k = -1;
 							while (buf[i] == '<' || buf[i] == ' ')
 								buf[i++] = ' ';
 							while (++k < (int)ft_strlen(tmp[0]))
 								buf[i + k] = ' ';
 							tcgetattr(STDIN_FILENO, &t_before);
-							set_termios(1);
 							set_termcap(2);
 							tcsetattr(STDIN_FILENO, TCSANOW, &t_before);
 							continue ;
@@ -171,7 +174,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 								cmd->delimit = fd[0];
 							else
 							{
-								while (read(fd[0], buffer, ARG_MAX - 1))
+								while (read(fd[0], buffer, 100))
 								{
 									printf("%s", buffer);
 								}
