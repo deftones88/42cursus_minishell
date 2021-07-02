@@ -56,34 +56,87 @@ int		main(int argc, char **argv, char **envp)
 		if (line && line[0] != 0)
 		{
 			add_history(line);
-			cmd = init_cmd(line, envl);
-			if (!cmd || cmd->ret > 0)
-				continue ;
-			while (cmd)
+			char **tmp;
+			tmp = ft_split(line, "|");
+			int		total;
+			total = 0;
+			while (tmp[total])
+				total++;
+			pid_t	*pid = malloc(sizeof(pid_t) * total);
+			int		*fd = malloc(sizeof(int) * ((total - 1) * 2));
+			int		fd_backup[2];
+			fd_backup[0] = dup(STDIN_FILENO);
+			fd_backup[1] = dup(STDOUT_FILENO);
+			for (int i = 0; tmp[i]; i++)
 			{
-				if (!ft_strcmp(cmd->arg[0], "echo"))
-					builtin_echo(cmd);
-				else if (!ft_strcmp(cmd->arg[0], "cd"))
-					builtin_cd(cmd);
-				else if (!ft_strcmp(cmd->arg[0], "pwd"))
+				pid[i] = fork();
+				pipe(fd + (i * 2));
+				if (pid[i] == 0)
 				{
-					printf("%s\n", getcwd(NULL, 0));
-					g_ret = 0;
-				}
-				else if (!ft_strcmp(cmd->arg[0], "export"))
-					builtin_export(cmd, &envl);
-				else if (!ft_strcmp(cmd->arg[0], "unset"))
-					builtin_unset(cmd, &envl);
-				else if (!ft_strcmp(cmd->arg[0], "env"))
-					builtin_env(envl, 0);
-				else if (!ft_strcmp(cmd->arg[0], "exit"))
-				{
-					tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
+					if (i > 0)
+					{
+						dup2(fd[i * 2], STDIN_FILENO);
+						close(fd[i * 2]);
+					}
+					if (i < total - 2)
+					{
+						dup2(fd[(i * 2) + 1], STDOUT_FILENO);
+						close(fd[(i * 2) + 1]);
+					}
+					else
+					{
+						dup2(fd_backup[1], STDOUT_FILENO);
+						close(fd_backup[1]);
+					}
+					cmd = init_cmd(tmp[i], envl);
+					if (!cmd || cmd->ret > 0)
+						continue ;
+					while (cmd)
+					{
+						if (!ft_strcmp(cmd->arg[0], "echo"))
+							builtin_echo(cmd);
+						else if (!ft_strcmp(cmd->arg[0], "cd"))
+							builtin_cd(cmd);
+						else if (!ft_strcmp(cmd->arg[0], "pwd"))
+						{
+							printf("%s\n", getcwd(NULL, 0));
+							g_ret = 0;
+						}
+						else if (!ft_strcmp(cmd->arg[0], "export"))
+							builtin_export(cmd, &envl);
+						else if (!ft_strcmp(cmd->arg[0], "unset"))
+							builtin_unset(cmd, &envl);
+						else if (!ft_strcmp(cmd->arg[0], "env"))
+							builtin_env(envl, 0);
+						else if (!ft_strcmp(cmd->arg[0], "exit"))
+						{
+							tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
+							exit(1);
+						}
+						else
+							ft_exec(cmd, envl);
+						cmd = free_next(cmd);
+					}
 					exit(EXIT_SUCCESS);
 				}
 				else
-					ft_exec(cmd, envl);
-				cmd = free_next(cmd);
+				{
+					int		status;
+					waitpid(pid[i], &status, 0);
+					if (i > 0)
+						close(fd[(i - 1) * 2]);
+					close(fd[(i * 2) + 1]);
+					if (WIFEXITED(status))
+					{
+						if (WEXITSTATUS(status) == 1)
+						{
+							printf("exit\n");
+							exit(EXIT_SUCCESS);
+						}
+						else
+							g_ret = WEXITSTATUS(status);
+					}
+				}
 			}
 		}
 		else if (line == NULL)

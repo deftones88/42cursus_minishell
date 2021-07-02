@@ -35,7 +35,8 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 			quot = line[i];
 		else if (quot && line[i] == quot)
 			quot = 0;
-		if (!quot && (line[i] == ';' || line[i] == '|' || line[i] == 0))
+		// if (!quot && (line[i] == ';' || line[i] == '|' || line[i] == 0))
+		if (!quot && (line[i] == 0))
 		{
 			flag = line[i];
 			line[i] = 0;
