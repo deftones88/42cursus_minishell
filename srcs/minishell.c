@@ -130,6 +130,7 @@ int		main(int argc, char **argv, char **envp)
 					{
 						if (WEXITSTATUS(status) == 1)
 						{
+							wait(0);
 							printf("exit\n");
 							exit(EXIT_SUCCESS);
 						}
@@ -138,6 +139,7 @@ int		main(int argc, char **argv, char **envp)
 					}
 				}
 			}
+			dup2(fd_backup[0], STDIN_FILENO);
 		}
 		else if (line == NULL)
 		{
