@@ -11,14 +11,10 @@ void	heredoc_child(int fd[2], char *delimiter)
 	{
 		line = readline("> ");
 		if (!line)
-		{
-			write(fd[1], "\0", 1);
 			exit(1);
-		}
 		if (!ft_strcmp(line, delimiter))
 		{
 			free(line);
-			write(fd[1], "\0", 1);
 			close(fd[1]);
 			exit(EXIT_SUCCESS);
 		}
