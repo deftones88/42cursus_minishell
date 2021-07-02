@@ -82,7 +82,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 {
 	int		i;
 	char	quot;
-	char	**tmp;
+	// char	**tmp;
 
 	quot = 0;
 	i = -1;
@@ -95,10 +95,10 @@ void	parse_red(char *buf, t_cmd *cmd)
 		if (!quot && (buf[i] == '<' || buf[i] == '>'))
 		{
 			if (buf[i + 1] == buf[i])
-				tmp = ft_split(buf + i + 2, " <>");
+				cmd->parse = ft_split(buf + i + 2, " <>");
 			else
-				tmp = ft_split(buf + i + 1, " <>");
-			if (!tmp[0])
+				cmd->parse = ft_split(buf + i + 1, " <>");
+			if (!cmd->parse[0])
 			{
 				printf("minishell: syntax error near unexpected token 'newline'\n");
 				cmd->ret = 1;
@@ -109,14 +109,17 @@ void	parse_red(char *buf, t_cmd *cmd)
 			{
 				if (buf[i + 1] == '<')
 				{
+					if (heredoc_all(cmd, buf, i))
+						continue ;
+					/*
 					int		fd[2];
 					pid_t	pid;
 
 					if (pipe(fd) == -1)
-						err_msg("pipe failed\n");
+					err_msg("pipe failed\n");
 					pid = fork();
 					if (pid < 0)
-						err_msg("fork failed\n");
+					err_msg("fork failed\n");
 					if (pid == 0)
 					{
 						char	*line;
@@ -130,7 +133,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 								write(fd[1], "\0", 1);
 								exit(1);
 							}
-							if (!ft_strcmp(line, tmp[0]))
+							if (!ft_strcmp(line, delimiter))
 							{
 								free(line);
 								write(fd[1], "\0", 1);
@@ -157,12 +160,12 @@ void	parse_red(char *buf, t_cmd *cmd)
 							int		k;
 
 							if (i != 0)
-								cmd->delimit = fd[0];
+							cmd->delimit = fd[0];
 							k = -1;
 							while (buf[i] == '<' || buf[i] == ' ')
-								buf[i++] = ' ';
+							buf[i++] = ' ';
 							while (++k < (int)ft_strlen(tmp[0]))
-								buf[i + k] = ' ';
+							buf[i + k] = ' ';
 							tcgetattr(STDIN_FILENO, &t_before);
 							set_termcap(2);
 							tcsetattr(STDIN_FILENO, TCSANOW, &t_before);
@@ -171,7 +174,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 						else
 						{
 							if (i != 0)
-								cmd->delimit = fd[0];
+							cmd->delimit = fd[0];
 							else
 							{
 								while (read(fd[0], buffer, 100))
@@ -182,34 +185,28 @@ void	parse_red(char *buf, t_cmd *cmd)
 								// seg fault?
 							}
 						}
-					}
+					}*/
 				}
 				else
 				{
-					if (cmd->redin > -1)
-						close(cmd->redin);
-					cmd->redin = open(tmp[0], O_RDONLY, 0);
-					if (cmd->redin < 0)
-					{
-						printf("minishell: %s: %s\n", tmp[0], strerror(errno));
-						cmd->ret = 1;
-						g_ret = errno;
-						free_all(tmp);
+					if (redin(cmd))
 						return ;
-					}
 				}
 			}
 			else
 			{
 				if (buf[i + 1] == '>')
 				{
+					if (redout_append(cmd, &cmd->append, &cmd->redout, O_APPEND))
+						continue ;
+						/*
 					if (cmd->append > -1)
 						close(cmd->append);
 					cmd->append = open(tmp[0], O_CREAT | O_APPEND | O_WRONLY, 0644);
 					if (cmd->append < 0)
 					{
 						g_ret = cmd->append;
-						cmd->ret = 1;
+						// cmd->ret = 1;
 						continue ;
 					}
 					if (cmd->redout > -1)
@@ -217,23 +214,27 @@ void	parse_red(char *buf, t_cmd *cmd)
 						close(cmd->redout);
 						cmd->redout = -1;
 					}
+					*/
 				}
 				else
 				{
+					if (redout_append(cmd, &cmd->redout, &cmd->append, O_TRUNC))
+						continue ;
+					/*
 					if (cmd->redout > -1)
 						close(cmd->redout);
 					cmd->redout = open(tmp[0], O_CREAT | O_TRUNC | O_WRONLY, 0644);
 					if (cmd->redout < 0)
 					{
 						g_ret = cmd->redout;
-						cmd->ret = 1;
+						// cmd->ret = 1;
 						continue ;
 					}
 					if (cmd->append > -1)
 					{
 						close(cmd->append);
 						cmd->append = -1;
-					}
+					}*/
 				}
 			}
 			if (buf[i + 1] == buf[i])
@@ -256,7 +257,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 				buf[i++] = ' ';
 			}
 			i--;
-			free_all(tmp);
+			free_all(cmd->parse);
 		}
 	}
 }

@@ -10,6 +10,7 @@ typedef struct		s_cmd
 	int				redout;				// >
 	int				append;				// >>
 	int				delimit;			// <<
+	char			**parse;				// tmp from parse_tmp
 	int				ret;					// skip executing cmd
 	struct s_cmd	*next;
 }					t_cmd;
@@ -48,5 +49,15 @@ t_cmd	*init_cmd(char *line, t_list *envl);
 t_cmd	*free_next(t_cmd *cmd);
 char	**split_line(char *line, t_cmd *cmd, t_list *envl);
 void	parse_tmp(char *line, t_cmd *cmd, t_list *envl);
+
+/*
+** redirection.c
+*/
+void	heredoc_child(int fd[2], char *delimiter);
+int		heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int flag);
+int		heredoc_eof(char *buf, char *delimiter);
+int		heredoc_all(t_cmd *cmd, char *buf, int i);
+int		redin(t_cmd *cmd);
+int		redout_append(t_cmd *cmd, int *this, int *other, int flag);
 
 #endif
