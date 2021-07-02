@@ -56,15 +56,19 @@ int		main(int argc, char **argv, char **envp)
 		if (line && line[0] != 0)
 		{
 			add_history(line);
+
 			char **tmp;
-			tmp = ft_split(line, "|");
 			int		total;
+			pid_t	*pid;
+			int		*fd;
+			int		fd_backup[2];
+
+			tmp = ft_split(line, "|");
 			total = 0;
 			while (tmp[total])
 				total++;
-			pid_t	*pid = malloc(sizeof(pid_t) * total);
-			int		*fd = malloc(sizeof(int) * ((total - 1) * 2));
-			int		fd_backup[2];
+			pid = malloc(sizeof(pid_t) * total);
+			fd = malloc(sizeof(int) * ((total - 1) * 2));
 			fd_backup[0] = dup(STDIN_FILENO);
 			fd_backup[1] = dup(STDOUT_FILENO);
 			for (int i = 0; tmp[i]; i++)
@@ -73,6 +77,10 @@ int		main(int argc, char **argv, char **envp)
 				pipe(fd + (i * 2));
 				if (pid[i] == 0)
 				{
+					/*
+					** needs solving :
+					** cat 1 | cat 2
+					*/
 					if (i > 0)
 					{
 						dup2(fd[i * 2], STDIN_FILENO);
@@ -130,6 +138,11 @@ int		main(int argc, char **argv, char **envp)
 					{
 						if (WEXITSTATUS(status) == 1)
 						{
+							/*
+							** echo 1 >1 | cat <1 <2
+							** 2 no such file or directory
+							** need to write exit 'twice' in order to exit
+							*/
 							wait(0);
 							printf("exit\n");
 							exit(EXIT_SUCCESS);
@@ -140,6 +153,7 @@ int		main(int argc, char **argv, char **envp)
 				}
 			}
 			dup2(fd_backup[0], STDIN_FILENO);
+			close(fd_backup[0]);
 		}
 		else if (line == NULL)
 		{
