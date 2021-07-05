@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sig_handler.h                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/05 15:12:10 by ji-kim            #+#    #+#             */
+/*   Updated: 2021/07/05 15:12:12 by ji-kim           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #ifndef SIG_HANDLER_H
 # define SIG_HANDLER_H
 
@@ -7,7 +19,6 @@
 # include <readline/readline.h>
 # include <readline/history.h>
 # include <termios.h>
-// # include <termcap.h>
 # include <curses.h>
 # include <term.h>
 # include "libft.h"
