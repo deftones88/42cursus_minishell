@@ -12,7 +12,7 @@
 
 #include "libft.h"
 
-static int		isin(char n, char *str)
+static int	isin(char n, char *str)
 {
 	int		i;
 
@@ -23,35 +23,36 @@ static int		isin(char n, char *str)
 	return (0);
 }
 
-static int		countstrs(const char *str, char *c)
+static int	countstrs(const char *str, char *c)
 {
-	int		i;
+	int		i[2];
 	int		flag;
-	int		n;
 	char	quot;
 
-	n = 0;
-	i = -1;
+	i[0] = 0;
+	i[1] = -1;
 	flag = 0;
 	quot = 0;
-	while (str[++i])
-		if (!quot && isin(str[i], c))
+	while (str[++i[1]])
+	{
+		if (!quot && isin(str[i[1]], c))
 		{
-			if (flag == 1 && ++n)
+			if (flag == 1 && ++i[0])
 				flag = 0;
 		}
 		else
 		{
-			if (!quot && (str[i] == '\'' || str[i] == '\"'))
-				quot = str[i];
-			else if (quot && str[i] == quot)
+			if (!quot && (str[i[1]] == '\'' || str[i[1]] == '\"'))
+				quot = str[i[1]];
+			else if (quot && str[i[1]] == quot)
 				quot = 0;
 			flag = 1;
 		}
-	return (n + flag);
+	}
+	return (i[0] + flag);
 }
 
-static char		*istr(int *k, const char *str, char *c)
+static char	*istr(int *k, const char *str, char *c)
 {
 	int		n;
 	char	ret[65536];
@@ -80,24 +81,24 @@ static char		*istr(int *k, const char *str, char *c)
 	return (ft_strdup(ret));
 }
 
-char			**ft_split(char const *str, char *c)
+char	**ft_split(char const *str, char *c)
 {
-	int		k;
-	int		i;
+	int		i[2];
 	int		n;
 	char	**ret;
 
 	n = countstrs(str, c);
-	ret = (char**)ft_calloc((n + 1), sizeof(char*));
+	ret = (char **)ft_calloc((n + 1), sizeof(char *));
 	if (!ret)
 		return (0);
-	i = -1;
-	k = 0;
-	while (++i < n)
+	i[1] = -1;
+	i[0] = 0;
+	while (++i[1] < n)
 	{
-		while (str[k] && isin(str[k], c))
-			k++;
-		if (!(ret[i] = istr(&k, str, c)))
+		while (str[i[0]] && isin(str[i[0]], c))
+			i[0]++;
+		ret[i[1]] = istr(&i[0], str, c);
+		if (!ret[i[1]])
 		{
 			n = 0;
 			while (ret[n])

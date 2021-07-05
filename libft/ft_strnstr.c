@@ -20,7 +20,7 @@ char	*ft_strnstr(const char *str, const char *to_find, size_t l)
 	n = 0;
 	idx = 0;
 	if (to_find[0] == 0)
-		return ((char*)str);
+		return ((char *)str);
 	while (str[idx] && idx < l)
 	{
 		while (to_find[n])
@@ -33,7 +33,7 @@ char	*ft_strnstr(const char *str, const char *to_find, size_t l)
 			n++;
 		}
 		if (n)
-			return ((char*)str + idx);
+			return ((char *)str + idx);
 		idx++;
 	}
 	return (0);

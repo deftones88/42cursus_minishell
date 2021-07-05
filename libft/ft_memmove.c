@@ -18,17 +18,19 @@ void	*ft_memmove(void *restrict dst, const void *restrict src, size_t n)
 
 	i = 0;
 	if (dst < src)
+	{
 		while (i < (int)n)
 		{
-			*((unsigned char*)dst + i) = *((unsigned char*)src + i);
+			*((unsigned char *)dst + i) = *((unsigned char *)src + i);
 			i++;
 		}
+	}
 	else if (dst > src)
 	{
 		i = (int)n - 1;
 		while (i >= 0)
 		{
-			*((unsigned char*)dst + i) = *((unsigned char*)src + i);
+			*((unsigned char *)dst + i) = *((unsigned char *)src + i);
 			i--;
 		}
 	}

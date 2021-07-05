@@ -29,7 +29,25 @@ static int	deg(unsigned int un)
 	return (c);
 }
 
-char		*ft_itoa(int n)
+static char	*return_p(int n, int *l)
+{
+	char	*p;
+
+	if (n < 0)
+		p = (char *)ft_calloc((*l + 2), sizeof(char));
+	else
+		p = (char *)ft_calloc((*l + 1), sizeof(char));
+	if (!p)
+		return (0);
+	if (n < 0)
+	{
+		p[0] = '-';
+		++*l;
+	}
+	return (p);
+}
+
+char	*ft_itoa(int n)
 {
 	unsigned int	un;
 	int				l;
@@ -42,14 +60,12 @@ char		*ft_itoa(int n)
 	else
 		return (ft_strdup("0"));
 	l = deg(un);
-	p = (char*)ft_calloc(l + (n < 0 ? 2 : 1), sizeof(char));
+	p = return_p(n, &l);
 	if (!p)
 		return (0);
-	if (n < 0)
-		p[0] = '-';
 	while (un)
 	{
-		p[--l + (n < 0 ? 1 : 0)] = un % 10 + '0';
+		p[--l] = un % 10 + '0';
 		un /= 10;
 	}
 	return (p);

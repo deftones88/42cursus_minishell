@@ -27,7 +27,7 @@ char	*ft_strjoin(char const *s1, char const *s2)
 		str_len[0] = ft_strlen(s1);
 	if (s2)
 		str_len[1] = ft_strlen(s2);
-	p = (char*)ft_calloc(str_len[0] + str_len[1] + 1, sizeof(char));
+	p = (char *)ft_calloc(str_len[0] + str_len[1] + 1, sizeof(char));
 	if (!p)
 		return (p);
 	if (s1)

@@ -23,7 +23,7 @@ static int	isin(char c, char const *set)
 	return (0);
 }
 
-char		*ft_strtrim(char const *s1, char const *set)
+char	*ft_strtrim(char const *s1, char const *set)
 {
 	char	*p;
 	int		i;
@@ -37,12 +37,12 @@ char		*ft_strtrim(char const *s1, char const *set)
 		if (!isin(s1[i], set))
 			break ;
 	if (s1[i] == 0)
-		return ((char*)ft_calloc(1, sizeof(char)));
+		return ((char *)ft_calloc(1, sizeof(char)));
 	j = ft_strlen(s1);
 	while (s1[--j])
 		if (!isin(s1[j], set))
 			break ;
-	p = (char*)ft_calloc(j - i + 2, sizeof(char));
+	p = (char *)ft_calloc(j - i + 2, sizeof(char));
 	if (!p)
 		return (p);
 	idx = 0;

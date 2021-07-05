@@ -35,7 +35,7 @@ static unsigned int	trim(char *str, unsigned int i)
 	return (i);
 }
 
-int					ft_atoi(char *str)
+int	ft_atoi(char *str)
 {
 	int					i;
 	unsigned long long	n;
@@ -53,9 +53,11 @@ int					ft_atoi(char *str)
 		i++;
 	i--;
 	while (str[++i])
+	{
 		if (str[i] >= '0' && str[i] <= '9')
 			n = n * 10 + str[i] - '0';
 		else
 			break ;
+	}
 	return ((int)(s * n));
 }

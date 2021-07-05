@@ -20,9 +20,9 @@ char	*ft_strdup(const char *str)
 	i = -1;
 	while (str[++i])
 		;
-	arr = (char*)malloc((i + 1) * sizeof(char));
+	arr = (char *)malloc((i + 1) * sizeof(char));
 	if (arr == 0)
-		return ((char*)0);
+		return ((char *)0);
 	arr[i] = 0;
 	while (--i >= 0)
 		arr[i] = str[i];
