@@ -44,16 +44,19 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 	{
 		if (cmd->delimit)
 		{
+			printf("--\tdelimit(in)\n");
 			dup2(cmd->delimit, STDIN_FILENO);
 			close(cmd->delimit);
 		}
 		if (cmd->redin)
 		{
+			printf("--\tredin(in)\n");
 			dup2(cmd->redin, STDIN_FILENO);
 			close(cmd->redin);
 		}
 		if (cmd->redout || cmd->append)
 		{
+			printf("--\tredout/append(out)\n");
 			dup2(cmd->redout + cmd->append + 1, STDOUT_FILENO);
 			close(cmd->redout + cmd->append + 1);
 		}

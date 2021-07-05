@@ -90,6 +90,7 @@ int		redin(t_cmd *cmd)
 		cmd->ret = 1;
 		g_ret = errno;
 		free_all(cmd->parse);
+		exit(EXIT_SUCCESS);
 		return (1);
 	}
 	return (0);
@@ -104,6 +105,7 @@ int		redout_append(t_cmd *cmd, int *this, int *other, int flag)
 	{
 		g_ret = *this;
 		cmd->ret = 1;
+		exit(EXIT_SUCCESS);
 		return (1);
 	}
 	if (*other > -1)

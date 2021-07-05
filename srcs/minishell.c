@@ -74,25 +74,25 @@ int		main(int argc, char **argv, char **envp)
 			for (int i = 0; tmp[i]; i++)
 			{
 				pid[i] = fork();
+				printf("==== beginning gid(%d - %d): %d(%d)\n", total, i, getpid(), getppid());
 				pipe(fd + (i * 2));
 				if (pid[i] == 0)
 				{
-					/*
-					** needs solving :
-					** cat 1 | cat 2
-					*/
 					if (i > 0)
 					{
+						printf("--\tin: fd[%d]\n", i * 2);
 						dup2(fd[i * 2], STDIN_FILENO);
 						close(fd[i * 2]);
 					}
-					if (i < total - 2)
+					if (i < total - 1)
 					{
+						printf("--\tout: fd[%d]\n", (i * 2) + 1);
 						dup2(fd[(i * 2) + 1], STDOUT_FILENO);
 						close(fd[(i * 2) + 1]);
 					}
 					else
 					{
+						printf("--\tout backup\n");
 						dup2(fd_backup[1], STDOUT_FILENO);
 						close(fd_backup[1]);
 					}
@@ -101,6 +101,7 @@ int		main(int argc, char **argv, char **envp)
 						continue ;
 					while (cmd)
 					{
+						printf("----\tGID: %d(%d)\n", getpid(), getppid());
 						if (!ft_strcmp(cmd->arg[0], "echo"))
 							builtin_echo(cmd);
 						else if (!ft_strcmp(cmd->arg[0], "cd"))
@@ -138,11 +139,6 @@ int		main(int argc, char **argv, char **envp)
 					{
 						if (WEXITSTATUS(status) == 1)
 						{
-							/*
-							** echo 1 >1 | cat <1 <2
-							** 2 no such file or directory
-							** need to write exit 'twice' in order to exit
-							*/
 							wait(0);
 							printf("exit\n");
 							exit(EXIT_SUCCESS);
@@ -152,6 +148,7 @@ int		main(int argc, char **argv, char **envp)
 					}
 				}
 			}
+			printf("--\tin backup\n");
 			dup2(fd_backup[0], STDIN_FILENO);
 			close(fd_backup[0]);
 		}
