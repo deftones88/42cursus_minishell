@@ -1,16 +1,28 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    Makefile                                           :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2021/07/05 17:24:50 by ji-kim            #+#    #+#              #
+#    Updated: 2021/07/05 17:25:30 by ji-kim           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
 NAME 			= minishell
 
 CC 				= gcc
-CFLAGS 		= -Wall -Wextra #-Werror
+CFLAGS	 		= -Wall -Wextra #-Werror
 
-LIBFT 		= libft.a
-INCLUDE 	= includes/
-SRCS_DIR 	= ./srcs/
+LIBFT 			= libft.a
+INCLUDE 		= includes/
+SRCS_DIR 		= ./srcs/
 
 RL				= -lreadline
-RL_DIR		= /Users/$(USER)/.brew/opt/readline/
-RL_LIB		= -L $(RL_DIR)lib
-RL_INC		= -I $(RL_DIR)include
+RL_DIR			= /Users/$(USER)/.brew/opt/readline/
+RL_LIB			= -L $(RL_DIR)lib
+RL_INC			= -I $(RL_DIR)include
 
 SRCS 			= $(wildcard $(SRCS_DIR)*.c)
 OBJS 			= $(SRCS:.c=.o)
