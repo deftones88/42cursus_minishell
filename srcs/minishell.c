@@ -74,19 +74,19 @@ int		main(int argc, char **argv, char **envp)
 			for (int i = 0; tmp[i]; i++)
 			{
 				pid[i] = fork();
-				printf("==== beginning gid(%d - %d): %d(%d)\n", total, i, getpid(), getppid());
+				printf("==\t<< FORK >> gid(%d / %d): %d[%d]\n", i, total, getpid(), getppid());
 				pipe(fd + (i * 2));
 				if (pid[i] == 0)
 				{
 					if (i > 0)
 					{
-						printf("--\tin: fd[%d]\n", i * 2);
+						printf("\tin: fd[%d]\n", i * 2);
 						dup2(fd[i * 2], STDIN_FILENO);
 						close(fd[i * 2]);
 					}
 					if (i < total - 1)
 					{
-						printf("--\tout: fd[%d]\n", (i * 2) + 1);
+						printf("\tout: fd[%d]\n", (i * 2) + 1);
 						dup2(fd[(i * 2) + 1], STDOUT_FILENO);
 						close(fd[(i * 2) + 1]);
 					}
