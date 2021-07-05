@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   redirection.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/05 15:17:26 by ji-kim            #+#    #+#             */
+/*   Updated: 2021/07/05 15:17:52 by ji-kim           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 # include "minishell.h"
 
-extern int		g_ret;
+extern int	g_ret;
 
-void	heredoc_child(int fd[2], char *delimiter)
+void		heredoc_child(int fd[2], char *delimiter)
 {
 	char	*line;
 
@@ -24,7 +36,7 @@ void	heredoc_child(int fd[2], char *delimiter)
 	}
 }
 
-int		heredoc_eof(char *buf, char *delimiter)
+int			heredoc_eof(char *buf, char *delimiter)
 {
 	struct termios	t_before;
 	int		k;
@@ -40,7 +52,7 @@ int		heredoc_eof(char *buf, char *delimiter)
 	return (1);
 }
 
-int		heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int flag)
+int			heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int flag)
 {
 	char	buffer[100 + 1];
 	int		status;
@@ -64,7 +76,7 @@ int		heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int flag)
 	return (0);
 }
 
-int		heredoc_all(t_cmd *cmd, char *buf, int i)
+int			heredoc_all(t_cmd *cmd, char *buf, int i)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -79,7 +91,7 @@ int		heredoc_all(t_cmd *cmd, char *buf, int i)
 	return (heredoc_parent(cmd, buf + i, fd, i));
 }
 
-int		redin(t_cmd *cmd)
+int			redin(t_cmd *cmd)
 {
 	if (cmd->redin > -1)
 		close(cmd->redin);
@@ -96,7 +108,7 @@ int		redin(t_cmd *cmd)
 	return (0);
 }
 
-int		redout_append(t_cmd *cmd, int *this, int *other, int flag)
+int			redout_append(t_cmd *cmd, int *this, int *other, int flag)
 {
 	if (*this > -1)
 		close(*this);

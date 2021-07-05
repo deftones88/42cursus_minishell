@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   builtin.c                                          :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/05 15:14:16 by ji-kim            #+#    #+#             */
+/*   Updated: 2021/07/05 15:14:18 by ji-kim           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "builtin.h"
 
 extern int		g_ret;
@@ -44,19 +56,16 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 	{
 		if (cmd->delimit > 0)
 		{
-			printf("\t\tdelimit(in)\n");
 			dup2(cmd->delimit, STDIN_FILENO);
 			close(cmd->delimit);
 		}
 		if (cmd->redin > 0)
 		{
-			printf("\t\tredin(in)\n");
 			dup2(cmd->redin, STDIN_FILENO);
 			close(cmd->redin);
 		}
-		if (cmd->redout || cmd->append > 0)
+		if ((cmd->redout > 0 || cmd->append > 0))
 		{
-			printf("\t\tredout/append(out)\n");
 			dup2(cmd->redout + cmd->append + 1, STDOUT_FILENO);
 			close(cmd->redout + cmd->append + 1);
 		}
@@ -73,7 +82,6 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 		exit(g_ret);
 	}
 	wait(&status);
-	printf("out: %d(%d)\n", getpid(), getppid());
 	dup2(fd[0], STDIN_FILENO);
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[0]);

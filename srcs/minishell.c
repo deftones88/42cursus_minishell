@@ -1,6 +1,18 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   minishell.c                                        :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/05 15:16:37 by ji-kim            #+#    #+#             */
+/*   Updated: 2021/07/05 15:16:57 by ji-kim           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-void show_logo(void)
+void	show_logo(void)
 {
 	printf("\n");
 	printf("-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-=x=-\n");
@@ -57,7 +69,7 @@ int		main(int argc, char **argv, char **envp)
 		{
 			add_history(line);
 
-			char **tmp;
+			char	**tmp;
 			int		total;
 			pid_t	*pid;
 			int		*fd;
@@ -68,40 +80,42 @@ int		main(int argc, char **argv, char **envp)
 			while (tmp[total])
 				total++;
 			pid = malloc(sizeof(pid_t) * total);
-			fd = malloc(sizeof(int) * ((total - 1) * 2));
-			fd_backup[0] = dup(STDIN_FILENO);
-			fd_backup[1] = dup(STDOUT_FILENO);
-			for (int i = 0; tmp[i]; i++)
+			if (total > 1)
+			{
+				fd = malloc(sizeof(int) * ((total - 1) * 2));
+				fd_backup[0] = dup(STDIN_FILENO);
+				fd_backup[1] = dup(STDOUT_FILENO);
+			}
+			for (int i = 0; i < total; i++)
 			{
 				pid[i] = fork();
-				printf("==\t<< FORK >> gid(%d / %d): %d[%d]\n", i, total, getpid(), getppid());
-				pipe(fd + (i * 2));
+				if (total > 1)
+					pipe(fd + (i * 2));
 				if (pid[i] == 0)
 				{
-					if (i > 0)
+					if (total > 1)
 					{
-						printf("\tin: fd[%d]\n", i * 2);
-						dup2(fd[i * 2], STDIN_FILENO);
-						close(fd[i * 2]);
-					}
-					if (i < total - 1)
-					{
-						printf("\tout: fd[%d]\n", (i * 2) + 1);
-						dup2(fd[(i * 2) + 1], STDOUT_FILENO);
-						close(fd[(i * 2) + 1]);
-					}
-					else
-					{
-						printf("--\tout backup\n");
-						dup2(fd_backup[1], STDOUT_FILENO);
-						close(fd_backup[1]);
+						if (i > 0)
+						{
+							dup2(fd[i * 2], STDIN_FILENO);
+							close(fd[i * 2]);
+						}
+						if (i < total - 1)
+						{
+							dup2(fd[(i * 2) + 1], STDOUT_FILENO);
+							close(fd[(i * 2) + 1]);
+						}
+						else
+						{
+							dup2(fd_backup[1], STDOUT_FILENO);
+							close(fd_backup[1]);
+						}
 					}
 					cmd = init_cmd(tmp[i], envl);
 					if (!cmd || cmd->ret > 0)
 						continue ;
 					while (cmd)
 					{
-						printf("----\tGID: %d(%d)\n", getpid(), getppid());
 						if (!ft_strcmp(cmd->arg[0], "echo"))
 							builtin_echo(cmd);
 						else if (!ft_strcmp(cmd->arg[0], "cd"))
@@ -132,9 +146,12 @@ int		main(int argc, char **argv, char **envp)
 				{
 					int		status;
 					waitpid(pid[i], &status, 0);
-					if (i > 0)
-						close(fd[(i - 1) * 2]);
-					close(fd[(i * 2) + 1]);
+					if (total > 1)
+					{
+						if (i > 0)
+							close(fd[(i - 1) * 2]);
+						close(fd[(i * 2) + 1]);
+					}
 					if (WIFEXITED(status))
 					{
 						if (WEXITSTATUS(status) == 1)
@@ -148,9 +165,11 @@ int		main(int argc, char **argv, char **envp)
 					}
 				}
 			}
-			printf("--\tin backup\n");
-			dup2(fd_backup[0], STDIN_FILENO);
-			close(fd_backup[0]);
+			if (total > 1)
+			{
+				dup2(fd_backup[0], STDIN_FILENO);
+				close(fd_backup[0]);
+			}
 		}
 		else if (line == NULL)
 		{

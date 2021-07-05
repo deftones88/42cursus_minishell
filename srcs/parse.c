@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   parse.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/05 15:23:27 by ji-kim            #+#    #+#             */
+/*   Updated: 2021/07/05 15:24:02 by ji-kim           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "minishell.h"
 
-extern int		g_ret;
+extern int	g_ret;
 
-t_cmd	*free_next(t_cmd *cmd)
+t_cmd		*free_next(t_cmd *cmd)
 {
 	t_cmd	*next;
 
@@ -31,7 +43,7 @@ static char	*get_key(char *line, int *i)
 	return (ft_strdup(buf));
 }
 
-void	parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
+void		parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 {
 	int		i;
 	int		j;
@@ -78,11 +90,10 @@ void	parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 	buf[i] = 0;
 }
 
-void	parse_red(char *buf, t_cmd *cmd)
+void		parse_red(char *buf, t_cmd *cmd)
 {
 	int		i;
 	char	quot;
-	// char	**tmp;
 
 	quot = 0;
 	i = -1;
@@ -111,81 +122,6 @@ void	parse_red(char *buf, t_cmd *cmd)
 				{
 					if (heredoc_all(cmd, buf, i))
 						continue ;
-					/*
-					int		fd[2];
-					pid_t	pid;
-
-					if (pipe(fd) == -1)
-					err_msg("pipe failed\n");
-					pid = fork();
-					if (pid < 0)
-					err_msg("fork failed\n");
-					if (pid == 0)
-					{
-						char	*line;
-
-						close(fd[0]);
-						while (1)
-						{
-							line = readline("> ");
-							if (!line)
-							{
-								write(fd[1], "\0", 1);
-								exit(1);
-							}
-							if (!ft_strcmp(line, delimiter))
-							{
-								free(line);
-								write(fd[1], "\0", 1);
-								exit(EXIT_SUCCESS);
-							}
-							write(fd[1], line, (int)ft_strlen(line));
-							write(fd[1], "\n", 1);
-							free(line);
-						}
-						close(fd[1]);
-					}
-					else
-					{
-						char	buffer[100 + 1];
-						int		status;
-						int		ret;
-						struct termios	t_before;
-
-						close(fd[1]);
-						wait(&status);
-						ret = WEXITSTATUS(status);
-						if (ret == 1)
-						{
-							int		k;
-
-							if (i != 0)
-							cmd->delimit = fd[0];
-							k = -1;
-							while (buf[i] == '<' || buf[i] == ' ')
-							buf[i++] = ' ';
-							while (++k < (int)ft_strlen(tmp[0]))
-							buf[i + k] = ' ';
-							tcgetattr(STDIN_FILENO, &t_before);
-							set_termcap(2);
-							tcsetattr(STDIN_FILENO, TCSANOW, &t_before);
-							continue ;
-						}
-						else
-						{
-							if (i != 0)
-							cmd->delimit = fd[0];
-							else
-							{
-								while (read(fd[0], buffer, 100))
-								{
-									printf("%s", buffer);
-								}
-								close(fd[0]);
-								// seg fault?
-							}
-						}
-					}*/
 				}
 				else
 				{
@@ -199,42 +135,11 @@ void	parse_red(char *buf, t_cmd *cmd)
 				{
 					if (redout_append(cmd, &cmd->append, &cmd->redout, O_APPEND))
 						continue ;
-						/*
-					if (cmd->append > -1)
-						close(cmd->append);
-					cmd->append = open(tmp[0], O_CREAT | O_APPEND | O_WRONLY, 0644);
-					if (cmd->append < 0)
-					{
-						g_ret = cmd->append;
-						// cmd->ret = 1;
-						continue ;
-					}
-					if (cmd->redout > -1)
-					{
-						close(cmd->redout);
-						cmd->redout = -1;
-					}
-					*/
 				}
 				else
 				{
 					if (redout_append(cmd, &cmd->redout, &cmd->append, O_TRUNC))
 						continue ;
-					/*
-					if (cmd->redout > -1)
-						close(cmd->redout);
-					cmd->redout = open(tmp[0], O_CREAT | O_TRUNC | O_WRONLY, 0644);
-					if (cmd->redout < 0)
-					{
-						g_ret = cmd->redout;
-						// cmd->ret = 1;
-						continue ;
-					}
-					if (cmd->append > -1)
-					{
-						close(cmd->append);
-						cmd->append = -1;
-					}*/
 				}
 			}
 			if (buf[i + 1] == buf[i])
@@ -262,7 +167,7 @@ void	parse_red(char *buf, t_cmd *cmd)
 	}
 }
 
-void	parse_tmp(char *line, t_cmd *cmd, t_list *envl)
+void		parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 {
 	char		buf[10000];
 

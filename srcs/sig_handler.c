@@ -1,8 +1,20 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   sig_handler.c                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/05 15:15:07 by ji-kim            #+#    #+#             */
+/*   Updated: 2021/07/05 15:16:08 by ji-kim           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "sig_handler.h"
 
-extern int		g_ret;
+extern int	g_ret;
 
-void sig_handler(int sig)
+void		sig_handler(int sig)
 {
 	if (sig)
 	{
@@ -14,7 +26,7 @@ void sig_handler(int sig)
 	g_ret = 1;
 }
 
-void set_termios(int i)
+void		set_termios(int i)
 {
 	struct termios	t_new;
 
@@ -30,7 +42,7 @@ void set_termios(int i)
 	tcsetattr(0, TCSANOW, &t_new);
 }
 
-void	get_cursor_position(int *col, int *rows)
+void		get_cursor_position(int *col, int *rows)
 {
 	int		a;
 	int		i;
@@ -55,19 +67,19 @@ void	get_cursor_position(int *col, int *rows)
 	}
 }
 
-void	set_line(int col, int row, char *cm, char *ce)
+void		set_line(int col, int row, char *cm, char *ce)
 {
 	tputs(tgoto(cm, col, row - 1), 1, ft_putchar);
 	tputs(ce, 1, ft_putchar);
 }
 
-int		ft_putchar(int c)
+int			ft_putchar(int c)
 {
 	write(1, &c, 1);
 	return (0);
 }
 
-void set_termcap(int flag)
+void		set_termcap(int flag)
 {
 	char	*cm;
 	char	*ce;
