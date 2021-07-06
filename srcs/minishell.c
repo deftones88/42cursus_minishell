@@ -72,58 +72,65 @@ int		main(int argc, char **argv, char **envp)
 			char	**tmp;
 			int		total;
 			pid_t	*pid;
-			int		*fd;
+			int		fd[2];
 			int		fd_backup[2];
+			int		fdin;
 
 			tmp = ft_split(line, "|");
 			total = 0;
 			while (tmp[total])
 				total++;
-			printf("total: %d\n", total);
+			if (total > 1)
+				printf("total: %d\n", total);
 			pid = malloc(sizeof(pid_t) * total);
 			if (total > 1)
 			{
-				fd = malloc(sizeof(int) * ((total - 1) * 2));
 				fd_backup[0] = dup(STDIN_FILENO);
 				fd_backup[1] = dup(STDOUT_FILENO);
+				fdin = -1;
 			}
 			for (int i = 0; i < total; i++)
 			{
 				pid[i] = fork();
-				printf("\e[31m====\t< FORK(%d) > : %d(%d)\t====\n\e[0m", i, getpid(), getppid());
 				if (total > 1)
-					pipe(fd + (i * 2));
+					printf("\e[31m====\t< FORK(%d) > : %d(%d)\t====\n\e[0m", i, getpid(), getppid());
+				if (total > 1 && i < total - 1)
+				{
+					pipe(fd);
+					printf("\t\t\t\e[34m-- FD[0]: %d, FD[1]: %d\e[0m\n", fd[0], fd[1]);
+				}
 				if (pid[i] == 0)
 				{
 					if (total > 1)
 					{
-						if (i > 0)
+						if (fdin > -1)
 						{
-							printf("\e[34m-- IN fd[%d]\e[0m\n", i * 2);
-							dup2(fd[i * 2], STDIN_FILENO);
-							close(fd[i * 2]);
+							printf("\e[34m-- IN fd[%d] - child\e[0m\n", fdin);
+							dup2(fdin, STDIN_FILENO);
+							close(fdin);
 						}
-						printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", (i * 2));
-						close(fd[(i * 2)]);
+						printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", fd[0]);
+						close(fd[0]);
 						if (i < total - 1)
 						{
-							printf("\e[34m-- OUT fd[%d]\e[0m\n", (i * 2) + 1);
-							dup2(fd[(i * 2) + 1], STDOUT_FILENO);
-							close(fd[(i * 2) + 1]);
+							printf("\e[34m-- OUT fd[%d]\e[0m\n", fd[1]);
+							dup2(fd[1], STDOUT_FILENO);
+							close(fd[1]);
 						}
 						else
 						{
-							printf("\e[34m-- OUT backup[%d]\e[0m\n", i);
+							printf("\e[34m-- OUT backup\e[0m\n");
 							dup2(fd_backup[1], STDOUT_FILENO);
 							close(fd_backup[1]);
 						}
 					}
-					cmd = init_cmd(tmp[i], envl, total);
+					cmd = init_cmd(tmp[i], envl);
 					if (!cmd || cmd->ret > 0)
 						continue ;
 					while (cmd)
 					{
-						printf("\t -. /child/ :\t%d(%d)\n", getpid(), getppid());
+						if (total > 1)
+							printf("\t -. /child/ :\t%d(%d)\n", getpid(), getppid());
 						if (!ft_strcmp(cmd->arg[0], "echo"))
 							builtin_echo(cmd);
 						else if (!ft_strcmp(cmd->arg[0], "cd"))
@@ -145,7 +152,7 @@ int		main(int argc, char **argv, char **envp)
 							exit(1);
 						}
 						else
-							ft_exec(cmd, envl);
+							ft_exec(cmd, envl, total);
 						cmd = free_next(cmd);
 					}
 					exit(EXIT_SUCCESS);
@@ -154,16 +161,21 @@ int		main(int argc, char **argv, char **envp)
 				{
 					int		status;
 					waitpid(pid[i], &status, 0);
-					printf("\t -. /parent/ :\t%d(%d)\n", getpid(), getppid());
+					if (total > 1)
+						printf("\t -. /parent/ :\t%d(%d)\n", getpid(), getppid());
 					if (total > 1)
 					{
-						if (i > 0)
+						if (fdin > -1)
 						{
-							close(fd[(i * 2) - 1]);
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", (i * 2) - 1);
+							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fdin);
+							close(fdin);
 						}
-						close(fd[(i * 2)]);
-						printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", (i * 2));
+						fdin = fd[0];
+						if (i < total - 1)
+						{
+							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[1]);
+							close(fd[1]);
+						}
 					}
 					if (WIFEXITED(status))
 					{

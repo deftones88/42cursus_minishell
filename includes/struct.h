@@ -24,6 +24,8 @@ typedef struct		s_cmd
 	int				delimit;			// <<
 	char			**parse;			// tmp from parse_tmp
 	int				ret;					// skip executing cmd
+	int				fdin;
+	int				fdout;
 	struct s_cmd	*next;
 }					t_cmd;
 

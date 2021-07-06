@@ -28,7 +28,7 @@ void	add_cmd(t_cmd **first, t_cmd *new)
 	new->next = 0;
 }
 
-t_cmd	*init_cmd(char *line, t_list *envl, int total)
+t_cmd	*init_cmd(char *line, t_list *envl)
 {
 	int		i[2];
 	char	quot;
@@ -52,7 +52,6 @@ t_cmd	*init_cmd(char *line, t_list *envl, int total)
 			flag = line[i[0]];
 			line[i[0]] = 0;
 			cur = (t_cmd*)ft_calloc(1, sizeof(t_cmd));
-			cur->flag = total;
 			parse_tmp(line + i[1], cur, envl);
 			add_cmd(&head, cur);
 			i[1]= i[0] + 1;
@@ -67,6 +66,5 @@ t_cmd	*init_cmd(char *line, t_list *envl, int total)
 		printf("minishell: '%c': syntax error\n", quot);
 		return (0);
 	}
-	printf("\e[32m-- init cmd\n\e[0m");
 	return (head);
 }
