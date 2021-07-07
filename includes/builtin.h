@@ -22,6 +22,6 @@ void	builtin_echo(t_cmd *cmd);
 void	builtin_export(t_cmd *cmd, t_list **envl);
 void	builtin_unset(t_cmd *cmd, t_list  **envl);
 void	builtin_env(t_list *envl, int flag);
-void	builtin_cd(t_cmd *cmd);
+void	builtin_cd(char *dir, t_list **envl);
 
 #endif

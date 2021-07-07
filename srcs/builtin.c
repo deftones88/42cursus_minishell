@@ -194,14 +194,15 @@ void    builtin_env(t_list *envl, int flag)
 	g_ret = 0;
 }
 
-void    builtin_cd(t_cmd *cmd)
+void    builtin_cd(char *dir, t_list **envl)
 {
 	int		status;
 
-	status = chdir(cmd->arg[1]);
+	ft_lstadd_last(envl, ft_lstnew("OLDPWD", getcwd(NULL, 0)));
+	status = chdir(dir);
 	if (status < 0)
 	{
-		printf("minishell: %s: %s: %s\n", cmd->arg[0], cmd->arg[1], strerror(errno));
+		printf("minishell: cd: %s: %s\n", dir, strerror(errno));
 		g_ret = 1;
 	}
 	else

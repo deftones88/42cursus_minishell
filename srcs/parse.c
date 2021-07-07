@@ -116,14 +116,14 @@ void		parse_red(char *buf, t_cmd *cmd)
 				g_ret = 258;
 				return ;
 			}
-			if (buf[i] == '<')
+			if (buf[i] == '<' && buf[i + 1] != '>')
 			{
-				if (buf[i + 1] == '<')
+				if (buf[i + 1] == '<' && (buf[i + 2] != '<' && buf[i + 2] != '>'))
 				{
 					if (heredoc_all(cmd, buf, i + 2))
 						continue ;
 				}
-				else
+				else if (buf[i + 1] != '<')
 				{
 					if (redin(cmd))
 						return ;
@@ -155,7 +155,7 @@ void		parse_red(char *buf, t_cmd *cmd)
 					quot = 0;
 				if (!quot && (buf[i] == '<' || buf[i] == '>'))
 				{
-					printf("parse error\n");
+					printf("minishell: syntax error near unexpected token '%c'\n", buf[i]);
 					cmd->ret = 1;
 					g_ret = 1;
 				}
