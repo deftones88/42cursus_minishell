@@ -102,6 +102,9 @@ int		main(int argc, char **argv, char **envp)
 					printf("\e[31m====\t< FORK(%d) > : %d (%4d)\t====\n\e[0m", i, getpid(), getppid());
 				if (pid[i] == 0)
 				{
+					cmd = init_cmd(tmp[i], envl);
+					if (!cmd || cmd->ret > 0)
+						continue ;
 					if (total > 1)
 					{
 						if (PRINT)
@@ -117,7 +120,7 @@ int		main(int argc, char **argv, char **envp)
 						else
 						{
 							if (PRINT)
-								printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", pipe_fdout[0]);
+								printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n",pipe_fdout[0]);
 							close(pipe_fdout[0]);
 						}
 						if (i < total - 1)
@@ -135,9 +138,6 @@ int		main(int argc, char **argv, char **envp)
 							close(fd_backup[1]);
 						}
 					}
-					cmd = init_cmd(tmp[i], envl);
-					if (!cmd || cmd->ret > 0)
-						continue ;
 					while (cmd)
 					{
 						if (total > 1 && PRINT)

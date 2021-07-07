@@ -175,8 +175,6 @@ void		parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	cmd->redout = -1;
 	cmd->append = -1;
 	cmd->delimit = -1;
-	cmd->fdin = -1;
-	cmd->fdout = -1;
 	cmd->ret = 0;
 	parse_var(buf, line, envl, cmd);
 	parse_red(buf, cmd);

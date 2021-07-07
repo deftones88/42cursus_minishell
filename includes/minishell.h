@@ -36,8 +36,9 @@
 #  define ARG_MAX 2048
 # endif
 
-# define PRINT 0
-
+# ifndef PRINT
+#  define PRINT 0
+# endif
 
 /*
 ** init.c
