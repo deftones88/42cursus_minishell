@@ -51,7 +51,7 @@ void	ft_exec(t_cmd *cmd, t_list *envl, int total)
 	merge_path(cmd, find_value(envl, "PATH"));
 	pid = fork();
 	if (total > 1)
-		printf("\e[33m----\t< exe > fork :\t%d(%d)\t----\n\e[0m", getpid(), getppid());
+		printf("\e[33m----\t< exe > fork :\t%d (%4d)\t----\n\e[0m", getpid(), getppid());
 	if (pid < 0)
 		err_msg("fork failed\n");
 	if (pid == 0)
@@ -66,13 +66,13 @@ void	ft_exec(t_cmd *cmd, t_list *envl, int total)
 			dup2(cmd->redin, STDIN_FILENO);
 			close(cmd->redin);
 		}
-		if ((cmd->redout > 0 || cmd->append > 0) && (cmd->flag < 2))
+		if ((cmd->redout > 0 || cmd->append > 0))
 		{
 			dup2(cmd->redout + cmd->append + 1, STDOUT_FILENO);
 			close(cmd->redout + cmd->append + 1);
 		}
 		if (total > 1)
-			printf("\t -. exe /child/ :\t%d(%d)\n", getpid(), getppid());
+			printf("\t -. exe /child/ :\t%d (%4d)\n", getpid(), getppid());
 		if (cmd->cmd && execve(cmd->cmd, cmd->arg, envp) == -1)
 		{
 			g_ret = errno;
@@ -85,9 +85,11 @@ void	ft_exec(t_cmd *cmd, t_list *envl, int total)
 		}
 		exit(g_ret);
 	}
+	if (total > 1)
+		printf("\t< exe >\n\t\t>> waiting for child to exit\n");
 	wait(&status);
 	if (total > 1)
-		printf("\t -. exe /paren/t :\t%d(%d)\n", getpid(), getppid());
+		printf("\t -. exe /parent/ :\t%d (%4d)\n", getpid(), getppid());
 	dup2(fd[0], STDIN_FILENO);
 	dup2(fd[1], STDOUT_FILENO);
 	close(fd[0]);

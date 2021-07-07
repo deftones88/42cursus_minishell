@@ -72,9 +72,9 @@ int		main(int argc, char **argv, char **envp)
 			char	**tmp;
 			int		total;
 			pid_t	*pid;
-			int		fd[2];
+			int		pipe_fdin[2];
+			int		pipe_fdout[2];
 			int		fd_backup[2];
-			int		fdin;
 
 			tmp = ft_split(line, "|");
 			total = 0;
@@ -85,41 +85,47 @@ int		main(int argc, char **argv, char **envp)
 			pid = malloc(sizeof(pid_t) * total);
 			if (total > 1)
 			{
+				pipe(pipe_fdin);
+				pipe(pipe_fdout);
 				fd_backup[0] = dup(STDIN_FILENO);
 				fd_backup[1] = dup(STDOUT_FILENO);
-				fdin = -1;
 			}
 			for (int i = 0; i < total; i++)
 			{
-				pid[i] = fork();
-				if (total > 1)
-					printf("\e[31m====\t< FORK(%d) > : %d(%d)\t====\n\e[0m", i, getpid(), getppid());
 				if (total > 1 && i < total - 1)
 				{
-					pipe(fd);
-					printf("\t\t\t\e[34m-- FD[0]: %d, FD[1]: %d\e[0m\n", fd[0], fd[1]);
+					printf("\t\t\t\e[34m--  in[READ]: %d,  in[WRITE]: %d\e[0m\n", pipe_fdin[0], pipe_fdin[1]);
+					printf("\t\t\t\e[34m-- out[READ]: %d, out[WRITE]: %d\e[0m\n", pipe_fdout[0], pipe_fdout[1]);
 				}
+				pid[i] = fork();
+				if (total > 1)
+					printf("\e[31m====\t< FORK(%d) > : %d (%4d)\t====\n\e[0m", i, getpid(), getppid());
 				if (pid[i] == 0)
 				{
 					if (total > 1)
 					{
-						if (fdin > -1)
+						printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", pipe_fdin[1]);
+						close(pipe_fdin[1]);
+						if (i > 0)
 						{
-							printf("\e[34m-- IN fd[%d] - child\e[0m\n", fdin);
-							dup2(fdin, STDIN_FILENO);
-							close(fdin);
-						}
-						printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", fd[0]);
-						close(fd[0]);
-						if (i < total - 1)
-						{
-							printf("\e[34m-- OUT fd[%d]\e[0m\n", fd[1]);
-							dup2(fd[1], STDOUT_FILENO);
-							close(fd[1]);
+							printf("\e[34m-- IN    fd[%d] - child\e[0m\n", pipe_fdin[0]);
+							dup2(pipe_fdin[0], STDIN_FILENO);
+							close(pipe_fdin[0]);
 						}
 						else
 						{
-							printf("\e[34m-- OUT backup\e[0m\n");
+							printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", pipe_fdout[0]);
+							close(pipe_fdout[0]);
+						}
+						if (i < total - 1)
+						{
+							printf("\e[34m-- OUT   fd[%d] - child\e[0m\n", pipe_fdout[1]);
+							dup2(pipe_fdout[1], STDOUT_FILENO);
+							close(pipe_fdout[1]);
+						}
+						else
+						{
+							printf("\e[34m-- OUT   backup\e[0m\n");
 							dup2(fd_backup[1], STDOUT_FILENO);
 							close(fd_backup[1]);
 						}
@@ -130,7 +136,7 @@ int		main(int argc, char **argv, char **envp)
 					while (cmd)
 					{
 						if (total > 1)
-							printf("\t -. /child/ :\t%d(%d)\n", getpid(), getppid());
+							printf("\t -.     /child/ :\t%d (%4d)\n", getpid(), getppid());
 						if (!ft_strcmp(cmd->arg[0], "echo"))
 							builtin_echo(cmd);
 						else if (!ft_strcmp(cmd->arg[0], "cd"))
@@ -155,6 +161,8 @@ int		main(int argc, char **argv, char **envp)
 							ft_exec(cmd, envl, total);
 						cmd = free_next(cmd);
 					}
+					if (total > 1)
+						printf("\t< cmd >\n\t\t>> child exit - (%d)\n", i);
 					exit(EXIT_SUCCESS);
 				}
 				else
@@ -162,19 +170,25 @@ int		main(int argc, char **argv, char **envp)
 					int		status;
 					waitpid(pid[i], &status, 0);
 					if (total > 1)
-						printf("\t -. /parent/ :\t%d(%d)\n", getpid(), getppid());
+						printf("\t -.     /parent/ :\t%d (%4d)\n", getpid(), getppid());
 					if (total > 1)
 					{
-						if (fdin > -1)
-						{
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fdin);
-							close(fdin);
-						}
-						fdin = fd[0];
 						if (i < total - 1)
 						{
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[1]);
-							close(fd[1]);
+							char	buf;
+							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdout[1]);
+							close(pipe_fdout[1]);
+							while (read(pipe_fdout[0], &buf, 1) > 0)
+								write(pipe_fdin[1], &buf, 1);
+							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdout[0]);
+							close(pipe_fdout[0]);
+						}
+						else
+						{
+							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdin[0]);
+							close(pipe_fdin[0]);
+							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdin[1]);
+							close(pipe_fdin[1]);
 						}
 					}
 					if (WIFEXITED(status))
