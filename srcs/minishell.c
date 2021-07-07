@@ -80,7 +80,7 @@ int		main(int argc, char **argv, char **envp)
 			total = 0;
 			while (tmp[total])
 				total++;
-			if (total > 1)
+			if (total > 1 && PRINT)
 				printf("total: %d\n", total);
 			pid = malloc(sizeof(pid_t) * total);
 			if (total > 1)
@@ -92,40 +92,45 @@ int		main(int argc, char **argv, char **envp)
 			}
 			for (int i = 0; i < total; i++)
 			{
-				if (total > 1 && i < total - 1)
+				if (total > 1 && i < total - 1 && PRINT)
 				{
 					printf("\t\t\t\e[34m--  in[READ]: %d,  in[WRITE]: %d\e[0m\n", pipe_fdin[0], pipe_fdin[1]);
 					printf("\t\t\t\e[34m-- out[READ]: %d, out[WRITE]: %d\e[0m\n", pipe_fdout[0], pipe_fdout[1]);
 				}
 				pid[i] = fork();
-				if (total > 1)
+				if (total > 1 && PRINT)
 					printf("\e[31m====\t< FORK(%d) > : %d (%4d)\t====\n\e[0m", i, getpid(), getppid());
 				if (pid[i] == 0)
 				{
 					if (total > 1)
 					{
-						printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", pipe_fdin[1]);
+						if (PRINT)
+							printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", pipe_fdin[1]);
 						close(pipe_fdin[1]);
 						if (i > 0)
 						{
-							printf("\e[34m-- IN    fd[%d] - child\e[0m\n", pipe_fdin[0]);
+							if (PRINT)
+								printf("\e[34m-- IN    fd[%d] - child\e[0m\n", pipe_fdin[0]);
 							dup2(pipe_fdin[0], STDIN_FILENO);
 							close(pipe_fdin[0]);
 						}
 						else
 						{
-							printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", pipe_fdout[0]);
+							if (PRINT)
+								printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", pipe_fdout[0]);
 							close(pipe_fdout[0]);
 						}
 						if (i < total - 1)
 						{
-							printf("\e[34m-- OUT   fd[%d] - child\e[0m\n", pipe_fdout[1]);
+							if (PRINT)
+								printf("\e[34m-- OUT   fd[%d] - child\e[0m\n", pipe_fdout[1]);
 							dup2(pipe_fdout[1], STDOUT_FILENO);
 							close(pipe_fdout[1]);
 						}
 						else
 						{
-							printf("\e[34m-- OUT   backup\e[0m\n");
+							if (PRINT)
+								printf("\e[34m-- OUT   backup\e[0m\n");
 							dup2(fd_backup[1], STDOUT_FILENO);
 							close(fd_backup[1]);
 						}
@@ -135,8 +140,8 @@ int		main(int argc, char **argv, char **envp)
 						continue ;
 					while (cmd)
 					{
-						if (total > 1)
-							printf("\t -.     /child/ :\t%d (%4d)\n", getpid(), getppid());
+						if (total > 1 && PRINT)
+							printf("\t -. %-6s /child/ :\t%d (%4d)\n", cmd->arg[0], getpid(), getppid());
 						if (!ft_strcmp(cmd->arg[0], "echo"))
 							builtin_echo(cmd);
 						else if (!ft_strcmp(cmd->arg[0], "cd"))
@@ -161,34 +166,38 @@ int		main(int argc, char **argv, char **envp)
 							ft_exec(cmd, envl, total);
 						cmd = free_next(cmd);
 					}
-					if (total > 1)
-						printf("\t< cmd >\n\t\t>> child exit - (%d)\n", i);
+					if (total > 1 && PRINT)
+						printf("\t< cmd >\t\t>> child exit - (%d)\n", i);
 					exit(EXIT_SUCCESS);
 				}
 				else
 				{
 					int		status;
 					waitpid(pid[i], &status, 0);
-					if (total > 1)
-						printf("\t -.     /parent/ :\t%d (%4d)\n", getpid(), getppid());
+					if (total > 1 && PRINT)
+						printf("\t -.        /parent/ :\t%d (%4d)\n", getpid(), getppid());
 					if (total > 1)
 					{
 						if (i < total - 1)
 						{
-							char	buf;
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdout[1]);
+							if (PRINT)
+								printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdout[1]);
 							close(pipe_fdout[1]);
+							char	buf;
 							while (read(pipe_fdout[0], &buf, 1) > 0)
 								write(pipe_fdin[1], &buf, 1);
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdout[0]);
-							close(pipe_fdout[0]);
+							if (PRINT)
+								printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdin[1]);
+							close(pipe_fdin[1]);
 						}
 						else
 						{
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdin[0]);
+							if (PRINT)
+								printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdin[0]);
 							close(pipe_fdin[0]);
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdin[1]);
-							close(pipe_fdin[1]);
+							if (PRINT)
+								printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_fdout[0]);
+							close(pipe_fdout[0]);
 						}
 					}
 					if (WIFEXITED(status))
@@ -207,7 +216,8 @@ int		main(int argc, char **argv, char **envp)
 			if (total > 1)
 			{
 				dup2(fd_backup[0], STDIN_FILENO);
-				printf("\e[34m-- IN backup\e[0m\n");
+				if (PRINT)
+					printf("\e[34m-- IN backup\e[0m\n");
 				close(fd_backup[0]);
 			}
 		}
