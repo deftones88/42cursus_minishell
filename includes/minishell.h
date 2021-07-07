@@ -37,7 +37,7 @@
 # endif
 
 # ifndef PRINT
-#  define PRINT 0
+#  define PRINT 1
 # endif
 
 /*

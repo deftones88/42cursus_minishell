@@ -120,7 +120,7 @@ void		parse_red(char *buf, t_cmd *cmd)
 			{
 				if (buf[i + 1] == '<')
 				{
-					if (heredoc_all(cmd, buf, i))
+					if (heredoc_all(cmd, buf, i + 2))
 						continue ;
 				}
 				else

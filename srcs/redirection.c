@@ -52,22 +52,31 @@ int			heredoc_eof(char *buf, char *delimiter)
 	return (1);
 }
 
-int			heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int flag)
+int			heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int idx)
 {
 	char	buffer[100 + 1];
 	int		status;
 	int		ret;
+	int		flag;
+	int		i;
 
 	close(fd[1]);
 	wait(&status);
 	ret = WEXITSTATUS(status);
-	if (flag)
-		cmd->delimit = fd[0];
+	flag = -1;
+	i = 0;
+	while (i < idx && (buf[i] == ' ' || buf[i] == '<'))
+		i++;
+	if (i != idx)
+		flag = 1;
 	else
 		cmd->ret = 1;
+	while (buf[i++])
+		if (buf[i] == '<' && buf[i + 1] == '<')
+			cmd->delimit = fd[0];
 	if (ret == 1)
 		return (heredoc_eof(buf, cmd->parse[0]));
-	else if (cmd->delimit < 0)
+	else if (flag < 0 && cmd->delimit < 0)
 	{
 		while (read(fd[0], buffer, 100))
 			printf("%s", buffer);
@@ -88,7 +97,7 @@ int			heredoc_all(t_cmd *cmd, char *buf, int i)
 		err_msg("fork failed\n");
 	if (pid == 0)
 		heredoc_child(fd, cmd->parse[0]);
-	return (heredoc_parent(cmd, buf + i, fd, i));
+	return (heredoc_parent(cmd, buf, fd, i));
 }
 
 int			redin(t_cmd *cmd)
