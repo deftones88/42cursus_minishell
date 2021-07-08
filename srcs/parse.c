@@ -121,12 +121,18 @@ void		parse_red(char *buf, t_cmd *cmd)
 				if (buf[i + 1] == '<' && (buf[i + 2] != '<' && buf[i + 2] != '>'))
 				{
 					if (heredoc_all(cmd, buf, i + 2))
+					{
+						printf("heredoc_all continue\n");
 						continue ;
+					}
 				}
 				else if (buf[i + 1] != '<')
 				{
 					if (redin(cmd))
+					{
+						printf("redin continue\n");
 						return ;
+					}
 				}
 			}
 			else
@@ -134,12 +140,20 @@ void		parse_red(char *buf, t_cmd *cmd)
 				if (buf[i + 1] == '>')
 				{
 					if (redout_append(cmd, &cmd->append, &cmd->redout, O_APPEND))
+					{
+						printf("redout_append continue\n");
 						continue ;
+					}
+
 				}
 				else
 				{
 					if (redout_append(cmd, &cmd->redout, &cmd->append, O_TRUNC))
+					{
+						printf("redout_append continue\n");
 						continue ;
+					}
+
 				}
 			}
 			if (buf[i + 1] == buf[i])
@@ -155,9 +169,13 @@ void		parse_red(char *buf, t_cmd *cmd)
 					quot = 0;
 				if (!quot && (buf[i] == '<' || buf[i] == '>'))
 				{
-					printf("minishell: syntax error near unexpected token '%c'\n", buf[i]);
+					if (!(buf[i] == '>' && buf[i + 1] == '<') && (buf[i + 1] == '<' || buf[i + 1] == '>'))
+						printf("minishell: syntax error near unexpected token '%c%c'\n", buf[i], buf[i + 1]);
+					else
+						printf("minishell: syntax error near unexpected token '%c'\n", buf[i]);
+					g_ret = 258;
 					cmd->ret = 1;
-					g_ret = 1;
+					exit(CMD_RED);
 				}
 				buf[i++] = ' ';
 			}

@@ -85,8 +85,8 @@ void	ft_exec(t_cmd *cmd, t_list *envl, int total)
 		}
 		exit(g_ret);
 	}
-	// if (total > 1 && PRINT)
-		// printf("\t< exe >\t\t>> waiting for child to exit\n");
+	if (total > 1 && PRINT)
+		printf("\t< exe > \t>> \twaiting\n");
 	wait(&status);
 	if (total > 1 && PRINT)
 		printf("\t -. exe    /parent/ :\t%d (%4d)\n", getpid(), getppid());

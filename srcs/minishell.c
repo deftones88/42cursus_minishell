@@ -146,9 +146,8 @@ int		main(int argc, char **argv, char **envp)
 							builtin_echo(cmd);
 						else if (!ft_strcmp(cmd->arg[0], "cd"))
 						{
-							// builtin_cd(cmd, &envl);
 							write(pipe_c2p[1], cmd->arg[1], (int)ft_strlen(cmd->arg[1]));
-							exit(2);
+							exit(CMD_CD);
 						}
 						else if (!ft_strcmp(cmd->arg[0], "pwd"))
 						{
@@ -165,10 +164,12 @@ int		main(int argc, char **argv, char **envp)
 						{
 							tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
 							cmd = free_next(cmd);
-							exit(1);
+							exit(CMD_EXIT);
 						}
 						else
 							ft_exec(cmd, envl, total);
+						if (PRINT)
+							printf("\t< cmd >\t\t>> \e[1m%s\e[0m ends\n", cmd->arg[0]);
 						cmd = free_next(cmd);
 					}
 					if (total > 1 && PRINT)
@@ -183,13 +184,13 @@ int		main(int argc, char **argv, char **envp)
 						printf("\t -.        /parent/ :\t%d (%4d)\n", getpid(), getppid());
 					if (WIFEXITED(status))
 					{
-						if (WEXITSTATUS(status) == 1)
+						if (WEXITSTATUS(status) == CMD_EXIT)
 						{
 							// wait(0);
 							printf("exit\n");
 							exit(EXIT_SUCCESS);
 						}
-						else if (WEXITSTATUS(status) == 2)
+						else if (WEXITSTATUS(status) == CMD_CD)
 						{
 							char dir[100];
 							read(pipe_c2p[0], &dir, 99);

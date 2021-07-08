@@ -40,6 +40,13 @@
 #  define PRINT 1
 # endif
 
+enum	e_CMD_exit_code
+{
+	CMD_EXIT = 1,
+	CMD_CD,
+	CMD_RED
+};
+
 /*
 ** init.c
 */
