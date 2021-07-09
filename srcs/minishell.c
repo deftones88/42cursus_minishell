@@ -98,6 +98,8 @@ int		main(int argc, char **argv, char **envp)
 					printf("\t\t\t\e[34m-- out[READ]: %d, out[WRITE]: %d\e[0m\n", pipe_c2p[0], pipe_c2p[1]);
 				}
 				pid[i] = fork();
+				if (pid[i] < 0)
+					err_msg("fork failed\n");
 				if (total > 1 && PRINT)
 					printf("\e[31m====\t< FORK(%d) > : %d (%4d)\t====\n\e[0m", i, getpid(), getppid());
 				if (pid[i] == 0)
