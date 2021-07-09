@@ -6,7 +6,7 @@
 /*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:16:37 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/05 19:14:33 by ji-kim           ###   ########.fr       */
+/*   Updated: 2021/07/09 17:30:16 by ji-kim           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,8 +72,8 @@ int		main(int argc, char **argv, char **envp)
 			char	**tmp;
 			int		total;
 			pid_t	*pid;
-			int		pipe_p2c[2];
-			int		pipe_c2p[2];
+			int		fd[2];
+			int		prev_fd;
 			int		fd_backup[2];
 
 			tmp = ft_split(line, "|");
@@ -83,52 +83,43 @@ int		main(int argc, char **argv, char **envp)
 			if (total > 1 && PRINT)
 				printf("total: %d\n", total);
 			pid = malloc(sizeof(pid_t) * total);
-			pipe(pipe_p2c);
-			pipe(pipe_c2p);
 			if (total > 1)
 			{
 				fd_backup[0] = dup(STDIN_FILENO);
 				fd_backup[1] = dup(STDOUT_FILENO);
 			}
-			for (int i = 0; i < total; i++) //child
+			for (int i = 0; i < total; i++)
 			{
+				/* child */
+				pipe(fd);
 				if (total > 1 && i < total - 1 && PRINT)
-				{
-					printf("\t\t\t\e[34m--  in[READ]: %d,  in[WRITE]: %d\e[0m\n", pipe_p2c[0], pipe_p2c[1]);
-					printf("\t\t\t\e[34m-- out[READ]: %d, out[WRITE]: %d\e[0m\n", pipe_c2p[0], pipe_c2p[1]);
-				}
+					printf("\t\t\t\e[34m--  fd[READ]: %d,  fd[WRITE]: %d\e[0m\n", fd[0], fd[1]);
 				pid[i] = fork();
 				if (total > 1 && PRINT)
 					printf("\e[31m====\t< FORK(%d) > : %d (%4d)\t====\n\e[0m", i, getpid(), getppid());
+				if (pid[i] < 0)
+					err_msg("fork failed\n");
 				if (pid[i] == 0)
 				{
+					close(fd[0]);
 					cmd = init_cmd(tmp[i], envl);
 					if (!cmd || cmd->ret > 0)
 						continue ;
 					if (total > 1)
 					{
-						if (PRINT)
-							printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n", pipe_p2c[1]);
-						close(pipe_p2c[1]);
 						if (i > 0)
 						{
 							if (PRINT)
-								printf("\e[34m-- IN    fd[%d] - child\e[0m\n", pipe_p2c[0]);
-							dup2(pipe_p2c[0], STDIN_FILENO);
-							close(pipe_p2c[0]);
-						}
-						else
-						{
-							if (PRINT)
-								printf("\e[1;34m-- CLOSE fd[%d] - child\e[0;0m\n",pipe_c2p[0]);
-							close(pipe_c2p[0]);
+								printf("\e[34m-- IN    fd[%d] - child\e[0m\n", prev_fd);
+							dup2(prev_fd, STDIN_FILENO);
+							close(prev_fd);
 						}
 						if (i < total - 1)
 						{
 							if (PRINT)
-								printf("\e[34m-- OUT   fd[%d] - child\e[0m\n", pipe_c2p[1]);
-							dup2(pipe_c2p[1], STDOUT_FILENO);
-							close(pipe_c2p[1]);
+								printf("\e[34m-- OUT   fd[%d] - child\e[0m\n", fd[1]);
+							dup2(fd[1], STDOUT_FILENO);
+							close(fd[1]);
 						}
 						else
 						{
@@ -146,7 +137,7 @@ int		main(int argc, char **argv, char **envp)
 							builtin_echo(cmd);
 						else if (!ft_strcmp(cmd->arg[0], "cd"))
 						{
-							write(pipe_c2p[1], cmd->arg[1], (int)ft_strlen(cmd->arg[1]));
+							write(fd[1], cmd->arg[1], (int)ft_strlen(cmd->arg[1]));
 							exit(CMD_CD);
 						}
 						else if (!ft_strcmp(cmd->arg[0], "pwd"))
@@ -176,15 +167,13 @@ int		main(int argc, char **argv, char **envp)
 						printf("\t< cmd >\t\t>> child exit - (%d)\n", i);
 					exit(EXIT_SUCCESS);
 				}
-			}
-			for (int i = 0; i < total; i++) // parent
-			{
-				if (pid[i] > 0)
+				else
 				{
+					/* parent */
 					int		status;
 					waitpid(pid[i], &status, 0);
 					if (total > 1 && PRINT)
-					printf("\t -.        /parent/ :\t%d (%4d)\n", getpid(), getppid());
+						printf("\t -.        /parent/ :\t%d (%4d)\n", getpid(), getppid());
 					if (WIFEXITED(status))
 					{
 						if (WEXITSTATUS(status) == CMD_EXIT)
@@ -196,37 +185,48 @@ int		main(int argc, char **argv, char **envp)
 						else if (WEXITSTATUS(status) == CMD_CD)
 						{
 							char dir[100];
-							read(pipe_c2p[0], &dir, 99);
+
+							read(fd[0], &dir, 99);
 							builtin_cd(dir, &envl);
 						}
 						else
-						g_ret = WEXITSTATUS(status);
+							g_ret = WEXITSTATUS(status);
 					}
+					if (PRINT)
+						printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0m\n", fd[1]);
+					close(fd[1]);
 					if (total > 1)
 					{
-						if (i < total - 1)
-						{
-							if (PRINT)
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_c2p[1]);
-							close(pipe_c2p[1]);
-							char	buf;
-							while (read(pipe_c2p[0], &buf, 1) > 0)
-							write(pipe_p2c[1], &buf, 1);
-							if (PRINT)
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_p2c[1]);
-							close(pipe_p2c[1]);
-						}
-						else
-						{
-							if (PRINT)
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_p2c[0]);
-							close(pipe_p2c[0]);
-							if (PRINT)
-							printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", pipe_c2p[0]);
-							close(pipe_c2p[0]);
-						}
+						if (i > 0)
+							close(prev_fd);
+						prev_fd = fd[0];
+						/*
+						// if (i < total - 1)
+						// {
+						// 	if (PRINT)
+						// 		printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[1]);
+						// 	close(fd[1]);
+						// 	char	buf;
+						//
+						// 	while (read(fd[0], &buf, 1) > 0)
+						// 		write(fd[1], &buf, 1);
+						// 	if (PRINT)
+						// 		printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[1]);
+						// 	close(fd[1]);
+						// }
+						// else
+						// {
+						// 	if (PRINT)
+						// 		printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[0]);
+						// 	close(fd[0]);
+						// 	if (PRINT)
+						// 		printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[0]);
+						// 	close(fd[0]);
+						// }
+						*/
 					}
 				}
+				close(fd[0]);
 			}
 			if (total > 1)
 			{
