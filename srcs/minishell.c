@@ -83,6 +83,8 @@ int		main(int argc, char **argv, char **envp)
 			if (total > 1 && PRINT)
 				printf("total: %d\n", total);
 			pid = malloc(sizeof(pid_t) * total);
+			if (!pid)
+				err_msg("malloc failed\n");
 			if (total > 1)
 			{
 				fd_backup[0] = dup(STDIN_FILENO);
@@ -174,6 +176,7 @@ int		main(int argc, char **argv, char **envp)
 					/* parent */
 					int		status;
 					waitpid(pid[i], &status, 0);
+					close(fd[1]);
 					if (total > 1 && PRINT)
 						printf("\t -.        /parent/ :\t%d (%4d)\n", getpid(), getppid());
 					if (WIFEXITED(status))
@@ -196,39 +199,14 @@ int		main(int argc, char **argv, char **envp)
 					}
 					if (PRINT)
 						printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0m\n", fd[1]);
-					close(fd[1]);
 					if (total > 1)
 					{
 						if (i > 0)
 							close(prev_fd);
 						prev_fd = fd[0];
-						/*
-						// if (i < total - 1)
-						// {
-						// 	if (PRINT)
-						// 		printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[1]);
-						// 	close(fd[1]);
-						// 	char	buf;
-						//
-						// 	while (read(fd[0], &buf, 1) > 0)
-						// 		write(fd[1], &buf, 1);
-						// 	if (PRINT)
-						// 		printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[1]);
-						// 	close(fd[1]);
-						// }
-						// else
-						// {
-						// 	if (PRINT)
-						// 		printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[0]);
-						// 	close(fd[0]);
-						// 	if (PRINT)
-						// 		printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0;0m\n", fd[0]);
-						// 	close(fd[0]);
-						// }
-						*/
 					}
 				}
-				close(fd[0]);
+				// close(fd[0]);
 			}
 			if (total > 1)
 			{

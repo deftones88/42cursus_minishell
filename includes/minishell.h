@@ -37,7 +37,7 @@
 # endif
 
 # ifndef PRINT
-#  define PRINT 1
+#  define PRINT 0
 # endif
 
 enum	e_CMD_exit_code
