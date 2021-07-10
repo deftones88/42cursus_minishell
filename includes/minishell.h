@@ -35,10 +35,6 @@
 #  define ARG_MAX 2048
 # endif
 
-# ifndef PRINT					//
-#  define PRINT 0				//
-# endif									//
-
 enum	e_CMD_exit_code
 {
 	CMD_EXIT = 1,

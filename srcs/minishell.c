@@ -90,8 +90,8 @@ int		main(int argc, char **argv, char **envp)
 					cmd_loop(fd, cmd, envl, pid.total, t_old);
 
 					/* PRINT start */
-					if (pid.total > 1 && PRINT)
-						printf("\t< cmd >\t\t>> child exit - (%d)\n", i);
+					if (pid.total < -1)
+					printf("total: %d\n", pid.total);
 					/* PRINT end */
 
 					exit(EXIT_SUCCESS);
