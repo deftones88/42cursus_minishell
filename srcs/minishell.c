@@ -112,15 +112,9 @@ int		main(int argc, char **argv, char **envp)
 					}
 				}
 			}
-			if (PRINT)
-				printf("\e[1;34m-- CLOSE fd[%d] - parent\e[0m\n", fd.fd[1]);
 			close(fd.prev_fd);
 			if (pid.total > 1)
-			{
-				if (PRINT)
-					printf("\e[34m-- IN backup\e[0m\n");
 				dup_close(fd.fd_bu[0], STDIN_FILENO);
-			}
 		}
 		else if (line == NULL)
 		{
