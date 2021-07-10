@@ -81,6 +81,6 @@ void	exit_status(t_fd fd, int status, t_list *envl);
 /*
 ** exec.c
 */
-void	cmd_loop(t_fd fd, t_cmd *cmd, t_list *envl, int total, struct termios t_old); // rid of total later
+void	cmd_loop(t_fd fd, t_cmd *cmd, t_list *envl, int total, struct termios t_old);
 
 #endif

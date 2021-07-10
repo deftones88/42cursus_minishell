@@ -6,11 +6,6 @@ void	cmd_loop(t_fd fd, t_cmd *cmd, t_list *envl, int total, struct termios t_old
 {
 	while (cmd)
 	{
-		// PRINT start //
-		if (total > 1 && PRINT)
-			printf("\t -. %-6s /child/ :\t%d (%4d)\n", cmd->arg[0], getpid(), getppid());
-		// PRINT end //
-
 		if (!ft_strcmp(cmd->arg[0], "echo"))
 			builtin_echo(cmd);
 		else if (!ft_strcmp(cmd->arg[0], "cd"))
@@ -36,13 +31,7 @@ void	cmd_loop(t_fd fd, t_cmd *cmd, t_list *envl, int total, struct termios t_old
 			exit(CMD_EXIT);
 		}
 		else
-			ft_exec(cmd, envl, total);
-
-		// PRINT start //
-		if (PRINT)
-			printf("\t< cmd >\t\t>> \e[1m%s\e[0m ends\n", cmd->arg[0]);
-		// PRINT end //
-		
+			ft_exec(cmd, envl);
 		cmd = free_next(cmd);
 	}
 }

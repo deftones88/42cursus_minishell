@@ -87,9 +87,4 @@ void	init_pid(t_pid *pid, char *line)
 	pid->pid = malloc(sizeof(pid_t) * pid->total);
 	if (!pid->pid)
 		err_msg("malloc failed\n");
-
-	/* PRINT start */
-	if (pid->total > 1 && PRINT)
-		printf("total: %d\n", pid->total);
-	/* PRINT end */
 }

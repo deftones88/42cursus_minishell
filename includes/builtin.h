@@ -17,7 +17,7 @@
 # include "struct.h"
 # include "minishell.h"
 
-void	ft_exec(t_cmd *cmd, t_list *envl, int total);
+void	ft_exec(t_cmd *cmd, t_list *envl);
 void	builtin_echo(t_cmd *cmd);
 void	builtin_export(t_cmd *cmd, t_list **envl);
 void	builtin_unset(t_cmd *cmd, t_list  **envl);

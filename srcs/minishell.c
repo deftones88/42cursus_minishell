@@ -80,16 +80,6 @@ int		main(int argc, char **argv, char **envp)
 				pid.pid[i] = fork();
 				if (pid.pid[i] < 0)
 					err_msg("fork failed\n");
-
-				/* PRINT start */
-				if (pid.total > 1 && i < pid.total - 1 && PRINT)
-					printf("\t\t\t\e[34m--  fd[READ]: %d,  fd[WRITE]: %d\e[0m\n", fd.fd[0], fd.fd[1]);
-				if (pid.total > 1 && PRINT)
-					printf("\e[31m====\t< FORK(%d) > : %d (%4d)\t====\n\e[0m", i, getpid(), getppid());
-				/* PRINT end */
-
-				if (pid.pid[i] < 0)
-					err_msg("fork failed\n");
 				if (pid.pid[i] == 0)
 				{
 					/* child */
@@ -113,12 +103,6 @@ int		main(int argc, char **argv, char **envp)
 
 					waitpid(pid.pid[i], &status, 0);
 					close(fd.fd[1]);
-
-					/* PRINT start */
-					if (pid.total > 1 && PRINT)
-						printf("\t -.        /parent/ :\t%d (%4d)\n", getpid(), getppid());
-					/* PRINT end */
-
 					exit_status(fd, status, envl);
 					if (pid.total > 1)
 					{

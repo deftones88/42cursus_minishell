@@ -14,23 +14,11 @@ void	set_fd(t_fd *fd, int total, int i)
 	if (total > 1)
 	{
 		if (i > 0)
-		{
-			if (PRINT)
-			printf("\e[34m-- IN    fd[%d] - child\e[0m\n", fd->prev_fd);
 			dup_close(fd->prev_fd, STDIN_FILENO);
-		}
 		if (i < total - 1)
-		{
-			if (PRINT)
-			printf("\e[34m-- OUT   fd[%d] - child\e[0m\n", fd->fd[1]);
 			dup_close(fd->fd[1], STDOUT_FILENO);
-		}
 		else
-		{
-			if (PRINT)
-			printf("\e[34m-- OUT   backup\e[0m\n");
 			dup_close(fd->fd_bu[1], STDOUT_FILENO);
-		}
 	}
 }
 
