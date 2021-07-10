@@ -71,9 +71,6 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 
 void	init_fd(t_fd *fd)
 {
-	fd = ft_calloc(sizeof(t_fd), 1);
-	if (!fd)
-		err_msg("malloc failed\n");
 	fd->fd_bu[0] = dup(STDIN_FILENO);
 	fd->fd_bu[1] = dup(STDOUT_FILENO);
 }
@@ -87,4 +84,20 @@ void	init_pid(t_pid *pid, char *line)
 	pid->pid = malloc(sizeof(pid_t) * pid->total);
 	if (!pid->pid)
 		err_msg("malloc failed\n");
+}
+
+t_all	*init_all(char **envp)
+{
+	t_all	*tmp;
+
+	tmp = ft_calloc(sizeof(t_all), 1);
+	if (!tmp)
+		err_msg("malloc failed\n");
+	init_fd(&tmp->fd);
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, SIG_IGN);
+	tcgetattr(STDIN_FILENO, &tmp->t_old);
+	set_termios(0);
+	tmp->envl = init_env(envp);
+	return (tmp);
 }

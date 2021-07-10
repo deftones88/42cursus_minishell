@@ -14,6 +14,8 @@
 # define STRUCT_H
 
 # include <sys/types.h>
+# include <termios.h>
+# include "list.h"
 
 typedef struct		s_cmd
 {
@@ -42,5 +44,14 @@ typedef struct	s_pid
 	int			total;
 	char		**pipe_cmd;
 }					t_pid;
+
+typedef struct	s_all
+{
+	t_pid	pid;
+	t_fd	fd;
+	t_list	*envl;
+	t_cmd	*cmd;
+	struct termios	t_old;
+}	t_all;
 
 #endif

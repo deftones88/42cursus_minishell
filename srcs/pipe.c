@@ -11,18 +11,18 @@ void	dup_close(int fd, int dup)
 void	set_fd(t_fd *fd, int total, int i)
 {
 	close(fd->fd[0]);
-	if (total > 1)
+	if (total)
 	{
 		if (i > 0)
 			dup_close(fd->prev_fd, STDIN_FILENO);
-		if (i < total - 1)
+		if (i < total)
 			dup_close(fd->fd[1], STDOUT_FILENO);
 		else
 			dup_close(fd->fd_bu[1], STDOUT_FILENO);
 	}
 }
 
-void	exit_status(t_fd fd, int status, t_list *envl)
+void	exit_status(t_all *all, int status)
 {
 	char	dir[100];
 
@@ -31,14 +31,21 @@ void	exit_status(t_fd fd, int status, t_list *envl)
 		if (WEXITSTATUS(status) == CMD_EXIT)
 		{
 			printf("exit\n");
+			tcsetattr(STDIN_FILENO, TCSANOW, &all->t_old);
 			exit(EXIT_SUCCESS);
 		}
 		else if (WEXITSTATUS(status) == CMD_CD)
 		{
-			read(fd.fd[0], &dir, 99);
-			builtin_cd(dir, &envl);
+			read(all->fd.fd[0], &dir, 99);
+			builtin_cd(dir, &all->envl);
 		}
 		else
 			g_ret = WEXITSTATUS(status);
 	}
+}
+
+void	cd_pipe(int fd, char *arg)
+{
+	write(fd, arg, (int)ft_strlen(arg));
+	exit(CMD_CD);
 }

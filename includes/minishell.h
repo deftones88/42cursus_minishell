@@ -49,6 +49,7 @@ void	add_cmd(t_cmd **first, t_cmd *new);
 t_cmd	*init_cmd(char *line, t_list *envl);
 void	init_fd(t_fd *fd);
 void	init_pid(t_pid *pid, char *line);
+t_all	*init_all(char **envp);
 
 /*
 ** parse.c
@@ -72,11 +73,15 @@ int		redout_append(t_cmd *cmd, int *this, int *other, int flag);
 */
 void	dup_close(int fd, int dup);
 void	set_fd(t_fd *fd, int total, int i);
-void	exit_status(t_fd fd, int status, t_list *envl);
+void	exit_status(t_all *all, int status);
+void	cd_pipe(int fd, char *arg);
 
 /*
 ** exec.c
 */
-void	cmd_loop(t_fd fd, t_cmd *cmd, t_list *envl, int total, struct termios t_old);
+void	cmd_loop(t_all *all);
+int	pid_child_loop(t_all *all, int i);
+void	pid_parent_loop(t_all *all, int i);
+void	pid_loop(t_all *all);
 
 #endif
