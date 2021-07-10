@@ -24,7 +24,6 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
-# include <sys/types.h>
 # include <sys/stat.h>
 # include <sys/wait.h>
 # include <unistd.h>
@@ -36,9 +35,9 @@
 #  define ARG_MAX 2048
 # endif
 
-# ifndef PRINT
-#  define PRINT 0
-# endif
+# ifndef PRINT					//
+#  define PRINT 0				//
+# endif									//
 
 enum	e_CMD_exit_code
 {
@@ -52,6 +51,8 @@ enum	e_CMD_exit_code
 */
 void	add_cmd(t_cmd **first, t_cmd *new);
 t_cmd	*init_cmd(char *line, t_list *envl);
+void	init_fd(t_fd *fd);
+void	init_pid(t_pid *pid, char *line);
 
 /*
 ** parse.c
@@ -69,5 +70,17 @@ int		heredoc_eof(char *buf, char *delimiter);
 int		heredoc_all(t_cmd *cmd, char *buf, int i);
 int		redin(t_cmd *cmd);
 int		redout_append(t_cmd *cmd, int *this, int *other, int flag);
+
+/*
+** pipe.c
+*/
+void	dup_close(int fd, int dup);
+void	set_fd(t_fd *fd, int total, int i);
+void	exit_status(t_fd fd, int status, t_list *envl);
+
+/*
+** exec.c
+*/
+void	cmd_loop(t_fd fd, t_cmd *cmd, t_list *envl, int total, struct termios t_old); // rid of total later
 
 #endif

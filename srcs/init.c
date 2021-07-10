@@ -68,3 +68,28 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 	}
 	return (head);
 }
+
+void	init_fd(t_fd *fd)
+{
+	fd = ft_calloc(sizeof(t_fd), 1);
+	if (!fd)
+		err_msg("malloc failed\n");
+	fd->fd_bu[0] = dup(STDIN_FILENO);
+	fd->fd_bu[1] = dup(STDOUT_FILENO);
+}
+
+void	init_pid(t_pid *pid, char *line)
+{
+	pid->pipe_cmd = ft_split(line, "|");
+	pid->total = 0;
+	while (pid->pipe_cmd[pid->total])
+		pid->total++;
+	pid->pid = malloc(sizeof(pid_t) * pid->total);
+	if (!pid->pid)
+		err_msg("malloc failed\n");
+
+	/* PRINT start */
+	if (pid->total > 1 && PRINT)
+		printf("total: %d\n", pid->total);
+	/* PRINT end */
+}

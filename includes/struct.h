@@ -13,6 +13,8 @@
 #ifndef STRUCT_H
 # define STRUCT_H
 
+# include <sys/types.h>
+
 typedef struct		s_cmd
 {
 	char			*cmd;
@@ -26,5 +28,19 @@ typedef struct		s_cmd
 	int				ret;					// skip executing cmd
 	struct s_cmd	*next;
 }					t_cmd;
+
+typedef struct	s_fd
+{
+	int				prev_fd;
+	int				fd_bu[2];
+	int				fd[2];
+}					t_fd;
+
+typedef struct	s_pid
+{
+	pid_t		*pid;
+	int			total;
+	char		**pipe_cmd;
+}					t_pid;
 
 #endif
