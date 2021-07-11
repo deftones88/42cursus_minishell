@@ -50,7 +50,7 @@ void		get_cursor_position(int *col, int *rows)
 
 	a = 0;
 	i = -1;
-	write(1, "\033[6n", 4);
+	write(1, CLEAR_LINE, 4);
 	read(1, buf, 254);
 	while (buf[++i])
 	{

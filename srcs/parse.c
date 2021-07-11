@@ -121,18 +121,12 @@ void		parse_red(char *buf, t_cmd *cmd)
 				if (buf[i + 1] == '<' && (buf[i + 2] != '<' && buf[i + 2] != '>'))
 				{
 					if (heredoc_all(cmd, buf, i + 2))
-					{
-						printf("heredoc_all continue\n");
 						continue ;
-					}
 				}
 				else if (buf[i + 1] != '<')
 				{
 					if (redin(cmd))
-					{
-						printf("redin continue\n");
 						return ;
-					}
 				}
 			}
 			else
@@ -140,20 +134,12 @@ void		parse_red(char *buf, t_cmd *cmd)
 				if (buf[i + 1] == '>')
 				{
 					if (redout_append(cmd, &cmd->append, &cmd->redout, O_APPEND))
-					{
-						printf("redout_append continue\n");
 						continue ;
-					}
-
 				}
 				else
 				{
 					if (redout_append(cmd, &cmd->redout, &cmd->append, O_TRUNC))
-					{
-						printf("redout_append continue\n");
 						continue ;
-					}
-
 				}
 			}
 			if (buf[i + 1] == buf[i])

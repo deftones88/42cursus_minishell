@@ -17,6 +17,8 @@
 # include <termios.h>
 # include "list.h"
 
+typedef struct termios	t_term;
+
 typedef struct		s_cmd
 {
 	char			*cmd;
@@ -51,7 +53,7 @@ typedef struct	s_all
 	t_fd	fd;
 	t_list	*envl;
 	t_cmd	*cmd;
-	struct termios	t_old;
+	t_term	t_old;
 }	t_all;
 
 #endif

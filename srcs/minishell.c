@@ -47,7 +47,7 @@ int		main(int argc, char **argv, char **envp)
 	// t_all	*all;
 	t_pid	pid;
 	t_fd	fd;
-	struct termios	t_old;
+	t_term	t_old;
 	t_list	*envl;
 	t_cmd	*cmd;
 
@@ -90,11 +90,11 @@ int		main(int argc, char **argv, char **envp)
 					set_fd(&fd, pid.total - 1, i);
 					while (cmd)
 					{
-						if (!ft_strcmp(cmd->arg[0], "echo"))
+						if (check_builtin(cmd->arg[0], "echo"))
 							builtin_echo(cmd);
 						else if (!ft_strcmp(cmd->arg[0], "cd"))
 							cd_pipe(fd.fd[1], cmd->arg[1]);
-						else if (!ft_strcmp(cmd->arg[0], "pwd"))
+						else if (check_builtin(cmd->arg[0], "pwd"))
 						{
 							printf("%s\n", getcwd(NULL, 0));
 							g_ret = 0;
@@ -103,7 +103,7 @@ int		main(int argc, char **argv, char **envp)
 							builtin_export(cmd, &envl);
 						else if (!ft_strcmp(cmd->arg[0], "unset"))
 							builtin_unset(cmd, &envl);
-						else if (!ft_strcmp(cmd->arg[0], "env"))
+						else if (check_builtin(cmd->arg[0], "env"))
 							builtin_env(envl, 0);
 						else if (!ft_strcmp(cmd->arg[0], "exit"))
 							exit(CMD_EXIT);
@@ -150,7 +150,7 @@ int		main(int argc, char **argv, char **envp)
 			close(fd.prev_fd);
 			if (pid.total > 1)
 				dup_close(fd.fd_bu[0], STDIN_FILENO);
-			// free(pid.pid);
+			free(pid.pid);
 		}
 		else if (line == NULL)
 		{

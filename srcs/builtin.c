@@ -18,11 +18,22 @@ void    builtin_echo(t_cmd *cmd)
 {
 	int		flag;
 	int		i;
+	int		j;
 
 	flag = 0;
 	i = 0;
-	if (cmd->arg[1] && !ft_strcmp(cmd->arg[1], "-n"))
+	/*
+	**  echo -nnnnnnnnnn hi      : flag 1, prints "hi$"
+	**  Echo -nnnnnnnnnn hi      : flag 0, prints "-nnnnnnnnnn hi\n"
+	**	Echo -n hi							 : flag 1, prints "hi$"
+	*/
+	while (cmd->arg[i + 1] && cmd->arg[i + 1][0] == '-' && cmd->arg[i + 1][1] == 'n')
 	{
+		j = 2;
+		while (!ft_strcmp(cmd->arg[0], "echo") && cmd->arg[i + 1][j] && cmd->arg[i + 1][j] == 'n')
+			j++;
+		if (cmd->arg[i + 1][j] != '\0')
+			break ;
 		flag = 1;
 		i++;
 	}

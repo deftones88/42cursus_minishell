@@ -23,6 +23,8 @@
 # include <term.h>
 # include "libft.h"
 
+# define CLEAR_LINE "\033[6n"
+
 void	sig_handler(int sig);
 void	set_termios(int i);
 void	get_cursor_position(int *col, int *rows);

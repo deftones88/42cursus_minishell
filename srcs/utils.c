@@ -64,3 +64,19 @@ void	err_msg(char *str)
 	write(2, str, i);
 	exit(1);
 }
+
+int	check_builtin(char *arg, char *builtin)
+{
+	int	i;
+
+	i = 0;
+	while (arg[i] && builtin[i])
+	{
+		if (arg[i] != builtin[i] && arg[i] != builtin[i] - 32)
+			break ;
+		i++;
+	}
+	if (arg[i] == '\0' && builtin[i] == '\0')
+		return (1);
+	return (0);
+}
