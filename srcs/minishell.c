@@ -131,6 +131,8 @@ int		main(int argc, char **argv, char **envp)
 						else if (WEXITSTATUS(status) == CMD_CD)
 						{
 							char	dir[100];
+
+							ft_bzero(dir, 100);
 							read(fd.fd[0], &dir, 99);
 							builtin_cd(dir, &envl);
 						}
