@@ -32,6 +32,7 @@ void	exit_status(t_all *all, int status)
 		{
 			printf("exit\n");
 			tcsetattr(STDIN_FILENO, TCSANOW, &all->t_old);
+			all->cmd = free_next(all->cmd);
 			exit(EXIT_SUCCESS);
 		}
 		else if (WEXITSTATUS(status) == CMD_CD)

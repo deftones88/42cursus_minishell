@@ -44,9 +44,24 @@ void	show_logo(void)
 int		main(int argc, char **argv, char **envp)
 {
 	char	*line;
-	t_all	*all;
+	// t_all	*all;
+	t_pid	pid;
+	t_fd	fd;
+	struct termios	t_old;
+	t_list	*envl;
+	t_cmd	*cmd;
 
-	all = init_all(envp);
+	// all = ft_calloc(sizeof(t_all), 1);
+	// if (!all)
+	// 	err_msg("malloc failed\n");
+	fd.fd_bu[0] = dup(STDIN_FILENO);
+	fd.fd_bu[1] = dup(STDOUT_FILENO);
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, SIG_IGN);
+	tcgetattr(STDIN_FILENO, &t_old);
+	set_termios(0);
+	envl = init_env(envp);
+
 	show_logo();
 	while(1)
 	{
@@ -54,14 +69,92 @@ int		main(int argc, char **argv, char **envp)
 		if (line && line[0] != 0)
 		{
 			add_history(line);
-			init_pid(&all->pid, line);
-			pid_loop(all);
+			pid.pipe_cmd = ft_split(line, "|");
+			pid.total = 0;
+			while (pid.pipe_cmd[pid.total])
+				pid.total++;
+			pid.pid = malloc(sizeof(pid_t) * pid.total);
+			if (!pid.pid)
+				err_msg("malloc failed\n");
+			for (int i = 0; i < pid.total; i++)
+			{
+				pipe(fd.fd);
+				pid.pid[i] = fork();
+				if (pid.pid[i] < 0)
+					err_msg("fork failed\n");
+				if (pid.pid[i] == 0)
+				{
+					cmd = init_cmd(pid.pipe_cmd[i], envl);
+					if (!cmd || cmd->ret > 0)
+						continue ;
+					set_fd(&fd, pid.total - 1, i);
+					while (cmd)
+					{
+						if (!ft_strcmp(cmd->arg[0], "echo"))
+							builtin_echo(cmd);
+						else if (!ft_strcmp(cmd->arg[0], "cd"))
+							cd_pipe(fd.fd[1], cmd->arg[1]);
+						else if (!ft_strcmp(cmd->arg[0], "pwd"))
+						{
+							printf("%s\n", getcwd(NULL, 0));
+							g_ret = 0;
+						}
+						else if (!ft_strcmp(cmd->arg[0], "export"))
+							builtin_export(cmd, &envl);
+						else if (!ft_strcmp(cmd->arg[0], "unset"))
+							builtin_unset(cmd, &envl);
+						else if (!ft_strcmp(cmd->arg[0], "env"))
+							builtin_env(envl, 0);
+						else if (!ft_strcmp(cmd->arg[0], "exit"))
+							exit(CMD_EXIT);
+						else
+							ft_exec(cmd, envl);
+						cmd = free_next(cmd);
+					}
+					exit(EXIT_SUCCESS);
+				}
+				else
+				{
+					int		status;
+
+					waitpid(pid.pid[i], &status, 0);
+					close(fd.fd[1]);
+
+					if (WIFEXITED(status))
+					{
+						if (WEXITSTATUS(status) == CMD_EXIT)
+						{
+							printf("exit\n");
+							tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
+							exit(EXIT_SUCCESS);
+						}
+						else if (WEXITSTATUS(status) == CMD_CD)
+						{
+							char	dir[100];
+							read(fd.fd[0], &dir, 99);
+							builtin_cd(dir, &envl);
+						}
+						else
+							g_ret = WEXITSTATUS(status);
+					}
+					if (pid.total > 1)
+					{
+						if (i > 0)
+							close(fd.prev_fd);
+						fd.prev_fd = fd.fd[0];
+					}
+				}
+			}
+			close(fd.prev_fd);
+			if (pid.total > 1)
+				dup_close(fd.fd_bu[0], STDIN_FILENO);
+			// free(pid.pid);
 		}
 		else if (line == NULL)
 		{
 			set_termcap(0);
 			printf("minishell$ exit\n");
-			tcsetattr(STDIN_FILENO, TCSANOW, &all->t_old);
+			tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
 			exit(EXIT_SUCCESS);
 		}
 		free(line);
