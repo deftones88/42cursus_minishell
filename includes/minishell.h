@@ -80,7 +80,7 @@ void	cd_pipe(int fd, char *arg);
 ** loop.c
 */
 void	cmd_loop(t_all *all);
-int	pid_child_loop(t_all *all, int i);
+int		pid_child_loop(t_all *all, int i);
 void	pid_parent_loop(t_all *all, int i);
 void	pid_loop(t_all *all);
 
@@ -90,5 +90,10 @@ void	pid_loop(t_all *all);
 void	merge_path(t_cmd *cmd, char *str);
 void 	ft_exec_child(t_cmd *cmd, char **envp);
 void	ft_exec(t_cmd *cmd, t_list *envl);
+
+/*
+** logo.c
+*/
+void	show_logo(void);
 
 #endif
