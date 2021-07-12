@@ -75,6 +75,7 @@ void	init_fd(t_fd *fd)
 	fd->fd_bu[1] = dup(STDOUT_FILENO);
 }
 
+///////////////////////////////////
 void	init_pid(t_pid *pid, char *line)
 {
 	pid->pipe_cmd = ft_split(line, "|");

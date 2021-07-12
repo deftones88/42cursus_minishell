@@ -22,6 +22,13 @@ void	set_fd(t_fd *fd, int total, int i)
 	}
 }
 
+void	cd_pipe(int fd, char *arg)
+{
+	write(fd, arg, (int)ft_strlen(arg));
+	exit(CMD_CD);
+}
+
+//////////////////////////
 void	exit_status(t_all *all, int status)
 {
 	char	dir[100];
@@ -41,12 +48,6 @@ void	exit_status(t_all *all, int status)
 			builtin_cd(dir, &all->envl);
 		}
 		else
-			g_ret = WEXITSTATUS(status);
+		g_ret = WEXITSTATUS(status);
 	}
-}
-
-void	cd_pipe(int fd, char *arg)
-{
-	write(fd, arg, (int)ft_strlen(arg));
-	exit(CMD_CD);
 }

@@ -35,7 +35,7 @@ void    builtin_echo(t_cmd *cmd)
 			j++;
 		if (cmd->arg[i + 1][j] != '\0')
 			break ;
-		flag = 1;
+		flag++;
 		i++;
 	}
 	while (cmd->arg[++i])
@@ -46,7 +46,11 @@ void    builtin_echo(t_cmd *cmd)
 			write(cmd->append + cmd->redout + 1, " ", 1);
 		}
 		else
-			printf("%s ", cmd->arg[i]);
+		{
+			if (i > flag + 1)
+				printf(" ");
+			printf("%s", cmd->arg[i]);
+		}
 	}
 	if (!flag)
 	{
