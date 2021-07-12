@@ -51,7 +51,9 @@ void		parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 	char	quot;
 	char	*key;
 	char	*val;
+	int		red;
 
+	red = 0;
 	quot = 0;
 	i = 0;
 	j = 0;
@@ -61,22 +63,32 @@ void		parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 			quot = line[j];
 		else if (quot && line[j] == quot)
 			quot = 0;
-		if (quot != '\'' && line[j] == '$')
+		if (line[j] == '<' || line[j] == '>')
+			red = 1;
+		if (quot != '\'' && line[j] == '$' && !red)
 		{
-			if (line[j + 1] == '?')
+			if (!red)
 			{
-				val = ft_itoa(g_ret);
-				j += 2;
+				if (line[j + 1] == '?')
+				{
+					val = ft_itoa(g_ret);
+					j += 2;
+				}
+				else
+				{
+					key = get_key(line, &j);
+					val = find_value(envl, key);
+					free(key);
+				}
+				k = -1;
+				while (val[++k])
+					buf[i++] = val[k];
 			}
 			else
 			{
-				key = get_key(line, &j);
-				val = find_value(envl, key);
-				free(key);
+				buf[i++] = line[j++];
+				red = 0;
 			}
-			k = -1;
-			while (val[++k])
-				buf[i++] = val[k];
 		}
 		else
 			buf[i++] = line[j++];
@@ -161,7 +173,7 @@ void		parse_red(char *buf, t_cmd *cmd)
 						printf("minishell: syntax error near unexpected token '%c'\n", buf[i]);
 					g_ret = 258;
 					cmd->ret = 1;
-					exit(CMD_RED);
+					exit(CMD_SYN);
 				}
 				buf[i++] = ' ';
 			}

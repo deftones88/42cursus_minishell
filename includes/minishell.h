@@ -39,7 +39,7 @@ enum	e_CMD_exit_code
 {
 	CMD_EXIT = 2,
 	CMD_CD,
-	CMD_RED
+	CMD_SYN
 };
 
 /*
