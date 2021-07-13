@@ -192,10 +192,10 @@ void		parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	cmd->append = -1;
 	cmd->delimit = -1;
 	cmd->ret = 0;
+	ft_bzero(buf, 10000);
 	parse_var(buf, line, envl, cmd);
 	parse_red(buf, cmd);
-	// printf("\n%s\n%d\n%d\n%d\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);
 	cmd->arg = ft_split(buf, " ");
-	// for (size_t i = 0; cmd->arg[i]; i++)
-	// 	printf("arg[%zu]: |%s|\n", i, cmd->arg[i]);
+	for (size_t i = 0; cmd->arg[i]; i++)
+		printf("arg[%zu]: |%s|\n", i, cmd->arg[i]);
 }

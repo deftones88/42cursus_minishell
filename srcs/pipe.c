@@ -24,13 +24,6 @@ void	set_fd(t_fd *fd, int total, int i)
 
 void	exit_status(t_all *all, int status)
 {
-	char	dir[ARG_MAX];
-	int		i;
-	int		j;
-
-	j = 0;
-	i = -1;
-	ft_bzero(dir, ARG_MAX);
 	if (WIFEXITED(status))
 	{
 		if (WEXITSTATUS(status) == CMD_EXIT)

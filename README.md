@@ -8,4 +8,5 @@ Things to be done
 	- echo echo -n “test\’\\\”\|” -n test option
 	- '"pwd"' or "'pwd'" (should be command not found)
 	- export " "
+	- when cmd == 0 (syntax error)
 2. leaks
