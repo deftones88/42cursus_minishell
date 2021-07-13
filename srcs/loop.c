@@ -37,6 +37,7 @@ int	pid_child_loop(t_all *all, int i)
 	set_fd(&all->fd, all->pid.total - 1, i);
 	cmd_loop(all);
 	exit(EXIT_SUCCESS);
+	return (0);
 }
 
 void	pid_parent_loop(t_all *all, int i)
@@ -71,11 +72,9 @@ void	pid_loop(t_all *all)
 				continue ;
 		}
 		else
-			ft_exec(cmd, envl);
-		cmd = free_next(cmd);
 			pid_parent_loop(all, i);
 	}
-	close(all->fd.prev_fd);
+	close(all->fd.fd[0]);
 	if (all->pid.total > 1)
 		dup_close(all->fd.fd_bu[0], STDIN_FILENO);
 	free(all->pid.pid);
