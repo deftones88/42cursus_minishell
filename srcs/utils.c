@@ -65,7 +65,7 @@ void	err_msg(char *str)
 	exit(1);
 }
 
-int	check_builtin(char *arg, char *builtin)
+int	check_cap(char *arg, char *builtin)
 {
 	int	i;
 

@@ -42,9 +42,9 @@ typedef struct	s_fd
 
 typedef struct	s_pid
 {
-	pid_t		*pid;
 	int			total;
 	char		**pipe_cmd;
+	pid_t		*pid;
 }					t_pid;
 
 typedef struct	s_all

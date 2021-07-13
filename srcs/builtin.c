@@ -22,12 +22,6 @@ void    builtin_echo(t_cmd *cmd)
 
 	flag = 0;
 	i = 0;
-	/*
-	**  echo -nnnnnnnnnn hi      : flag 1, prints "hi$"
-	**  Echo -nnnnnnnnnn hi      : flag 0, prints "-nnnnnnnnnn hi\n"
-	**	Echo -n hi							 : flag 1, prints "hi$"
-	**	echo ----n hi						 : flag 0, prints "----n hi$"
-	*/
 	while (cmd->arg[i + 1] && cmd->arg[i + 1][0] == '-' && cmd->arg[i + 1][1] == 'n')
 	{
 		j = 2;

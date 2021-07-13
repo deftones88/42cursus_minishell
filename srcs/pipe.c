@@ -28,7 +28,6 @@ void	cd_pipe(int fd, char *arg)
 	exit(CMD_CD);
 }
 
-//////////////////////////
 void	exit_status(t_all *all, int status)
 {
 	char	dir[100];
@@ -48,6 +47,6 @@ void	exit_status(t_all *all, int status)
 			builtin_cd(dir, &all->envl);
 		}
 		else
-		g_ret = WEXITSTATUS(status);
+			g_ret = WEXITSTATUS(status);
 	}
 }

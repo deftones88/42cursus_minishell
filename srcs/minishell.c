@@ -17,72 +17,52 @@ int	g_ret = 0;
 int		main(int argc, char **argv, char **envp)
 {
 	char	*line;
-	// t_all	*all;
-	t_pid	pid;
-	t_fd	fd;
-	t_term	t_old;
-	t_list	*envl;
-	t_cmd	*cmd;
-
-	// all = ft_calloc(sizeof(t_all), 1);
-	// if (!all)
-	// 	err_msg("malloc failed\n");
-	fd.fd_bu[0] = dup(STDIN_FILENO);
-	fd.fd_bu[1] = dup(STDOUT_FILENO);
-	signal(SIGINT, sig_handler);
-	signal(SIGQUIT, SIG_IGN);
-	tcgetattr(STDIN_FILENO, &t_old);
-	set_termios(0);
-	envl = init_env(envp);
+	t_all	*all;
+	// t_cmd	*cmd;
 
 	show_logo();
+	all = init_all(envp);
 	while(1)
 	{
 		line = readline("minishell$ ");
 		if (line && line[0] != 0)
 		{
 			add_history(line);
-			pid.pipe_cmd = ft_split(line, "|");
-			pid.total = 0;
-			while (pid.pipe_cmd[pid.total])
-				pid.total++;
-			pid.pid = malloc(sizeof(pid_t) * pid.total);
-			if (!pid.pid)
-				err_msg("malloc failed\n");
-			for (int i = 0; i < pid.total; i++)
+			init_pid(&all->pid, line);
+			for (int i = 0; i < all->pid.total; i++)
 			{
-				pipe(fd.fd);
-				pid.pid[i] = fork();
-				if (pid.pid[i] < 0)
+				pipe(all->fd.fd);
+				all->pid.pid[i] = fork();
+				if (all->pid.pid[i] < 0)
 					err_msg("fork failed\n");
-				if (pid.pid[i] == 0)
+				if (all->pid.pid[i] == 0)
 				{
-					cmd = init_cmd(pid.pipe_cmd[i], envl);
-					if (!cmd || cmd->ret > 0)
+					all->cmd = init_cmd(all->pid.pipe_cmd[i], all->envl);
+					if (!all->cmd || all->cmd->ret > 0)
 						continue ;
-					set_fd(&fd, pid.total - 1, i);
-					while (cmd)
+					set_fd(&all->fd, all->pid.total - 1, i);
+					while (all->cmd)
 					{
-						if (check_builtin(cmd->arg[0], "echo"))
-							builtin_echo(cmd);
-						else if (!ft_strcmp(cmd->arg[0], "cd"))
-							cd_pipe(fd.fd[1], cmd->arg[1]);
-						else if (check_builtin(cmd->arg[0], "pwd"))
+						if (check_cap(all->cmd->arg[0], "echo"))
+							builtin_echo(all->cmd);
+						else if (!ft_strcmp(all->cmd->arg[0], "cd"))
+							cd_pipe(all->fd.fd[1], all->cmd->arg[1]);
+						else if (check_cap(all->cmd->arg[0], "pwd"))
 						{
 							printf("%s\n", getcwd(NULL, 0));
 							g_ret = 0;
 						}
-						else if (!ft_strcmp(cmd->arg[0], "export"))
-							builtin_export(cmd, &envl);
-						else if (!ft_strcmp(cmd->arg[0], "unset"))
-							builtin_unset(cmd, &envl);
-						else if (check_builtin(cmd->arg[0], "env"))
-							builtin_env(envl, 0);
-						else if (!ft_strcmp(cmd->arg[0], "exit"))
+						else if (!ft_strcmp(all->cmd->arg[0], "export"))
+							builtin_export(all->cmd, &all->envl);
+						else if (!ft_strcmp(all->cmd->arg[0], "unset"))
+							builtin_unset(all->cmd, &all->envl);
+						else if (check_cap(all->cmd->arg[0], "env"))
+							builtin_env(all->envl, 0);
+						else if (!ft_strcmp(all->cmd->arg[0], "exit"))
 							exit(CMD_EXIT);
 						else
-							ft_exec(cmd, envl);
-						cmd = free_next(cmd);
+							ft_exec(all->cmd, all->envl);
+						all->cmd = free_next(all->cmd);
 					}
 					exit(EXIT_SUCCESS);
 				}
@@ -90,46 +70,27 @@ int		main(int argc, char **argv, char **envp)
 				{
 					int		status;
 
-					waitpid(pid.pid[i], &status, 0);
-					close(fd.fd[1]);
-
-					if (WIFEXITED(status))
-					{
-						if (WEXITSTATUS(status) == CMD_EXIT)
-						{
-							printf("exit\n");
-							tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
-							exit(EXIT_SUCCESS);
-						}
-						else if (WEXITSTATUS(status) == CMD_CD)
-						{
-							char	dir[100];
-
-							ft_bzero(dir, 100);
-							read(fd.fd[0], &dir, 99);
-							builtin_cd(dir, &envl);
-						}
-						else
-							g_ret = WEXITSTATUS(status);
-					}
-					if (pid.total > 1)
+					waitpid(all->pid.pid[i], &status, 0);
+					close(all->fd.fd[1]);
+					exit_status(all, status);
+					if (all->pid.total > 1)
 					{
 						if (i > 0)
-							close(fd.prev_fd);
-						fd.prev_fd = fd.fd[0];
+							close(all->fd.prev_fd);
+						all->fd.prev_fd = all->fd.fd[0];
 					}
 				}
 			}
-			close(fd.prev_fd);
-			if (pid.total > 1)
-				dup_close(fd.fd_bu[0], STDIN_FILENO);
-			free(pid.pid);
+			close(all->fd.fd[0]);
+			if (all->pid.total > 1)
+				dup_close(all->fd.fd_bu[0], STDIN_FILENO);
+			free(all->pid.pid);
 		}
 		else if (line == NULL)
 		{
 			set_termcap(0);
 			printf("minishell$ exit\n");
-			tcsetattr(STDIN_FILENO, TCSANOW, &t_old);
+			tcsetattr(STDIN_FILENO, TCSANOW, &all->t_old);
 			exit(EXIT_SUCCESS);
 		}
 		free(line);
