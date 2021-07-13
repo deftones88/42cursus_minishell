@@ -39,6 +39,8 @@ enum	e_CMD_exit_code
 {
 	CMD_EXIT = 2,
 	CMD_CD,
+	CMD_EXPT,
+	CMD_UNST,
 	CMD_SYN
 };
 
@@ -73,14 +75,14 @@ int		redout_append(t_cmd *cmd, int *this, int *other, int flag);
 */
 void	dup_close(int fd, int dup);
 void	set_fd(t_fd *fd, int total, int i);
+void	send_thru_pipe(t_all *all, char **arg, int flag);
 void	exit_status(t_all *all, int status);
-void	cd_pipe(int fd, char *arg);
 
 /*
 ** loop.c
 */
 void	cmd_loop(t_all *all);
-int		pid_child_loop(t_all *all, int i);
+void	pid_child_loop(t_all *all, int i);
 void	pid_parent_loop(t_all *all, int i);
 void	pid_loop(t_all *all);
 

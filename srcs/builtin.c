@@ -12,8 +12,6 @@
 
 #include "builtin.h"
 
-extern int	g_ret;
-
 void    builtin_echo(t_cmd *cmd)
 {
 	int		flag;
@@ -32,29 +30,7 @@ void    builtin_echo(t_cmd *cmd)
 		flag++;
 		i++;
 	}
-	while (cmd->arg[++i])
-	{
-		if (cmd->append > -1 || cmd->redout > -1)
-		{
-			write(cmd->append + cmd->redout + 1, cmd->arg[i], (int)ft_strlen(cmd->arg[i]));
-			write(cmd->append + cmd->redout + 1, " ", 1);
-		}
-		else
-		{
-			if (i > flag + 1)
-				printf(" ");
-			printf("%s", cmd->arg[i]);
-		}
-	}
-	if (!flag)
-	{
-		if (cmd->append > -1 || cmd->redout > -1)
-			write(cmd->append + cmd->redout + 1, "\n", 1);
-		else
-			printf("\n");
-	}
-	if (cmd->append > -1 || cmd->redout > -1)
-		close(cmd->append + cmd->redout + 1);
+	ft_echo(cmd, i, flag);
 	g_ret = 0;
 }
 
@@ -80,17 +56,7 @@ void    builtin_export(t_cmd *cmd, t_list **envl)
 			g_ret = 0;
 		}
 		else
-		{
-			if (cmd->arg[i][0] == ' ' || cmd->arg[i][0] == '=')
-			{
-				printf("minishell: %s: '%s': not a valid identifier\n", cmd->arg[0], cmd->arg[i]);
-				g_ret = 1;
-			}
-			if (key)
-				free(key);
-			if (val)
-				free(val);
-		}
+			ft_export(cmd, i, key, val);
 	}
 }
 

@@ -22,16 +22,15 @@ void	set_fd(t_fd *fd, int total, int i)
 	}
 }
 
-void	cd_pipe(int fd, char *arg)
-{
-	write(fd, arg, (int)ft_strlen(arg));
-	exit(CMD_CD);
-}
-
 void	exit_status(t_all *all, int status)
 {
-	char	dir[100];
+	char	dir[ARG_MAX];
+	int		i;
+	int		j;
 
+	j = 0;
+	i = -1;
+	ft_bzero(dir, ARG_MAX);
 	if (WIFEXITED(status))
 	{
 		if (WEXITSTATUS(status) == CMD_EXIT)
@@ -41,11 +40,11 @@ void	exit_status(t_all *all, int status)
 			exit(EXIT_SUCCESS);
 		}
 		else if (WEXITSTATUS(status) == CMD_CD)
-		{
-			ft_bzero(dir, 100);
-			read(all->fd.fd[0], &dir, 99);
-			builtin_cd(dir, &all->envl);
-		}
+			builtin_cd(all->cmd->arg[1], &all->envl);
+		else if (WEXITSTATUS(status) == CMD_EXPT)
+			builtin_export(all->cmd, &all->envl);
+		else if (WEXITSTATUS(status) == CMD_UNST)
+			builtin_unset(all->cmd, &all->envl);
 		else
 			g_ret = WEXITSTATUS(status);
 	}

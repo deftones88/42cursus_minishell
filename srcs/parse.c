@@ -65,7 +65,7 @@ void		parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 			quot = 0;
 		if (line[j] == '<' || line[j] == '>')
 			red = 1;
-		if (quot != '\'' && line[j] == '$' && !red)
+		if (quot != '\'' && line[j] == '$')
 		{
 			if (!red)
 			{
@@ -196,4 +196,6 @@ void		parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	parse_red(buf, cmd);
 	// printf("\n%s\n%d\n%d\n%d\n%s\n",buf,cmd->redin, cmd->redout, cmd->append, cmd->delimit);
 	cmd->arg = ft_split(buf, " ");
+	// for (size_t i = 0; cmd->arg[i]; i++)
+	// 	printf("arg[%zu]: |%s|\n", i, cmd->arg[i]);
 }
