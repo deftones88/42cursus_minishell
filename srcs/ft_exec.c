@@ -21,6 +21,11 @@ void	merge_path(t_cmd *cmd, char *str)
 	char		*tmp[2];
 	struct stat	s;
 
+	if (stat(cmd->arg[0], &s) == 0)
+	{
+		cmd->cmd = ft_strdup(cmd->arg[0]);
+		return ;
+	}
 	path = ft_split(str, ":");
 	i = -1;
 	while (path[++i])
@@ -38,7 +43,7 @@ void	merge_path(t_cmd *cmd, char *str)
 	free_all(path);
 }
 
-void 	ft_exec_child(t_cmd *cmd, char **envp)
+void	ft_exec_child(t_cmd *cmd, char **envp)
 {
 	if (cmd->delimit > 0)
 		dup_close(cmd->delimit, STDIN_FILENO);

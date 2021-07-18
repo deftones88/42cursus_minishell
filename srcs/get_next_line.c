@@ -20,11 +20,12 @@ int		get_next_line(int fd, char **line)
 
 	if (fd < 0 || fd >= OPEN_MAX || !line || BUFFER_SIZE < 1)
 		return (-1);
-	if (!(*line = ft_dup("")))
-		return (-1);
-	if ((i = ft_remainder(fd, remain, line)) != 0)
+	*line = ft_dup("");
+	i = ft_remainder(fd, remain, line);
+	if (i != 0)
 		return (i);
-	if (!(buf = (char*)malloc((BUFFER_SIZE + 1) * sizeof(char))))
+	buf = (char*)malloc((BUFFER_SIZE + 1) * sizeof(char));
+	if (!buf)
 		return (freeall(0, line));
 	while (!remain[fd] && (i = read(fd, buf, BUFFER_SIZE)) > 0)
 	{
@@ -33,6 +34,6 @@ int		get_next_line(int fd, char **line)
 			if (!(remain[fd] = ft_dup(buf + i + 1)))
 				return (freeall(buf, line));
 	}
-	freeall(buf, i == -1 ? line : 0);
+	freeall(buf, (char **)((!(i + 1)) * (unsigned long long int)line));
 	return (remain[fd] ? 1 : i);
 }
