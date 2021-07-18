@@ -34,10 +34,11 @@ static int	countstrs(const char *str, char *c)
 	flag = 0;
 	quot = 0;
 	while (str[++i[1]])
+	{
 		if (!quot && isin(str[i[1]], c))
 		{
-			if (flag == 1 && ++i[0])
-				flag = 0;
+			i[0] += flag;
+			flag = 0;
 		}
 		else
 		{
@@ -47,6 +48,7 @@ static int	countstrs(const char *str, char *c)
 				quot = 0;
 			flag = 1;
 		}
+	}
 	return (i[0] + flag);
 }
 
