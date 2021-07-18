@@ -17,7 +17,7 @@
 # include "libft.h"
 # include "utils.h"
 
-typedef struct		s_list
+typedef struct s_list
 {
 	char			*key;
 	char			*value;

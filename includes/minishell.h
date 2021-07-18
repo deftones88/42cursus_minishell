@@ -90,7 +90,7 @@ void	pid_loop(t_all *all);
 ** ft_exec.c
 */
 void	merge_path(t_cmd *cmd, char *str);
-void 	ft_exec_child(t_cmd *cmd, char **envp);
+void	ft_exec_child(t_cmd *cmd, char **envp);
 void	ft_exec(t_cmd *cmd, t_list *envl);
 
 /*

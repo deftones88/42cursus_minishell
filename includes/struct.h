@@ -19,11 +19,11 @@
 
 typedef struct termios	t_term;
 
-typedef struct		s_cmd
+typedef struct s_cmd
 {
 	char			*cmd;
 	char			**arg;
-	int				flag;				// represent |(1) or ;(2)
+	int				flag;
 	int				redin;
 	int				redout;
 	int				append;
