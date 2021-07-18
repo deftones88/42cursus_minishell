@@ -39,6 +39,7 @@ void	pid_child_loop(t_all *all, int i)
 void	pid_parent_loop(t_all *all, int i)
 {
 	int		status;
+	t_cmd	*tmp;
 
 	waitpid(all->pid.pid[i], &status, 0);
 	close(all->fd.fd[1]);
@@ -49,6 +50,9 @@ void	pid_parent_loop(t_all *all, int i)
 			close(all->fd.prev_fd);
 		all->fd.prev_fd = all->fd.fd[0];
 	}
+	tmp = all->cmd;
+	while (tmp)
+		tmp = free_next(tmp);
 }
 
 void	pid_loop(t_all *all)
@@ -59,10 +63,11 @@ void	pid_loop(t_all *all)
 	while (++i < all->pid.total)
 	{
 		pipe(all->fd.fd);
+		all->cmd = init_cmd(all->pid.pipe_cmd[i], all->envl);
+		free(all->pid.pipe_cmd[i]);
 		all->pid.pid[i] = fork();
 		if (all->pid.pid[i] < 0)
 			err_msg("fork failed\n");
-		all->cmd = init_cmd(all->pid.pipe_cmd[i], all->envl);
 		if (!all->cmd || all->cmd->ret > 0)
 			continue ;
 		if (all->pid.pid[i] == 0)
@@ -74,4 +79,5 @@ void	pid_loop(t_all *all)
 	if (all->pid.total > 1)
 		dup_close(all->fd.fd_bu[0], STDIN_FILENO);
 	free(all->pid.pid);
+	free(all->pid.pipe_cmd);
 }

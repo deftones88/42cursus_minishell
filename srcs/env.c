@@ -101,6 +101,6 @@ t_list	*init_env(char **envp)
 	while (envp[++i])
 		ft_lstadd_last(&root,
 			ft_lstnew(parse_key(envp[i]), parse_value(envp[i])));
-	ft_lstadd_last(&root, ft_lstnew("OLDPWD", ""));
+	ft_lstadd_last(&root, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup("")));
 	return (root);
 }

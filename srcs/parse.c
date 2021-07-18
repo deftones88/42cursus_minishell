@@ -22,6 +22,7 @@ t_cmd		*free_next(t_cmd *cmd)
 	free_all(cmd->arg);
 	if (cmd->cmd)
 		free(cmd->cmd);
+	free(cmd);
 	return (next);
 }
 
@@ -167,7 +168,8 @@ void		parse_red(char *buf, t_cmd *cmd)
 						printf("minishell: syntax error near unexpected token '%c'\n", buf[i]);
 					g_ret = 258;
 					cmd->ret = 1;
-					exit(CMD_SYN);
+					//return ;
+					//exit(CMD_SYN);
 				}
 				buf[i++] = ' ';
 			}

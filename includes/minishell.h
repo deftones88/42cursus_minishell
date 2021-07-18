@@ -14,7 +14,6 @@
 # define MINISHELL_H
 
 # include "struct.h"
-# include "get_next_line.h"
 # include "libft.h"
 # include "utils.h"
 # include "sig_handler.h"

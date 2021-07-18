@@ -16,10 +16,11 @@ t_list	*ft_lstnew(char *key, char *value)
 {
 	t_list	*newlst;
 
-	if (!(newlst = (t_list*)malloc(sizeof(t_list))))
+	newlst = (t_list*)malloc(sizeof(t_list));
+	if (!newlst)
 		err_msg("malloc error\n");
-	newlst->key = ft_strdup(key);
-	newlst->value = ft_strdup(value);
+	newlst->key = key;
+	newlst->value = value;
 	newlst->next = 0;
 	return (newlst);
 }

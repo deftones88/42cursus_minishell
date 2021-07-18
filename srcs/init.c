@@ -40,7 +40,7 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 	i[1]= 0;
 	quot = 0;
 	head = 0;
-	while (1)
+/*	while (1)
 	{
 		if (!quot && (line[i[0]] == '\'' || line[i[0]] == '\"'))
 			quot = line[i[0]];
@@ -49,6 +49,7 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 		if (!quot && (line[i[0]] == 0))
 		{
 			flag = line[i[0]];
+			printf("|%s|\n",line);
 			line[i[0]] = 0;
 			cur = (t_cmd*)ft_calloc(1, sizeof(t_cmd));
 			parse_tmp(line + i[1], cur, envl);
@@ -59,7 +60,9 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 		if (line[i[0]] == 0)
 			break ;
 		i[0]++;
-	}
+	}*/
+	head = (t_cmd*)ft_calloc(1, sizeof(t_cmd));
+	parse_tmp(line, head, envl);
 	return (head);
 }
 
@@ -84,7 +87,7 @@ t_all	*init_all(char **envp)
 {
 	t_all	*tmp;
 
-	tmp = ft_calloc(sizeof(t_all), 1);
+	tmp = ft_calloc(1, sizeof(t_all));
 	if (!tmp)
 		err_msg("malloc failed\n");
 	init_fd(&tmp->fd);
