@@ -93,12 +93,6 @@ void		parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 		else
 			buf[i++] = line[j++];
 	}
-	if (quot)
-	{
-		printf("parse error: quot");
-		g_ret = 1;
-		cmd->ret = 1;
-	}
 	buf[i] = 0;
 }
 
@@ -195,7 +189,5 @@ void		parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	ft_bzero(buf, 10000);
 	parse_var(buf, line, envl, cmd);
 	parse_red(buf, cmd);
-	cmd->arg = ft_split(buf, " ");
-	for (size_t i = 0; cmd->arg[i]; i++)
-		printf("arg[%zu]: |%s|\n", i, cmd->arg[i]);
+	cmd->arg = ft_strap(ft_split(buf, " "));
 }

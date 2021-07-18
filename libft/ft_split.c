@@ -34,7 +34,6 @@ static int	countstrs(const char *str, char *c)
 	flag = 0;
 	quot = 0;
 	while (str[++i[1]])
-	{
 		if (!quot && isin(str[i[1]], c))
 		{
 			if (flag == 1 && ++i[0])
@@ -48,7 +47,6 @@ static int	countstrs(const char *str, char *c)
 				quot = 0;
 			flag = 1;
 		}
-	}
 	return (i[0] + flag);
 }
 
@@ -62,19 +60,13 @@ static char	*istr(int *k, const char *str, char *c)
 	quot = 0;
 	while (str[*k])
 	{
-		if (!quot)
-		{
-			if (isin(str[*k], c))
-				break ;
-			if (str[*k] == '\'' || str[*k] == '\"')
-				quot = str[*k];
-			else
-				ret[n++] = str[*k];
-		}
-		else if (str[*k] != quot)
-			ret[n++] = str[*k];
-		else
+		if (!quot && isin(str[*k], c))
+			break ;
+		if (!quot && isin(str[*k], "\'\""))
+			quot = str[*k];
+		else if (quot && str[*k] == quot)
 			quot = 0;
+		ret[n++] = str[*k];
 		++*k;
 	}
 	ret[n] = 0;

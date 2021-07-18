@@ -60,11 +60,6 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 			break ;
 		i[0]++;
 	}
-	if (quot)
-	{
-		printf("minishell: '%c': syntax error\n", quot);
-		return (0);
-	}
 	return (head);
 }
 

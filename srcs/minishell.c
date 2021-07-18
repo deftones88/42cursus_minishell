@@ -14,6 +14,29 @@
 
 int	g_ret = 0;
 
+int		quot_check(char *line)
+{
+	int		i;
+	char	quot;
+
+	quot = 0;
+	i = -1;
+	while (line[++i])
+	{
+		if (!quot && (line[i] == '\'' || line[i] == '\"'))
+			quot = line[i];
+		else if (quot && line[i] == quot)
+			quot = 0;
+	}
+	if (quot)
+	{
+		g_ret = 1;
+		printf("minishell: '%c': syntax error\n", quot);
+		return (1);
+	}
+	return (0);
+}
+
 int		main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -27,6 +50,8 @@ int		main(int argc, char **argv, char **envp)
 		if (line && line[0] != 0)
 		{
 			add_history(line);
+			if (quot_check(line))
+				continue ;
 			init_pid(&all->pid, line);
 			pid_loop(all);
 		}
