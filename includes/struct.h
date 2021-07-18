@@ -22,32 +22,32 @@ typedef struct termios	t_term;
 typedef struct		s_cmd
 {
 	char			*cmd;
-	char			**arg;				// command + options
-	int				flag;					// represent |(1) or ;(2)
-	int				redin;				// <
-	int				redout;				// >
-	int				append;				// >>
-	int				delimit;			// <<
-	char			**parse;			// tmp from parse_tmp
-	int				ret;					// skip executing cmd
+	char			**arg;
+	int				flag;				// represent |(1) or ;(2)
+	int				redin;
+	int				redout;
+	int				append;
+	int				delimit;
+	char			**parse;
+	int				ret;
 	struct s_cmd	*next;
 }					t_cmd;
 
-typedef struct	s_fd
+typedef struct s_fd
 {
 	int				prev_fd;
 	int				fd_bu[2];
 	int				fd[2];
 }					t_fd;
 
-typedef struct	s_pid
+typedef struct s_pid
 {
 	int			total;
 	char		**pipe_cmd;
 	pid_t		*pid;
 }					t_pid;
 
-typedef struct	s_all
+typedef struct s_all
 {
 	t_pid	pid;
 	t_fd	fd;
