@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   builtin.c                                          :+:      :+:    :+:   */
+/*   builtin_util.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:14:16 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/05 15:14:18 by ji-kim           ###   ########.fr       */
+/*   Updated: 2021/07/18 16:43:50 by jinukim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,8 @@ void	ft_echo(t_cmd *cmd, int i, int flag)
 		{
 			if (i > flag + 1)
 				write(cmd->append + cmd->redout + 1, " ", 1);
-			write(cmd->append + cmd->redout + 1, cmd->arg[i], (int)ft_strlen(cmd->arg[i]));
+			write(cmd->append + cmd->redout + 1,
+				cmd->arg[i], (int)ft_strlen(cmd->arg[i]));
 		}
 		else
 		{
@@ -44,7 +45,8 @@ void	ft_export(t_cmd *cmd, int i, char *key, char *val)
 {
 	if (cmd->arg[i][0] == ' ' || cmd->arg[i][0] == '=')
 	{
-		printf("minishell: %s: '%s': not a valid identifier\n", cmd->arg[0], cmd->arg[i]);
+		printf("minishell: %s: '%s': not a valid identifier\n",
+			cmd->arg[0], cmd->arg[i]);
 		g_ret = 1;
 	}
 	if (key)

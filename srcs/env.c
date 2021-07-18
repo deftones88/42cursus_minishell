@@ -6,7 +6,7 @@
 /*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:13:47 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/05 15:13:50 by ji-kim           ###   ########.fr       */
+/*   Updated: 2021/07/18 16:45:13 by jinukim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ char	**list2arr(t_list *envl)
 		cur = cur->next;
 		n++;
 	}
-	ret = (char**)ft_calloc(n + 1, sizeof(char*));
+	ret = (char **)ft_calloc(n + 1, sizeof(char *));
 	n = 0;
 	cur = envl;
 	while (cur)
@@ -100,7 +100,7 @@ t_list	*init_env(char **envp)
 	root = 0;
 	while (envp[++i])
 		ft_lstadd_last(&root,
-				ft_lstnew(parse_key(envp[i]), parse_value(envp[i])));
+			ft_lstnew(parse_key(envp[i]), parse_value(envp[i])));
 	ft_lstadd_last(&root, ft_lstnew("OLDPWD", ""));
 	return (root);
 }

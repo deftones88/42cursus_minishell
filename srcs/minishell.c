@@ -6,7 +6,7 @@
 /*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:16:37 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/09 17:30:16 by ji-kim           ###   ########.fr       */
+/*   Updated: 2021/07/18 16:51:05 by jinukim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 int	g_ret = 0;
 
-int		quot_check(char *line)
+int	quot_check(char *line)
 {
 	int		i;
 	char	quot;
@@ -32,19 +32,20 @@ int		quot_check(char *line)
 	{
 		g_ret = 1;
 		printf("minishell: '%c': syntax error\n", quot);
+		free(line);
 		return (1);
 	}
 	return (0);
 }
 
-int		main(int argc, char **argv, char **envp)
+int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
 	t_all	*all;
 
 	show_logo();
 	all = init_all(envp);
-	while(1)
+	while (1)
 	{
 		line = readline("minishell$ ");
 		if (line && line[0] != 0)

@@ -6,7 +6,7 @@
 /*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:18:02 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/05 15:18:04 by ji-kim           ###   ########.fr       */
+/*   Updated: 2021/07/18 16:48:47 by jinukim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@ void	free_all(char **strs)
 	free(strs);
 }
 
-int		ft_strcmp(const char *s1, const char *s2)
+int	ft_strcmp(const char *s1, const char *s2)
 {
 	int				ret;
 	int				idx;
@@ -37,7 +37,7 @@ int		ft_strcmp(const char *s1, const char *s2)
 	return (ret);
 }
 
-int		ft_isspdigit(char *str)
+int	ft_isspdigit(char *str)
 {
 	int				i;
 
@@ -45,10 +45,11 @@ int		ft_isspdigit(char *str)
 	while (str[++i])
 	{
 		if ((str[i] == '-' || str[i] == '+')
-				&& (str[i + 1] >= '0' && str[i + 1] <= '9')
-				&& (i == 0 || (str[i - 1] < '0' && str[i - 1] > '9')))
+			&& (str[i + 1] >= '0' && str[i + 1] <= '9')
+			&& (i == 0 || (str[i - 1] < '0' && str[i - 1] > '9')))
 			i++;
-		else if (str[i] != ' ' && str[i] != '\t' && (str[i] < '0' || str[i] > '9'))
+		else if (str[i] != ' ' && str[i] != '\t'
+			&& (str[i] < '0' || str[i] > '9'))
 			return (0);
 	}
 	return (1);
