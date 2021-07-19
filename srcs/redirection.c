@@ -22,7 +22,6 @@ void		heredoc_child(int fd[2], char *delimiter)
 	while (1)
 	{
 		line = readline("> ");
-		printf("line: %s\n", line);
 		if (!line)
 			exit(1);
 		if (!ft_strcmp(line, delimiter))

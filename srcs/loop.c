@@ -28,10 +28,8 @@ void	cmd_loop(t_all *all)
 
 void	pid_child_loop(t_all *all, int i)
 {
-	// printf("\e[33mchild before: %d(%d)\e[0m\n", getpid(), getppid());
 	set_fd(&all->fd, all->pid.total - 1, i);
 	cmd_loop(all);
-	// printf("\e[33mchild after: %d(%d)\e[0m\n", getpid(), getppid());
 	exit(EXIT_SUCCESS);
 }
 
@@ -43,7 +41,6 @@ void	pid_parent_loop(t_all *all, int i)
 	signal(SIGINT, sig_handler);
 	signal(SIGQUIT, SIG_IGN);
 	waitpid(all->pid.pid[i], &status, 0);
-	// printf("\e[33mparent: %d(%d)\e[0m\n", getpid(), getppid());
 	close(all->fd.fd[1]);
 	exit_status(all, status);
 	if (all->pid.total > 1)
