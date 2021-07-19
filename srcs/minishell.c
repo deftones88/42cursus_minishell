@@ -43,7 +43,6 @@ int	main(int argc, char **argv, char **envp)
 	char	*line;
 	t_all	*all;
 
-	show_logo();
 	all = init_all(envp);
 	while (1)
 	{

@@ -29,7 +29,7 @@
 # include <fcntl.h>
 # include <errno.h>
 # include <limits.h>
-
+# include <unistd.h>
 # ifndef ARG_MAX
 #  define ARG_MAX 2048
 # endif
@@ -57,7 +57,7 @@ t_all	*init_all(char **envp);
 */
 t_cmd	*free_next(t_cmd *cmd);
 char	**split_line(char *line, t_cmd *cmd, t_list *envl);
-void	parse_tmp(char *line, t_cmd *cmd, t_list *envl);
+int		parse(char *line, t_cmd *cmd, t_list *envl);
 
 /*
 ** redirection.c

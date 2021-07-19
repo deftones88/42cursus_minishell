@@ -40,12 +40,14 @@ int			heredoc_eof(char *buf, char *delimiter)
 {
 	struct termios	t_before;
 	int		k;
+	int		i;
 
 	k = -1;
-	while (*buf == '<' || *buf == ' ')
-		*buf++ = ' ';
+	i = -1;
+	while (buf[++i] == '<' || buf[i] == ' ')
+		buf[i] = ' ';
 	while (++k < (int)ft_strlen(delimiter))
-		buf[k] = ' ';
+		buf[i + k] = ' ';
 	tcgetattr(STDIN_FILENO, &t_before);
 	set_termcap(2);
 	tcsetattr(STDIN_FILENO, TCSANOW, &t_before);
@@ -75,7 +77,7 @@ int			heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int idx)
 		if (buf[i] == '<' && buf[i + 1] == '<')
 			cmd->delimit = fd[0];
 	if (ret == 1)
-		return (heredoc_eof(buf, cmd->parse[0]));
+		return (heredoc_eof(buf + idx - 2, cmd->parse[0]));
 	else if (flag < 0 && cmd->delimit < 0)
 	{
 		while (read(fd[0], buffer, 100))
@@ -111,7 +113,7 @@ int			redin(t_cmd *cmd)
 		cmd->ret = 1;
 		g_ret = errno;
 		free_all(cmd->parse);
-		exit(EXIT_SUCCESS);
+		//exit(EXIT_SUCCESS);
 		return (1);
 	}
 	return (0);

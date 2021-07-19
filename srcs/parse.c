@@ -84,6 +84,8 @@ void		parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 				k = -1;
 				while (val[++k])
 					buf[i++] = val[k];
+				if (line[j - 1] == '?')
+					free(val);
 			}
 			else
 			{
@@ -97,7 +99,7 @@ void		parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 	buf[i] = 0;
 }
 
-void		parse_red(char *buf, t_cmd *cmd)
+int	parse_red(char *buf, t_cmd *cmd)
 {
 	int		i;
 	char	quot;
@@ -121,7 +123,7 @@ void		parse_red(char *buf, t_cmd *cmd)
 				printf("minishell: syntax error near unexpected token 'newline'\n");
 				cmd->ret = 1;
 				g_ret = 258;
-				return ;
+				return (1);
 			}
 			if (buf[i] == '<' && buf[i + 1] != '>')
 			{
@@ -133,7 +135,7 @@ void		parse_red(char *buf, t_cmd *cmd)
 				else if (buf[i + 1] != '<')
 				{
 					if (redin(cmd))
-						return ;
+						return (1);
 				}
 			}
 			else
@@ -143,11 +145,8 @@ void		parse_red(char *buf, t_cmd *cmd)
 					if (redout_append(cmd, &cmd->append, &cmd->redout, O_APPEND))
 						continue ;
 				}
-				else
-				{
-					if (redout_append(cmd, &cmd->redout, &cmd->append, O_TRUNC))
-						continue ;
-				}
+				else if (redout_append(cmd, &cmd->redout, &cmd->append, O_TRUNC))
+					continue ;
 			}
 			if (buf[i + 1] == buf[i])
 				buf[i + 1] = ' ';
@@ -168,7 +167,7 @@ void		parse_red(char *buf, t_cmd *cmd)
 						printf("minishell: syntax error near unexpected token '%c'\n", buf[i]);
 					g_ret = 258;
 					cmd->ret = 1;
-					//return ;
+					return 1;
 					//exit(CMD_SYN);
 				}
 				buf[i++] = ' ';
@@ -177,9 +176,10 @@ void		parse_red(char *buf, t_cmd *cmd)
 			free_all(cmd->parse);
 		}
 	}
+	return 0;
 }
 
-void		parse_tmp(char *line, t_cmd *cmd, t_list *envl)
+int	parse(char *line, t_cmd *cmd, t_list *envl)
 {
 	char		buf[10000];
 
@@ -190,6 +190,8 @@ void		parse_tmp(char *line, t_cmd *cmd, t_list *envl)
 	cmd->ret = 0;
 	ft_bzero(buf, 10000);
 	parse_var(buf, line, envl, cmd);
-	parse_red(buf, cmd);
+	if (parse_red(buf, cmd))
+		return (1);
 	cmd->arg = ft_strap(ft_split(buf, " "));
+	return (0);
 }

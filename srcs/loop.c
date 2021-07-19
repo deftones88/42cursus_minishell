@@ -26,6 +26,7 @@ void	cmd_loop(t_all *all)
 		else
 			ft_exec(all->cmd, all->envl);
 		all->cmd = free_next(all->cmd);
+		break ;
 	}
 }
 
@@ -65,11 +66,11 @@ void	pid_loop(t_all *all)
 		pipe(all->fd.fd);
 		all->cmd = init_cmd(all->pid.pipe_cmd[i], all->envl);
 		free(all->pid.pipe_cmd[i]);
+		if (!all->cmd || all->cmd->ret > 0)
+			continue ;
 		all->pid.pid[i] = fork();
 		if (all->pid.pid[i] < 0)
 			err_msg("fork failed\n");
-		if (!all->cmd || all->cmd->ret > 0)
-			continue ;
 		if (all->pid.pid[i] == 0)
 			pid_child_loop(all, i);
 		else
