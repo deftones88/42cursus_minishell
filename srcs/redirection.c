@@ -64,7 +64,6 @@ int			heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int idx)
 
 	close(fd[1]);
 	signal(SIGINT, sig_handler);
-	signal(SIGQUIT, SIG_IGN);
 	wait(&status);
 	ret = WEXITSTATUS(status);
 	flag = -1;

@@ -61,6 +61,7 @@ t_all	*init_all(char **envp)
 	t_all	*tmp;
 
 	show_logo();
+	signal(SIGQUIT, SIG_IGN);
 	tmp = ft_calloc(1, sizeof(t_all));
 	if (!tmp)
 		err_msg("malloc failed\n");

@@ -46,6 +46,7 @@ int	main(int argc, char **argv, char **envp)
 	all = init_all(envp);
 	while (1)
 	{
+		signal(SIGINT, SIG_DFL);
 		line = readline("minishell$ ");
 		if (line && line[0] != 0)
 		{

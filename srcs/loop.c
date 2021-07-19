@@ -39,7 +39,6 @@ void	pid_parent_loop(t_all *all, int i)
 	t_cmd	*tmp;
 
 	signal(SIGINT, sig_handler);
-	signal(SIGQUIT, SIG_IGN);
 	waitpid(all->pid.pid[i], &status, 0);
 	close(all->fd.fd[1]);
 	exit_status(all, status);
