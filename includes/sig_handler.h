@@ -26,6 +26,7 @@
 # define CLEAR_LINE "\033[6n"
 
 void	sig_handler(int sig);
+void	sig_handler2(int sig);
 void	set_termios(int i);
 void	get_cursor_position(int *col, int *rows);
 void	set_line(int col, int row, char *cm, char *ce);

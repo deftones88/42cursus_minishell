@@ -46,8 +46,9 @@ int	main(int argc, char **argv, char **envp)
 	all = init_all(envp);
 	while (1)
 	{
-		signal(SIGINT, SIG_DFL);
+		signal(SIGINT, sig_handler2);
 		line = readline("minishell$ ");
+		signal(SIGINT, SIG_DFL);
 		if (line && line[0] != 0)
 		{
 			add_history(line);
