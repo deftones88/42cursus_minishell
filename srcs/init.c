@@ -65,8 +65,6 @@ t_all	*init_all(char **envp)
 	if (!tmp)
 		err_msg("malloc failed\n");
 	init_fd(&tmp->fd);
-	signal(SIGINT, sig_handler);
-	signal(SIGQUIT, SIG_IGN);
 	tcgetattr(STDIN_FILENO, &tmp->t_old);
 	set_termios(0);
 	tmp->envl = init_env(envp);

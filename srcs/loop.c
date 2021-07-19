@@ -4,36 +4,34 @@ extern int	g_ret;
 
 void	cmd_loop(t_all *all)
 {
-	while (all->cmd)
+	if (check_cap(all->cmd->arg[0], "echo"))
+		builtin_echo(all->cmd);
+	else if (!ft_strcmp(all->cmd->arg[0], "cd"))
+		exit(CMD_CD);
+	else if (check_cap(all->cmd->arg[0], "pwd"))
 	{
-		if (check_cap(all->cmd->arg[0], "echo"))
-			builtin_echo(all->cmd);
-		else if (!ft_strcmp(all->cmd->arg[0], "cd"))
-			exit(CMD_CD);
-		else if (check_cap(all->cmd->arg[0], "pwd"))
-		{
-			printf("%s\n", getcwd(NULL, 0));
-			g_ret = 0;
-		}
-		else if (!ft_strcmp(all->cmd->arg[0], "export"))
-			exit(CMD_EXPT);
-		else if (!ft_strcmp(all->cmd->arg[0], "unset"))
-			exit(CMD_UNST);
-		else if (check_cap(all->cmd->arg[0], "env"))
-			builtin_env(all->envl, 0);
-		else if (!ft_strcmp(all->cmd->arg[0], "exit"))
-			exit(CMD_EXIT);
-		else
-			ft_exec(all->cmd, all->envl);
-		all->cmd = free_next(all->cmd);
-		break ;
+		printf("%s\n", getcwd(NULL, 0));
+		g_ret = 0;
 	}
+	else if (!ft_strcmp(all->cmd->arg[0], "export"))
+		exit(CMD_EXPT);
+	else if (!ft_strcmp(all->cmd->arg[0], "unset"))
+		exit(CMD_UNST);
+	else if (check_cap(all->cmd->arg[0], "env"))
+		builtin_env(all->envl, 0);
+	else if (!ft_strcmp(all->cmd->arg[0], "exit"))
+		exit(CMD_EXIT);
+	else
+		ft_exec(all->cmd, all->envl);
+	all->cmd = free_next(all->cmd);
 }
 
 void	pid_child_loop(t_all *all, int i)
 {
+	// printf("\e[33mchild before: %d(%d)\e[0m\n", getpid(), getppid());
 	set_fd(&all->fd, all->pid.total - 1, i);
 	cmd_loop(all);
+	// printf("\e[33mchild after: %d(%d)\e[0m\n", getpid(), getppid());
 	exit(EXIT_SUCCESS);
 }
 
@@ -42,7 +40,10 @@ void	pid_parent_loop(t_all *all, int i)
 	int		status;
 	t_cmd	*tmp;
 
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, SIG_IGN);
 	waitpid(all->pid.pid[i], &status, 0);
+	// printf("\e[33mparent: %d(%d)\e[0m\n", getpid(), getppid());
 	close(all->fd.fd[1]);
 	exit_status(all, status);
 	if (all->pid.total > 1)

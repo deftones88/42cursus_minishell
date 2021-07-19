@@ -22,6 +22,7 @@ void		heredoc_child(int fd[2], char *delimiter)
 	while (1)
 	{
 		line = readline("> ");
+		printf("line: %s\n", line);
 		if (!line)
 			exit(1);
 		if (!ft_strcmp(line, delimiter))
@@ -63,6 +64,8 @@ int			heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int idx)
 	int		i;
 
 	close(fd[1]);
+	signal(SIGINT, sig_handler);
+	signal(SIGQUIT, SIG_IGN);
 	wait(&status);
 	ret = WEXITSTATUS(status);
 	flag = -1;
