@@ -25,6 +25,12 @@ void	init_pid(t_all *all, t_pid *pid, char *line)
 		i++;
 	}
 	pid->pipe_cmd[i] = 0;
+	if (pid->pipe_cmd[0] == 0)
+	{
+		pid->pipe_cmd[0] = ft_strdup("cat");
+		all->idx = 0;
+		pid->pipe_cmd[1] = 0;
+	}
 	pid->total -= all->idx;
 	pid->pid = malloc(sizeof(pid_t) * pid->total);
 	if (!pid->pid)
