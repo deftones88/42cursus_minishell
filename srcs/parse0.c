@@ -60,6 +60,18 @@ int	parse_var_0(t_parse *p, char *buf, char *line, int red)
 	return (0);
 }
 
+void	parse_var_3(t_parse *p, char *buf)
+{
+	char	*val;
+
+	val = find_value(p->envl, "HOME");
+	p->k = -1;
+	while (val[++p->k])
+		buf[p->i++] = val[p->k];
+	free(val);
+	p->j += 1;
+}
+
 void	parse_var(char *buf, char *line, t_list *envl)
 {
 	int		red;
@@ -76,6 +88,9 @@ void	parse_var(char *buf, char *line, t_list *envl)
 			p->quot = 0;
 		if (line[p->j] == '<' || line[p->j] == '>')
 			red = 1;
+		if (!p->quot && line[p->j] == '~' && (line[p->j + 1] == 0
+			|| line[p->j + 1] ==  ' ' || line[p->j + 1] == '/'))
+			parse_var_3(p, buf);
 		if (p->quot != '\'' && line[p->j] == '$')
 			red = parse_var_0(p, buf, line, red);
 		else
