@@ -94,7 +94,10 @@ void	builtin_cd(char *dir, t_list **envl)
 
 	ft_lstadd_last(envl, ft_lstnew(ft_strdup("OLDPWD"),
 			ft_strdup(getcwd(NULL, 0))));
-	status = chdir(dir);
+	if (!dir)
+		status = chdir(find_value(*envl, "HOME"));
+	else
+		status = chdir(dir);
 	if (status < 0)
 	{
 		printf("minishell: cd: %s: %s\n", dir, strerror(errno));
