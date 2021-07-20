@@ -81,3 +81,24 @@ int	check_cap(char *arg, char *builtin)
 		return (1);
 	return (0);
 }
+
+int	check_pipe_char(char *arg)
+{
+	int	i;
+
+	i = 0;
+	while (arg[i] == ' ')
+		i++;
+	if (arg[i] == '|')
+	{
+		if (arg[i + 1] == '|')
+			printf("minishell: syntax error near unexpected token '||'\n");
+		else
+			printf("minishell: syntax error near unexpected token '|'\n");
+		return (1);
+	}
+	// while (arg[i])
+	// 	i++;
+	// if (arg[--i] == '|')
+	return (0);
+}

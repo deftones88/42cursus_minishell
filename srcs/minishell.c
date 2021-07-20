@@ -52,7 +52,7 @@ int	main(int argc, char **argv, char **envp)
 		if (line && line[0] != 0)
 		{
 			add_history(line);
-			if (quot_check(line))
+			if (check_pipe_char(line) || quot_check(line))
 				continue ;
 			init_pid(&all->pid, line);
 			pid_loop(all);
