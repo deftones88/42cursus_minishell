@@ -1,5 +1,11 @@
 #include "libft.h"
 
+static void	init(int *a, char *b)
+{
+	*a = 0;
+	*b = 0;
+}
+
 char	**ft_strap(char **strs)
 {
 	int		i;
@@ -8,8 +14,7 @@ char	**ft_strap(char **strs)
 	char	quot;
 	char	buf[16384];
 
-	i = -1;
-	quot = 0;
+	init(&i, &quot);
 	while (strs[++i])
 	{
 		j = -1;

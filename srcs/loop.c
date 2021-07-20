@@ -54,7 +54,6 @@ void	pid_loop(t_all *all)
 {
 	int		i;
 
-	//i = all->idx - 1;
 	i = -1;
 	while (++i < all->pid.total)
 	{
@@ -76,8 +75,4 @@ void	pid_loop(t_all *all)
 		dup_close(all->fd.fd_bu[0], STDIN_FILENO);
 	free(all->pid.pid);
 	free(all->pid.pipe_cmd);
-	i = -1;
-	while (++i < all->idx)
-		free(readline(""));
-	all->idx = 0;
 }

@@ -55,7 +55,7 @@ fclean : clean
 re : fclean all
 
 .c.o :
-	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) $(RL_INC) $(RL_M2) #-I ltermcap
+	@$(CC) $(CFLAGS) -MD -c -o $@ $< -I$(INCLUDE) $(RL_INC) $(RL_M2)
 
 -include $(DEPS)
 

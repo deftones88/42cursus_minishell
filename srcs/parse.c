@@ -14,7 +14,7 @@
 
 extern int	g_ret;
 
-t_cmd		*free_next(t_cmd *cmd)
+t_cmd	*free_next(t_cmd *cmd)
 {
 	t_cmd	*next;
 
@@ -44,7 +44,7 @@ static char	*get_key(char *line, int *i)
 	return (ft_strdup(buf));
 }
 
-void		parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
+void	parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 {
 	int		i;
 	int		j;
@@ -167,8 +167,7 @@ int	parse_red(char *buf, t_cmd *cmd)
 						printf("minishell: syntax error near unexpected token '%c'\n", buf[i]);
 					g_ret = 258;
 					cmd->ret = 1;
-					return 1;
-					//exit(CMD_SYN);
+					return (1);
 				}
 				buf[i++] = ' ';
 			}
@@ -176,7 +175,7 @@ int	parse_red(char *buf, t_cmd *cmd)
 			free_all(cmd->parse);
 		}
 	}
-	return 0;
+	return (0);
 }
 
 int	parse(char *line, t_cmd *cmd, t_list *envl)

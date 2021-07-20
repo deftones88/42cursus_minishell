@@ -10,11 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-# include "minishell.h"
+#include "minishell.h"
 
 extern int	g_ret;
 
-void		heredoc_child(int fd[2], char *delimiter)
+void	heredoc_child(int fd[2], char *delimiter)
 {
 	char	*line;
 
@@ -36,11 +36,11 @@ void		heredoc_child(int fd[2], char *delimiter)
 	}
 }
 
-int			heredoc_eof(char *buf, char *delimiter)
+int	heredoc_eof(char *buf, char *delimiter)
 {
 	struct termios	t_before;
-	int		k;
-	int		i;
+	int				k;
+	int				i;
 
 	k = -1;
 	i = -1;
@@ -54,18 +54,14 @@ int			heredoc_eof(char *buf, char *delimiter)
 	return (1);
 }
 
-int			heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int idx)
+int	heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int idx)
 {
 	char	buffer[100 + 1];
 	int		status;
-	int		ret;
 	int		flag;
 	int		i;
 
-	close(fd[1]);
-	signal(SIGINT, sig_handler);
 	wait(&status);
-	ret = WEXITSTATUS(status);
 	flag = -1;
 	i = 0;
 	while (i < idx && (buf[i] == ' ' || buf[i] == '<'))
@@ -77,18 +73,16 @@ int			heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int idx)
 	while (buf[i++])
 		if (buf[i] == '<' && buf[i + 1] == '<')
 			cmd->delimit = fd[0];
-	if (ret == 1)
+	if (WEXITSTATUS(status) == 1)
 		return (heredoc_eof(buf + idx - 2, cmd->parse[0]));
 	else if (flag < 0 && cmd->delimit < 0)
-	{
 		while (read(fd[0], buffer, 100))
 			printf("%s", buffer);
-		close(fd[0]);
-	}
+	close(fd[0]);
 	return (0);
 }
 
-int			heredoc_all(t_cmd *cmd, char *buf, int i)
+int	heredoc_all(t_cmd *cmd, char *buf, int i)
 {
 	int		fd[2];
 	pid_t	pid;
@@ -100,10 +94,12 @@ int			heredoc_all(t_cmd *cmd, char *buf, int i)
 		err_msg("fork failed\n");
 	if (pid == 0)
 		heredoc_child(fd, cmd->parse[0]);
+	close(fd[1]);
+	signal(SIGINT, sig_handler);
 	return (heredoc_parent(cmd, buf, fd, i));
 }
 
-int			redin(t_cmd *cmd)
+int	redin(t_cmd *cmd)
 {
 	if (cmd->redin > -1)
 		close(cmd->redin);
@@ -114,13 +110,12 @@ int			redin(t_cmd *cmd)
 		cmd->ret = 1;
 		g_ret = errno;
 		free_all(cmd->parse);
-		//exit(EXIT_SUCCESS);
 		return (1);
 	}
 	return (0);
 }
 
-int			redout_append(t_cmd *cmd, int *this, int *other, int flag)
+int	redout_append(t_cmd *cmd, int *this, int *other, int flag)
 {
 	if (*this > -1)
 		close(*this);

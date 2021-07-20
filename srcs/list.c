@@ -16,7 +16,7 @@ t_list	*ft_lstnew(char *key, char *value)
 {
 	t_list	*newlst;
 
-	newlst = (t_list*)malloc(sizeof(t_list));
+	newlst = (t_list *)malloc(sizeof(t_list));
 	if (!newlst)
 		err_msg("malloc error\n");
 	newlst->key = key;

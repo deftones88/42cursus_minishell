@@ -33,7 +33,7 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 	t_cmd	*head;
 
 	head = 0;
-	head = (t_cmd*)ft_calloc(1, sizeof(t_cmd));
+	head = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
 	if (parse(line, head, envl))
 		return (0);
 	return (head);
@@ -45,12 +45,11 @@ void	init_fd(t_fd *fd)
 	fd->fd_bu[1] = dup(STDOUT_FILENO);
 }
 
-void	init_pid(t_all *all, t_pid *pid, char *line)
+void	cat_check(t_all *all, t_pid *pid)
 {
 	int		i;
 	char	**cat;
 
-	pid->pipe_cmd = ft_split(line, "|");
 	pid->total = 0;
 	i = 0;
 	while (pid->pipe_cmd[pid->total])
@@ -68,6 +67,14 @@ void	init_pid(t_all *all, t_pid *pid, char *line)
 		pid->total++;
 	}
 	all->idx = i;
+}
+
+void	init_pid(t_all *all, t_pid *pid, char *line)
+{
+	int		i;
+
+	pid->pipe_cmd = ft_split(line, "|");
+	cat_check(all, pid);
 	i = 0;
 	while (pid->pipe_cmd[all->idx + i])
 	{

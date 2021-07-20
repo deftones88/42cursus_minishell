@@ -38,6 +38,20 @@ int	quot_check(char *line)
 	return (0);
 }
 
+void	mainloop(t_all *all, char *line)
+{
+	int		i;
+
+	add_history(line);
+	if (check_pipe_char(line) || quot_check(line))
+		continue ;
+	init_pid(all, &all->pid, line);
+	pid_loop(all);
+	i = -1;
+	while (++i < all->idx)
+		free(readline(""));
+}
+
 int	main(int argc, char **argv, char **envp)
 {
 	char	*line;
@@ -50,13 +64,7 @@ int	main(int argc, char **argv, char **envp)
 		line = readline("minishell$ ");
 		signal(SIGINT, SIG_DFL);
 		if (line && line[0] != 0)
-		{
-			add_history(line);
-			if (check_pipe_char(line) || quot_check(line))
-				continue ;
-			init_pid(all, &all->pid, line);
-			pid_loop(all);
-		}
+			mainloop(all, line);
 		else if (line == NULL)
 		{
 			set_termcap(0);

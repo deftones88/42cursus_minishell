@@ -14,19 +14,18 @@
 
 extern int	g_ret;
 
-void		sig_handler(int sig)
+void	sig_handler(int sig)
 {
 	if (sig)
 	{
 		printf("\n");
 		rl_on_new_line();
 		rl_replace_line("", 0);
-		// rl_redisplay();
 	}
 	g_ret = 1;
 }
 
-void		sig_handler2(int sig)
+void	sig_handler2(int sig)
 {
 	if (sig)
 	{
@@ -38,7 +37,7 @@ void		sig_handler2(int sig)
 	g_ret = 1;
 }
 
-void		set_termios(int i)
+void	set_termios(int i)
 {
 	struct termios	t_new;
 
@@ -54,7 +53,7 @@ void		set_termios(int i)
 	tcsetattr(0, TCSANOW, &t_new);
 }
 
-void		get_cursor_position(int *col, int *rows)
+void	get_cursor_position(int *col, int *rows)
 {
 	int		a;
 	int		i;
@@ -79,19 +78,19 @@ void		get_cursor_position(int *col, int *rows)
 	}
 }
 
-void		set_line(int col, int row, char *cm, char *ce)
+void	set_line(int col, int row, char *cm, char *ce)
 {
 	tputs(tgoto(cm, col, row - 1), 1, ft_putchar);
 	tputs(ce, 1, ft_putchar);
 }
 
-int			ft_putchar(int c)
+int	ft_putchar(int c)
 {
 	write(1, &c, 1);
 	return (0);
 }
 
-void		set_termcap(int flag)
+void	set_termcap(int flag)
 {
 	char	*cm;
 	char	*ce;
@@ -100,8 +99,8 @@ void		set_termcap(int flag)
 
 	set_termios(1);
 	tgetent(NULL, "xterm");
-	cm  = tgetstr("cm", NULL);
-	ce  = tgetstr("ce", NULL);
+	cm = tgetstr("cm", NULL);
+	ce = tgetstr("ce", NULL);
 	get_cursor_position(&col, &row);
 	col = flag;
 	set_line(col, row, cm, ce);

@@ -92,7 +92,8 @@ void	builtin_cd(char *dir, t_list **envl)
 {
 	int		status;
 
-	ft_lstadd_last(envl, ft_lstnew(ft_strdup("OLDPWD"), ft_strdup(getcwd(NULL, 0))));
+	ft_lstadd_last(envl, ft_lstnew(ft_strdup("OLDPWD"),
+			ft_strdup(getcwd(NULL, 0))));
 	status = chdir(dir);
 	if (status < 0)
 	{
