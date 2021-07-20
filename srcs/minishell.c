@@ -54,7 +54,7 @@ int	main(int argc, char **argv, char **envp)
 			add_history(line);
 			if (check_pipe_char(line) || quot_check(line))
 				continue ;
-			init_pid(&all->pid, line);
+			init_pid(all, &all->pid, line);
 			pid_loop(all);
 		}
 		else if (line == NULL)

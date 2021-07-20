@@ -39,8 +39,7 @@ enum	e_CMD_exit_code
 	CMD_EXIT = 2,
 	CMD_CD,
 	CMD_EXPT,
-	CMD_UNST,
-	CMD_SYN
+	CMD_UNST
 };
 
 /*
@@ -49,7 +48,7 @@ enum	e_CMD_exit_code
 void	add_cmd(t_cmd **first, t_cmd *new);
 t_cmd	*init_cmd(char *line, t_list *envl);
 void	init_fd(t_fd *fd);
-void	init_pid(t_pid *pid, char *line);
+void	init_pid(t_all *all, t_pid *pid, char *line);
 t_all	*init_all(char **envp);
 
 /*

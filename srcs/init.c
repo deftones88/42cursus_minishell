@@ -45,12 +45,37 @@ void	init_fd(t_fd *fd)
 	fd->fd_bu[1] = dup(STDOUT_FILENO);
 }
 
-void	init_pid(t_pid *pid, char *line)
+void	init_pid(t_all *all, t_pid *pid, char *line)
 {
+	int		i;
+	char	**cat;
+
 	pid->pipe_cmd = ft_split(line, "|");
 	pid->total = 0;
+	i = 0;
 	while (pid->pipe_cmd[pid->total])
+	{
+		if (i == pid->total)
+		{
+			cat = ft_split(pid->pipe_cmd[pid->total], " ");
+			if (cat[0] && !cat[1] && !ft_strcmp(cat[0], "cat"))
+			{
+				i++;
+				free(pid->pipe_cmd[pid->total]);
+			}
+			free_all(cat);
+		}
 		pid->total++;
+	}
+	all->idx = i;
+	i = 0;
+	while (pid->pipe_cmd[all->idx + i])
+	{
+		pid->pipe_cmd[i] = pid->pipe_cmd[all->idx + i];
+		i++;
+	}
+	pid->pipe_cmd[i] = 0;
+	pid->total -= all->idx;
 	pid->pid = malloc(sizeof(pid_t) * pid->total);
 	if (!pid->pid)
 		err_msg("malloc failed\n");

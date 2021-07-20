@@ -49,6 +49,7 @@ typedef struct s_pid
 
 typedef struct s_all
 {
+	int		idx;
 	t_pid	pid;
 	t_fd	fd;
 	t_list	*envl;

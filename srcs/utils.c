@@ -87,7 +87,7 @@ int	check_pipe_char(char *arg)
 	int	i;
 
 	i = 0;
-	while (arg[i] == ' ')
+	while (arg[i] && arg[i] == ' ')
 		i++;
 	if (arg[i] == '|')
 	{
@@ -97,8 +97,13 @@ int	check_pipe_char(char *arg)
 			printf("minishell: syntax error near unexpected token '|'\n");
 		return (1);
 	}
-	// while (arg[i])
-	// 	i++;
-	// if (arg[--i] == '|')
+	i = ft_strlen(arg);
+	while (--i > 0 && arg[i] && arg[i] == ' ')
+		;
+	if (arg[i] == '|')
+	{
+		printf("minishell: syntax error near unexpected token '|'\n");
+		return (1);
+	}
 	return (0);
 }
