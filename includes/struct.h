@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   struct.h                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: jinukim <jinukim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:23:06 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/05 15:23:08 by ji-kim           ###   ########.fr       */
+/*   Updated: 2021/07/20 16:21:41 by jinukim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,5 +56,14 @@ typedef struct s_all
 	t_cmd	*cmd;
 	t_term	t_old;
 }	t_all;
+
+typedef struct	s_parse
+{
+	int		i;
+	int		j;
+	int		k;
+	char	quot;
+	t_list	*envl;
+}				t_parse;
 
 #endif

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   parse.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: jinukim <jinukim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:23:27 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/05 15:24:02 by ji-kim           ###   ########.fr       */
+/*   Updated: 2021/07/20 16:23:46 by jinukim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,138 +43,161 @@ static char	*get_key(char *line, int *i)
 	buf[k] = 0;
 	return (ft_strdup(buf));
 }
+int	parse_var_0(t_parse *p, char *buf, char *line, int red)
+{
+	char	*key;
+	char	*val;
+
+	if (!red)
+	{
+		if (line[p->j + 1] == '?')
+		{
+			val = ft_itoa(g_ret);
+			p->j += 2;
+		}
+		else
+		{
+			key = get_key(line, &p->j);
+			val = ft_strdup(find_value(p->envl, key));
+			free(key);
+		}
+		p->k = -1;
+		while (val[++p->k])
+			buf[p->i++] = val[p->k];
+		free(val);
+	}
+	else
+		buf[p->i++] = line[p->j++];
+	return (0);
+}
 
 void	parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 {
-	int		i;
-	int		j;
-	int		k;
-	char	quot;
-	char	*key;
-	char	*val;
 	int		red;
+	t_parse	*p;
 
+	p = (t_parse *)ft_calloc(1, sizeof(t_parse));
+	p->envl = envl;
 	red = 0;
-	quot = 0;
-	i = 0;
-	j = 0;
-	while (line[j])
+	while (line[p->j])
 	{
-		if (!quot && (line[j] == '\'' || line[j] == '\"'))
-			quot = line[j];
-		else if (quot && line[j] == quot)
-			quot = 0;
-		if (line[j] == '<' || line[j] == '>')
+		if (!p->quot && (line[p->j] == '\'' || line[p->j] == '\"'))
+			p->quot = line[p->j];
+		else if (p->quot && line[p->j] == p->quot)
+			p->quot = 0;
+		if (line[p->j] == '<' || line[p->j] == '>')
 			red = 1;
-		if (quot != '\'' && line[j] == '$')
-		{
-			if (!red)
-			{
-				if (line[j + 1] == '?')
-				{
-					val = ft_itoa(g_ret);
-					j += 2;
-				}
-				else
-				{
-					key = get_key(line, &j);
-					val = find_value(envl, key);
-					free(key);
-				}
-				k = -1;
-				while (val[++k])
-					buf[i++] = val[k];
-				if (line[j - 1] == '?')
-					free(val);
-			}
-			else
-			{
-				buf[i++] = line[j++];
-				red = 0;
-			}
-		}
+		if (p->quot != '\'' && line[p->j] == '$')
+			red = parse_var_0(p, buf, line, red);
 		else
-			buf[i++] = line[j++];
+			buf[p->i++] = line[p->j++];
 	}
-	buf[i] = 0;
+	buf[p->i] = 0;
+}
+
+int	parse_red_1(t_parse *p, char *buf, t_cmd *cmd)
+{
+	if (buf[p->i] == '<' && buf[p->i + 1] != '>')
+	{
+		if (buf[p->i + 1] == '<' && (buf[p->i + 2] != '<' && buf[p->i + 2] != '>'))
+		{
+			if (heredoc_all(cmd, buf, p->i + 2))
+				return (2);
+		}
+		else if (buf[p->i + 1] != '<')
+		{
+			if (redin(cmd))
+				return (1);
+		}
+	}
+	else if (buf[p->i + 1] == '>')
+	{
+		if (redout_append(cmd, &cmd->append, &cmd->redout, O_APPEND))
+			return (2);
+	}
+	else if (redout_append(cmd, &cmd->redout, &cmd->append, O_TRUNC))
+		return (2);
+	return (0);
+}
+
+int	parse_red_2(t_parse *p, char *buf, t_cmd *cmd)
+{
+	if (buf[p->i + 1] == buf[p->i])
+		buf[p->i + 1] = ' ';
+	buf[p->i++] = ' ';
+	while (buf[p->i] == ' ')
+		p->i++;
+	while (buf[p->i] && (p->quot || buf[p->i] != ' '))
+	{
+		if (!p->quot && (buf[p->i] == '\'' || buf[p->i] == '\"'))
+			p->quot = buf[p->i];
+		else if (p->quot && buf[p->i] == p->quot)
+			p->quot = 0;
+		if (!p->quot && (buf[p->i] == '<' || buf[p->i] == '>'))
+		{
+			if (!(buf[p->i] == '>' && buf[p->i + 1] == '<') && (buf[p->i + 1] == '<' || buf[p->i + 1] == '>'))
+				printf("minishell: syntax error near unexpected token '%c%c'\n", buf[p->i], buf[p->i + 1]);
+			else
+				printf("minishell: syntax error near unexpected token '%c'\n", buf[p->i]);
+			g_ret = 258;
+			cmd->ret = 1;
+			return (1);
+		}
+		buf[p->i++] = ' ';
+	}
+	p->i--;
+	return (0);
+}
+
+int	parse_red_0(t_parse *p, char *buf, t_cmd *cmd)
+{
+	int	ret;
+
+	if (buf[p->i + 1] == buf[p->i])
+		cmd->parse = ft_split(buf + p->i + 2, " <>");
+	else
+		cmd->parse = ft_split(buf + p->i + 1, " <>");
+	if (!cmd->parse[0])
+	{
+		printf("minishell: syntax error near unexpected token 'newline'\n");
+		cmd->ret = 1;
+		g_ret = 258;
+		return (1);
+	}
+	ret = parse_red_1(p, buf, cmd);
+	if (ret == 1)
+		return (1);
+	else if (ret == 2)
+		return (2);
+	if (parse_red_2(p, buf, cmd))
+		return (1);
+	free_all(cmd->parse);
+	return (0);
 }
 
 int	parse_red(char *buf, t_cmd *cmd)
 {
-	int		i;
-	char	quot;
+	t_parse	*p;
+	int	ret;
 
-	quot = 0;
-	i = -1;
-	while (buf[++i])
+	p = (t_parse*)ft_calloc(1, sizeof(t_parse));
+	p->i = -1;
+	while (buf[++p->i])
 	{
-		if (!quot && (buf[i] == '\'' || buf[i] == '\"'))
-			quot = buf[i];
-		else if (quot && buf[i] == quot)
-			quot = 0;
-		if (!quot && (buf[i] == '<' || buf[i] == '>'))
+		if (!p->quot && (buf[p->i] == '\'' || buf[p->i] == '\"'))
+			p->quot = buf[p->i];
+		else if (p->quot && buf[p->i] == p->quot)
+			p->quot = 0;
+		if (!p->quot && (buf[p->i] == '<' || buf[p->i] == '>'))
 		{
-			if (buf[i + 1] == buf[i])
-				cmd->parse = ft_split(buf + i + 2, " <>");
-			else
-				cmd->parse = ft_split(buf + i + 1, " <>");
-			if (!cmd->parse[0])
-			{
-				printf("minishell: syntax error near unexpected token 'newline'\n");
-				cmd->ret = 1;
-				g_ret = 258;
+			ret = parse_red_0(p, buf, cmd);
+			if (ret == 1)
 				return (1);
-			}
-			if (buf[i] == '<' && buf[i + 1] != '>')
-			{
-				if (buf[i + 1] == '<' && (buf[i + 2] != '<' && buf[i + 2] != '>'))
-				{
-					if (heredoc_all(cmd, buf, i + 2))
-						continue ;
-				}
-				else if (buf[i + 1] != '<')
-				{
-					if (redin(cmd))
-						return (1);
-				}
-			}
-			else
-			{
-				if (buf[i + 1] == '>')
-				{
-					if (redout_append(cmd, &cmd->append, &cmd->redout, O_APPEND))
-						continue ;
-				}
-				else if (redout_append(cmd, &cmd->redout, &cmd->append, O_TRUNC))
-					continue ;
-			}
-			if (buf[i + 1] == buf[i])
-				buf[i + 1] = ' ';
-			buf[i++] = ' ';
-			while (buf[i] == ' ')
-				i++;
-			while (buf[i] && (quot || buf[i] != ' '))
-			{
-				if (!quot && (buf[i] == '\'' || buf[i] == '\"'))
-					quot = buf[i];
-				else if (quot && buf[i] == quot)
-					quot = 0;
-				if (!quot && (buf[i] == '<' || buf[i] == '>'))
-				{
-					if (!(buf[i] == '>' && buf[i + 1] == '<') && (buf[i + 1] == '<' || buf[i + 1] == '>'))
-						printf("minishell: syntax error near unexpected token '%c%c'\n", buf[i], buf[i + 1]);
-					else
-						printf("minishell: syntax error near unexpected token '%c'\n", buf[i]);
-					g_ret = 258;
-					cmd->ret = 1;
-					return (1);
-				}
-				buf[i++] = ' ';
-			}
-			i--;
-			free_all(cmd->parse);
+			else if (ret == 2)
+				continue ;
 		}
 	}
+	free(p);
 	return (0);
 }
 

@@ -78,7 +78,8 @@ int	heredoc_parent(t_cmd *cmd, char *buf, int fd[2], int idx)
 	else if (flag < 0 && cmd->delimit < 0)
 		while (read(fd[0], buffer, 100))
 			printf("%s", buffer);
-	close(fd[0]);
+	if (WEXITSTATUS(status) != 1 && flag < 0 && cmd->delimit < 0)
+		close(fd[0]);
 	return (0);
 }
 
