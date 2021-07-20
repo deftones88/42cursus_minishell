@@ -43,6 +43,7 @@ static char	*get_key(char *line, int *i)
 	buf[k] = 0;
 	return (ft_strdup(buf));
 }
+
 int	parse_var_0(t_parse *p, char *buf, char *line, int red)
 {
 	char	*key;
@@ -93,13 +94,15 @@ void	parse_var(char *buf, char *line, t_list *envl, t_cmd *cmd)
 			buf[p->i++] = line[p->j++];
 	}
 	buf[p->i] = 0;
+	free(p);
 }
 
 int	parse_red_1(t_parse *p, char *buf, t_cmd *cmd)
 {
 	if (buf[p->i] == '<' && buf[p->i + 1] != '>')
 	{
-		if (buf[p->i + 1] == '<' && (buf[p->i + 2] != '<' && buf[p->i + 2] != '>'))
+		if (buf[p->i + 1] == '<'
+			&& (buf[p->i + 2] != '<' && buf[p->i + 2] != '>'))
 		{
 			if (heredoc_all(cmd, buf, p->i + 2))
 				return (2);
@@ -122,9 +125,6 @@ int	parse_red_1(t_parse *p, char *buf, t_cmd *cmd)
 
 int	parse_red_2(t_parse *p, char *buf, t_cmd *cmd)
 {
-	if (buf[p->i + 1] == buf[p->i])
-		buf[p->i + 1] = ' ';
-	buf[p->i++] = ' ';
 	while (buf[p->i] == ' ')
 		p->i++;
 	while (buf[p->i] && (p->quot || buf[p->i] != ' '))
@@ -135,10 +135,13 @@ int	parse_red_2(t_parse *p, char *buf, t_cmd *cmd)
 			p->quot = 0;
 		if (!p->quot && (buf[p->i] == '<' || buf[p->i] == '>'))
 		{
-			if (!(buf[p->i] == '>' && buf[p->i + 1] == '<') && (buf[p->i + 1] == '<' || buf[p->i + 1] == '>'))
-				printf("minishell: syntax error near unexpected token '%c%c'\n", buf[p->i], buf[p->i + 1]);
+			if (!(buf[p->i] == '>' && buf[p->i + 1] == '<')
+				&& (buf[p->i + 1] == '<' || buf[p->i + 1] == '>'))
+				printf("minishell: syntax error near unexpected token '%c%c'\n",
+					buf[p->i], buf[p->i + 1]);
 			else
-				printf("minishell: syntax error near unexpected token '%c'\n", buf[p->i]);
+				printf("minishell: syntax error near unexpected token '%c'\n",
+					buf[p->i]);
 			g_ret = 258;
 			cmd->ret = 1;
 			return (1);
@@ -169,6 +172,9 @@ int	parse_red_0(t_parse *p, char *buf, t_cmd *cmd)
 		return (1);
 	else if (ret == 2)
 		return (2);
+	if (buf[p->i + 1] == buf[p->i])
+		buf[p->i + 1] = ' ';
+	buf[p->i++] = ' ';
 	if (parse_red_2(p, buf, cmd))
 		return (1);
 	free_all(cmd->parse);
@@ -178,9 +184,9 @@ int	parse_red_0(t_parse *p, char *buf, t_cmd *cmd)
 int	parse_red(char *buf, t_cmd *cmd)
 {
 	t_parse	*p;
-	int	ret;
+	int		ret;
 
-	p = (t_parse*)ft_calloc(1, sizeof(t_parse));
+	p = (t_parse *)ft_calloc(1, sizeof(t_parse));
 	p->i = -1;
 	while (buf[++p->i])
 	{

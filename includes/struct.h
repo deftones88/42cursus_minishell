@@ -57,7 +57,7 @@ typedef struct s_all
 	t_term	t_old;
 }	t_all;
 
-typedef struct	s_parse
+typedef struct s_parse
 {
 	int		i;
 	int		j;
