@@ -86,5 +86,5 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 	close(fd[0]);
 	close(fd[1]);
 	if (WIFEXITED(status))
-		g_ret = WEXITSTATUS(status);
+		exit(WEXITSTATUS(status));
 }
