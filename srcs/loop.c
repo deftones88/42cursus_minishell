@@ -4,12 +4,18 @@ extern int	g_ret;
 
 void	cmd_loop(t_all *all)
 {
+	char	*cwd;
+
 	if (check_cap(all->cmd->arg[0], "echo"))
 		builtin_echo(all->cmd);
 	else if (!ft_strcmp(all->cmd->arg[0], "cd"))
 		exit(CMD_CD);
 	else if (check_cap(all->cmd->arg[0], "pwd"))
-		printf("%s\n", getcwd(NULL, 0));
+	{
+		cwd = getcwd(NULL, 0);
+		printf("%s\n", cwd);
+		free(cwd);
+	}
 	else if (!ft_strcmp(all->cmd->arg[0], "export"))
 		exit(CMD_EXPT);
 	else if (!ft_strcmp(all->cmd->arg[0], "unset"))

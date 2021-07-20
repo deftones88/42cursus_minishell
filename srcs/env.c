@@ -85,7 +85,7 @@ char	*find_value(t_list *envl, char *key)
 	while (cur)
 	{
 		if (!ft_strcmp(cur->key, key))
-			return (cur->value);
+			return (ft_strdup(cur->value));
 		cur = cur->next;
 	}
 	return (ft_strdup(""));

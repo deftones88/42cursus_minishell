@@ -36,7 +36,7 @@
 
 enum	e_CMD_exit_code
 {
-	CMD_EXIT = 2,
+	CMD_EXIT = 99,
 	CMD_CD,
 	CMD_EXPT,
 	CMD_UNST

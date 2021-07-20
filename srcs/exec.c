@@ -70,11 +70,14 @@ void	ft_exec(t_cmd *cmd, t_list *envl)
 	char	**envp;
 	int		status;
 	int		fd[2];
+	char	*merge;
 
 	fd[0] = dup(STDIN_FILENO);
 	fd[1] = dup(STDOUT_FILENO);
 	envp = list2arr(envl);
-	merge_path(cmd, find_value(envl, "PATH"));
+	merge = find_value(envl, "PATH");
+	merge_path(cmd, merge);
+	free(merge);
 	pid = fork();
 	if (pid < 0)
 		err_msg("fork failed\n");

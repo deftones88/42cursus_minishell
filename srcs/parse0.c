@@ -47,7 +47,7 @@ int	parse_var_0(t_parse *p, char *buf, char *line, int red)
 		else
 		{
 			key = get_key(line, &p->j);
-			val = ft_strdup(find_value(p->envl, key));
+			val = find_value(p->envl, key);
 			free(key);
 		}
 		p->k = -1;

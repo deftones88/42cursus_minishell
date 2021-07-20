@@ -91,11 +91,16 @@ void	builtin_env(t_list *envl, int flag)
 void	builtin_cd(char *dir, t_list **envl)
 {
 	int		status;
+	char	*home;
 
-	ft_lstadd_last(envl, ft_lstnew(ft_strdup("OLDPWD"),
-			ft_strdup(getcwd(NULL, 0))));
+	home = getcwd(NULL, 0);
+	ft_lstadd_last(envl, ft_lstnew(ft_strdup("OLDPWD"), home));
 	if (!dir)
-		status = chdir(find_value(*envl, "HOME"));
+	{
+		home = find_value(*envl, "HOME");
+		status = chdir(home);
+		free(home);
+	}
 	else
 		status = chdir(dir);
 	if (status < 0)
