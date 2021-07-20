@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: jinukim <jinukim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:11:50 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/05 15:11:53 by ji-kim           ###   ########.fr       */
+/*   Updated: 2021/07/20 16:43:10 by jinukim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,12 +50,14 @@ t_cmd	*init_cmd(char *line, t_list *envl);
 void	init_fd(t_fd *fd);
 void	init_pid(t_all *all, t_pid *pid, char *line);
 t_all	*init_all(char **envp);
+void	cat_check(t_all *all, t_pid *pid);
 
 /*
 ** parse.c
 */
 t_cmd	*free_next(t_cmd *cmd);
 char	**split_line(char *line, t_cmd *cmd, t_list *envl);
+void	parse_var(char *buf, char *line, t_list *envl);
 int		parse(char *line, t_cmd *cmd, t_list *envl);
 
 /*

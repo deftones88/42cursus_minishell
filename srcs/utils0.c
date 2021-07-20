@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   utils.c                                            :+:      :+:    :+:   */
+/*   utils0.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ji-kim <marvin@42.fr>                      +#+  +:+       +#+        */
+/*   By: jinukim <jinukim@student.42.fr>            +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/05 15:18:02 by ji-kim            #+#    #+#             */
-/*   Updated: 2021/07/18 16:48:47 by jinukim          ###   ########.fr       */
+/*   Updated: 2021/07/20 16:42:01 by jinukim          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "utils.h"
+#include "minishell.h"
 
 void	free_all(char **strs)
 {
@@ -79,31 +79,5 @@ int	check_cap(char *arg, char *builtin)
 	}
 	if (arg[i] == '\0' && builtin[i] == '\0')
 		return (1);
-	return (0);
-}
-
-int	check_pipe_char(char *arg)
-{
-	int	i;
-
-	i = 0;
-	while (arg[i] && arg[i] == ' ')
-		i++;
-	if (arg[i] == '|')
-	{
-		if (arg[i + 1] == '|')
-			printf("minishell: syntax error near unexpected token '||'\n");
-		else
-			printf("minishell: syntax error near unexpected token '|'\n");
-		return (1);
-	}
-	i = ft_strlen(arg);
-	while (--i > 0 && arg[i] && arg[i] == ' ')
-		;
-	if (arg[i] == '|')
-	{
-		printf("minishell: syntax error near unexpected token '|'\n");
-		return (1);
-	}
 	return (0);
 }

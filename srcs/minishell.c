@@ -58,8 +58,9 @@ int	main(int argc, char **argv, char **envp)
 	char	*line;
 	t_all	*all;
 
+	argc = (int)argv[0][0] + 256;
 	all = init_all(envp);
-	while (1)
+	while (argc)
 	{
 		signal(SIGINT, sig_handler2);
 		line = readline("minishell$ ");
