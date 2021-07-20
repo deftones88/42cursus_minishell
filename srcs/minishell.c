@@ -38,18 +38,19 @@ int	quot_check(char *line)
 	return (0);
 }
 
-void	mainloop(t_all *all, char *line)
+int	mainloop(t_all *all, char *line)
 {
 	int		i;
 
 	add_history(line);
 	if (check_pipe_char(line) || quot_check(line))
-		continue ;
+		return (1);
 	init_pid(all, &all->pid, line);
 	pid_loop(all);
 	i = -1;
 	while (++i < all->idx)
 		free(readline(""));
+	return (0);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -63,8 +64,8 @@ int	main(int argc, char **argv, char **envp)
 		signal(SIGINT, sig_handler2);
 		line = readline("minishell$ ");
 		signal(SIGINT, SIG_DFL);
-		if (line && line[0] != 0)
-			mainloop(all, line);
+		if (line && line[0] != 0 && mainloop(all, line))
+			continue ;
 		else if (line == NULL)
 		{
 			set_termcap(0);
