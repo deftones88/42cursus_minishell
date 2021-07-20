@@ -24,7 +24,23 @@ RL_DIR			= /Users/$(USER)/.brew/opt/readline/
 RL_LIB			= -L $(RL_DIR)lib
 RL_INC			= -I $(RL_DIR)include
 
-SRCS 			= $(wildcard $(SRCS_DIR)*.c)
+SRCS 			= $(addprefix $(SRCS_DIR),\
+				  builtin.c\
+				  builtin_util.c\
+				  env.c\
+				  eof_handler.c\
+				  exec.c\
+				  init0.c init1.c\
+				  list.c\
+				  logo.c\
+				  loop.c\
+				  minishell.c\
+				  parse0.c parse1.c\
+				  pipe.c\
+				  redirection0.c redirection1.c\
+				  sig_handler.c\
+				  utils0.c utils1.c\
+				  )
 OBJS 			= $(SRCS:.c=.o)
 DEPS 			= $(SRCS:.c=.d)
 
