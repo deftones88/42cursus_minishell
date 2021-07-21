@@ -54,11 +54,13 @@ char	*parse_key(char *str)
 	{
 		buf[i] = 0;
 		while (--i >= 0)
+		{
 			if (!ft_isalnum(buf[i]) && buf[i] != '_')
 			{
 				free(buf);
 				return (0);
 			}
+		}
 		key = ft_strdup(buf);
 		free(buf);
 		return (key);

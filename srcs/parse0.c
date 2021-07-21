@@ -89,7 +89,7 @@ void	parse_var(char *buf, char *line, t_list *envl)
 		if (line[p->j] == '<' || line[p->j] == '>')
 			red = 1;
 		if (!p->quot && line[p->j] == '~' && (line[p->j + 1] == 0
-			|| line[p->j + 1] ==  ' ' || line[p->j + 1] == '/'))
+				|| line[p->j + 1] == ' ' || line[p->j + 1] == '/'))
 			parse_var_3(p, buf);
 		if (p->quot != '\'' && line[p->j] == '$')
 			red = parse_var_0(p, buf, line, red);
