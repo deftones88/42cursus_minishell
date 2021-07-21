@@ -24,7 +24,7 @@ void	set_fd(t_fd *fd, int total, int i)
 
 void	exit_status(t_all *all, int status)
 {
-	if (WIFEXITED(status))
+	if (all->pid.total == 1 && WIFEXITED(status))
 	{
 		if (WEXITSTATUS(status) == CMD_EXIT)
 		{
@@ -38,7 +38,7 @@ void	exit_status(t_all *all, int status)
 			builtin_export(all->cmd, &all->envl);
 		else if (WEXITSTATUS(status) == CMD_UNST)
 			builtin_unset(all->cmd, &all->envl);
-		else
-			g_ret = WEXITSTATUS(status);
 	}
+	else
+		g_ret = WEXITSTATUS(status);
 }
