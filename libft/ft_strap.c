@@ -2,7 +2,7 @@
 
 static void	init(int *a, char *b)
 {
-	*a = 0;
+	*a = -1;
 	*b = 0;
 }
 

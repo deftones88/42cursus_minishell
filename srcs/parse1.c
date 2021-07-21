@@ -74,9 +74,9 @@ int	parse_red_0(t_parse *p, char *buf, t_cmd *cmd)
 	int	ret;
 
 	if (buf[p->i + 1] == buf[p->i])
-		cmd->parse = ft_split(buf + p->i + 2, " <>");
+		cmd->parse = ft_strap(ft_split(buf + p->i + 2, " <>"));
 	else
-		cmd->parse = ft_split(buf + p->i + 1, " <>");
+		cmd->parse = ft_strap(ft_split(buf + p->i + 1, " <>"));
 	if (!cmd->parse[0])
 	{
 		printf("minishell: syntax error near unexpected token 'newline'\n");
@@ -94,7 +94,6 @@ int	parse_red_0(t_parse *p, char *buf, t_cmd *cmd)
 	buf[p->i++] = ' ';
 	if (parse_red_2(p, buf, cmd))
 		return (1);
-	free_all(cmd->parse);
 	return (0);
 }
 
@@ -114,6 +113,7 @@ int	parse_red(char *buf, t_cmd *cmd)
 		if (!p->quot && (buf[p->i] == '<' || buf[p->i] == '>'))
 		{
 			ret = parse_red_0(p, buf, cmd);
+			free_all(cmd->parse);
 			if (ret == 1)
 			{
 				free(p);
