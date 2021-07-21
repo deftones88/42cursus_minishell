@@ -52,18 +52,15 @@ int	parse_red_2(t_parse *p, char *buf, t_cmd *cmd)
 			p->quot = 0;
 		if (!p->quot && (buf[p->i] == '<' || buf[p->i] == '>'))
 		{
-			if (!(buf[p->i] == '>' && buf[p->i + 1] == '<')
-				&& (buf[p->i + 1] == '<' || buf[p->i + 1] == '>'))
-				printf("minishell: syntax error near unexpected token '%c%c'\n",
-					buf[p->i], buf[p->i + 1]);
-			else
-				printf("minishell: syntax error near unexpected token '%c'\n",
-					buf[p->i]);
+			printf("minishell: syntax error near unexpected token '%c'\n",
+				buf[p->i]);
 			g_ret = 258;
 			cmd->ret = 1;
 			return (1);
 		}
 		buf[p->i++] = ' ';
+		if (buf[p->i - 1] == ' ' && (buf[p->i] == '<' || buf[p->i] == '>'))
+			break ;
 	}
 	p->i--;
 	return (0);

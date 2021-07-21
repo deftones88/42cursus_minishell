@@ -110,7 +110,6 @@ int	redin(t_cmd *cmd)
 		printf("minishell: %s: %s\n", cmd->parse[0], strerror(errno));
 		cmd->ret = 1;
 		g_ret = errno;
-		free_all(cmd->parse);
 		return (1);
 	}
 	return (0);
