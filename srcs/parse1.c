@@ -97,13 +97,10 @@ int	parse_red_0(t_parse *p, char *buf, t_cmd *cmd)
 	return (0);
 }
 
-int	parse_red(char *buf, t_cmd *cmd)
+int	parse_red(char *buf, t_cmd *cmd, t_parse *p)
 {
-	t_parse	*p;
 	int		ret;
 
-	p = (t_parse *)ft_calloc(1, sizeof(t_parse));
-	p->i = -1;
 	while (buf[++p->i])
 	{
 		if (!p->quot && (buf[p->i] == '\'' || buf[p->i] == '\"'))
@@ -115,22 +112,21 @@ int	parse_red(char *buf, t_cmd *cmd)
 			ret = parse_red_0(p, buf, cmd);
 			free_all(cmd->parse);
 			if (ret == 1)
-			{
-				free(p);
 				return (1);
-			}
 			else if (ret == 2)
 				continue ;
 		}
 	}
-	free(p);
 	return (0);
 }
 
 int	parse(char *line, t_cmd *cmd, t_list *envl)
 {
 	char		buf[10000];
+	t_parse		*p;
 
+	p = (t_parse *)ft_calloc(1, sizeof(t_parse));
+	p->i = -1;
 	cmd->redin = -1;
 	cmd->redout = -1;
 	cmd->append = -1;
@@ -138,8 +134,12 @@ int	parse(char *line, t_cmd *cmd, t_list *envl)
 	cmd->ret = 0;
 	ft_bzero(buf, 10000);
 	parse_var(buf, line, envl);
-	if (parse_red(buf, cmd))
+	if (parse_red(buf, cmd, p))
+	{
+		free(p);
 		return (1);
+	}
 	cmd->arg = ft_strap(ft_split(buf, " "));
+	free(p);
 	return (0);
 }
