@@ -65,10 +65,23 @@ void	builtin_export(t_cmd *cmd, t_list **envl)
 void	builtin_unset(t_cmd *cmd, t_list **envl)
 {
 	int		i;
+	int		j;
+	int		flag;
 
 	i = 0;
 	while (cmd->arg[++i])
-		ft_lstdel_key(envl, cmd->arg[i]);
+	{
+		j = -1;
+		flag = ft_isalpha(cmd->arg[i][0]) || cmd->arg[i][0] == '_';
+		while (flag && cmd->arg[i][++j])
+			if (!ft_isalnum(cmd->arg[i][j]) && cmd->arg[i][j] != '_')
+				flag = 0;
+		if (flag)
+			ft_lstdel_key(envl, cmd->arg[i]);
+		else
+			printf("minishell: %s: '%s': not a valid identifier\n",
+				cmd->arg[0], cmd->arg[i]);
+	}
 	g_ret = 0;
 }
 
