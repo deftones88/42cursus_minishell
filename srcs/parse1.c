@@ -115,7 +115,10 @@ int	parse_red(char *buf, t_cmd *cmd)
 		{
 			ret = parse_red_0(p, buf, cmd);
 			if (ret == 1)
+			{
+				free(p);
 				return (1);
+			}
 			else if (ret == 2)
 				continue ;
 		}

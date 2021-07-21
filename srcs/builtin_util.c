@@ -43,12 +43,10 @@ void	ft_echo(t_cmd *cmd, int i, int flag)
 
 void	ft_export(t_cmd *cmd, int i, char *key, char *val)
 {
-	if (cmd->arg[i][0] == ' ' || cmd->arg[i][0] == '=')
-	{
-		printf("minishell: %s: '%s': not a valid identifier\n",
-			cmd->arg[0], cmd->arg[i]);
-		g_ret = 1;
-	}
+	//if (cmd->arg[i][0] == ' ' || cmd->arg[i][0] == '=')
+	printf("minishell: %s: '%s': not a valid identifier\n",
+		cmd->arg[0], cmd->arg[i]);
+	g_ret = 1;
 	if (key)
 		free(key);
 	if (val)

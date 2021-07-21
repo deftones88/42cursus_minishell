@@ -50,18 +50,21 @@ char	*parse_key(char *str)
 	buf = ft_strdup(str);
 	while (buf[++i] && buf[i] != '=')
 		;
-	if (i != 0 && buf[i] == '=' && buf[0] != ' ')
+	if (i != 0 && buf[i] == '=' && (ft_isalpha(buf[0]) || buf[0] == '_'))
 	{
 		buf[i] = 0;
+		while (--i >= 0)
+			if (!ft_isalnum(buf[i]) && buf[i] != '_')
+			{
+				free(buf);
+				return (0);
+			}
 		key = ft_strdup(buf);
 		free(buf);
 		return (key);
 	}
-	else
-	{
-		free(buf);
-		return (0);
-	}
+	free(buf);
+	return (0);
 }
 
 char	*parse_value(char *str)

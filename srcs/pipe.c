@@ -38,6 +38,8 @@ void	exit_status(t_all *all, int status)
 			builtin_export(all->cmd, &all->envl);
 		else if (WEXITSTATUS(status) == CMD_UNST)
 			builtin_unset(all->cmd, &all->envl);
+		else
+			g_ret = WEXITSTATUS(status);
 	}
 	else
 		g_ret = WEXITSTATUS(status);

@@ -28,10 +28,12 @@ void	init_pid(t_all *all, t_pid *pid, char *line)
 	if (pid->pipe_cmd[0] == 0)
 	{
 		pid->pipe_cmd[0] = ft_strdup("cat");
+		pid->total = 1;
 		all->idx = 0;
 		pid->pipe_cmd[1] = 0;
 	}
-	pid->total -= all->idx;
+	else
+		pid->total -= all->idx;
 	pid->pid = malloc(sizeof(pid_t) * pid->total);
 	if (!pid->pid)
 		err_msg("malloc failed\n");

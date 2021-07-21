@@ -35,7 +35,10 @@ t_cmd	*init_cmd(char *line, t_list *envl)
 	head = 0;
 	head = (t_cmd *)ft_calloc(1, sizeof(t_cmd));
 	if (parse(line, head, envl))
+	{
+		free(head);
 		return (0);
+	}
 	return (head);
 }
 
