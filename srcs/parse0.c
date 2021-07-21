@@ -62,16 +62,10 @@ char	*set_val(t_parse *p, char *line)
 			val = find_value(p->envl, key);
 		free(key);
 	}
-	else if (!p->quot && (line[p->j + 1] == '\'' || line[p->j + 1] == '\"'))
-	{
+	else if ((line[++p->j] == '\'' || line[p->j] == '\"') && !p->quot)
 		val = ft_strdup("");
-		p->j++;
-	}
 	else
-	{
 		val = ft_strdup("$");
-		p->j++;
-	}
 	return (val);
 }
 
