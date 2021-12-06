@@ -11,4 +11,4 @@ jinukim(@1226kjw) - PARSING
 
 <br>
 
-MARK : ![cub3d](https://badge42.herokuapp.com/api/project/ji-kim/cub3d)
+MARK : ![minishell](https://badge42.herokuapp.com/api/project/ji-kim/minishell)
