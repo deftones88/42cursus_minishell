@@ -11,4 +11,4 @@ jinukim(@1226kjw) - PARSING
 
 <br>
 
-MARK : [![ji-kim's 42 minishell Score](https://badge42.vercel.app/api/v2/cl1tzt6ir004409lexcgnnbrw/project/2153395)]
+MARK : ![ji-kim's 42 minishell Score](https://badge42.vercel.app/api/v2/cl1tzt6ir004409lexcgnnbrw/project/2153395)
